@@ -6,7 +6,7 @@ using namespace std;
 const char* mentions[10][2] = {
     {"반갑습니다", "Hello sir"},
     {"테스트", "test"},
-    {"카드를 넣어주세요", "gensin impact"}
+    {"카드를 넣어주세요", "genshin impact"}
 };
 
 class Account;
@@ -14,6 +14,7 @@ class ATM;
 class User;
 class Bank;
 
+// 쓸 수 있으면 map 쓰는게 제일 좋을듯
 class History {
 private:
     // 2d  array;
@@ -23,9 +24,7 @@ public:
     // atm history 보관소
     vector<vector<string> > atmhis; //
     // user가 세션 종료 후 받게 되는 명세서
-    vector<vector<string> > userhis;
-    // 1개 단위 거래 종료 후 받게 되는 transaction history
-    vector<vector<string> > transactionhis;
+    vector<vector<string> > sessionhis;
 
     //char History[][10];
     // history 를 보관하는 2d 어레이
@@ -34,7 +33,7 @@ public:
     ----------------------
     1 김수한무     3        송금         1         3
     ----------------------
-    2
+    2 거북이와두루미 4        출금         7         NULL       10  
     -----------------------
     3
     */
