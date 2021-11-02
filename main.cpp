@@ -15,7 +15,7 @@ admin이 atm 기록 볼 때도 status 1임
 */
 #define UserStatus 0
 
-
+/*
 using namespace std;
 
 int main() {
@@ -36,3 +36,5 @@ int main() {
 
     return 0;
 }
+
+*/
