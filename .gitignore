@@ -1,8 +1,12 @@
 ## git ignore files ##
 
 main.dSYM/
+hw3.dSYM/
+hw31.dSYM/
 main
 
 *.DS_Store
 hw3.cpp
 hw31.cpp
+hw3
+hw31
