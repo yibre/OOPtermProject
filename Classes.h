@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -7,7 +8,8 @@ const char* mentions[10][2] = {
     {"반갑습니다", "Hello sir"},
     {"테스트", "test"},
     {"카드를 넣어주세요", "genshin impact"}
-};
+}; // 이거 맵을 쓰는게 좋을거같음
+
 
 class Account;
 class ATM;
@@ -15,12 +17,12 @@ class User;
 class Bank;
 
 // 쓸 수 있으면 map 쓰는게 제일 좋을듯
-class History {
+class Database {
 private:
     // 2d  array;
 public:
-    History() {};
-    ~History() {};
+    Database() {};
+    ~Database() {};
     // atm history 보관소
     vector<vector<string> > atmhis; //
     // user가 세션 종료 후 받게 되는 명세서
@@ -73,10 +75,10 @@ private:
     int cash; // atm 내부 현금 총액
     int check; // atm 내부 수표 총액
     bool bilingual;
-    History* atmhis;
+    Database* atmhis;
 
 public:
-    static History* getInstance();
+    static Database* getInstance();
     bool checkID(char);
     bool checkpw(int);
     void deposit(char, int); // 입금함수, 입금액
@@ -92,7 +94,7 @@ private:
     User *owner;
     int passward; // password는 순수 integer 구성, 카드와 동일
     int balance; // 잔액
-    History* accounthis;
+    Database* accounthis;
 
 public:
     Account() {};

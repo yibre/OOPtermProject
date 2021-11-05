@@ -3,7 +3,7 @@
 #include <string>
 
 /*
-0: 세션 대기, 프로그램 시작하고 난 직후 이후 다시 0 될 일 없음
+0: 프그ㅁ 자 종ㅛ
 1: 세션 진행중. 프로그램 시작 후 1로 넘어감
 admin이 atm 기록 볼 때도 status 1임
 2: 계좌번호 확인 과정
@@ -13,21 +13,30 @@ admin이 atm 기록 볼 때도 status 1임
 6: 송금
 7: 한 세션 종료 flag, 세션 결과 출력 후 다시 1로 넘어감
 */
-#define UserStatus 0
-
-/*
 using namespace std;
 
 int main() {
 
-    string str;
-    while (cin >> str) {
+    int UserStatus = 1; // 세션 시작
 
+    while (UserStatus != 0) {
+        string UserInput;
+        getline(cin, UserInput);
+
+        if (UserStatus == 1) {
+            // ATM 선택 단계, 디버깅용으로 넣어둠
+            cout << "please choose the ATM number among these (e.g. A1, B4)" << endl;
+
+            UserStatus = 2;
+        } else if (UserStatus == 2) {
+            // admin인지 확인 후 
+        }
         // exit 을 타입할 시 단계와 무관하게 세션 종료
-        // 프로그램 종료에 대한 input 기준은 없음
-        if (str == "exit") {break;}
-        // if (cin.eof() == true) {break;}
-        cout << str << endl;
+        if (UserInput == "exit") {UserStatus = 0;}
+
+        
+
+        cout << UserInput << endl;
 
     }
     
@@ -36,5 +45,3 @@ int main() {
 
     return 0;
 }
-
-*/
