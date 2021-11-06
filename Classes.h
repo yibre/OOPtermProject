@@ -1,14 +1,16 @@
 #include <string>
 #include <vector>
+#include <iostream>
 #include <map>
 
 using namespace std;
 
+// 맵을 쓰는게 좋을듯, 안내멘트용
 const char* mentions[10][2] = {
-    {"반갑습니다", "Hello sir"},
+    {"반갑습니다", "Hello"},
     {"테스트", "test"},
     {"카드를 넣어주세요", "genshin impact"}
-}; // 이거 맵을 쓰는게 좋을거같음
+};
 
 
 class Account;
@@ -19,16 +21,18 @@ class Bank;
 // 쓸 수 있으면 map 쓰는게 제일 좋을듯
 class Database {
 private:
-    // 2d  array;
-public:
     Database() {};
     ~Database() {};
-    // atm history 보관소
-    vector<vector<string> > atmhis; //
-    // user가 세션 종료 후 받게 되는 명세서
-    vector<vector<string> > sessionhis;
+    Account* accountList[100]; // 계좌 리스트
+    static Database* instance; //
+    vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
+    vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
 
-    //char History[][10];
+public:
+    static Database* getInstance();
+    void addAccountList(Account*);
+    Account* getAccountByNum(int); // 계좌번호로 account pointer를 가져옴
+  
     // history 를 보관하는 2d 어레이
     /*
     번호 username userid  거래타입(입출송) 거래계좌id 상대계좌id 거래액수 거래전잔액 거래후잔액 날짜
@@ -43,67 +47,91 @@ public:
 
 class User {
 private:
-    char ID; // user는 U1, U2, U3 이렇게 시작
-    char name;
+    string ID; // user는 U1, U2, U3 이렇게 시작
+    string name;
 
 public:
-    User() {};
+    User() {ID = "U0"; name="john doe";}
+    User(string ID, string name) {this->ID = ID; this->name = name;}
     ~User() {};
-    // account list가 들어가는 범위 공개
-    Account* accountlist[300]; // test를 위하여 설정해둠
+    Account* accountlist[300]; // 쓸지 안쓸지 아직 모름
 };
 
 class Bank {
 private:
-    char ID; // bank는 B1, B2, B3 이렇게 시작
+    string ID; // bank는 B1, B2, B3 이렇게 시작
     static int addID; // 0부터 시작해서 1씩 증가
     string name;
 
 public:
-    Bank() {};
+    Bank() {ID = "B1"; name="hellothere";}
+    Bank(string name) {this->name = name;}
     ~Bank() {};
     Account* accountlist[300];
+    string getBankName() {return name;}
 };
 
 class ATM {
 private:
-    char ID; // atm은 A1 A2 A3 이렇게 시작
-    static int addID; // id 부여용 넘버, 0부터 시작해서 1씩 증가
-    Bank *ownerBank;
-    char adminID;
+    string ID; // atm은 A1 A2 A3 이렇게 시작
+    static int numID; // id 부여용 넘버, 0부터 시작해서 1씩 증가
+    Bank* ownerBank;
+    string adminID;
     int adminpw;
-    int cash; // atm 내부 현금 총액
-    int check; // atm 내부 수표 총액
-    bool bilingual;
+    int remainCash; // atm 내부 현금 총액
+    int remainCheck = 0; // atm 내부 수표 총액
+    bool engSupport;
     Database* atmhis;
 
 public:
+    ATM() { numID = 0;}
+    ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engSupport) {
+    this->engSupport = engSupport;
+    this->ownerBank = bank;
+    this->adminID = adminID;
+    this->adminpw = adminPW;
+    this->remainCash = cash;
+    this->remainCheck = check; }
+    ~ATM();
     static Database* getInstance();
     bool checkID(char);
     bool checkpw(int);
     void deposit(char, int); // 입금함수, 입금액
     void withdrawal(int); // 출금함수, 출금액
+    void IncreaseID() {numID++;}
+    int getNumID() {return numID; }
+    int getATMremainCash() {return remainCash;}
 };
 
 
 class Account {
 private:
     int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자
-    static int addID; // 어떤 ID를 부여할것인가
+    static int numID; // 어떤 ID를 부여할것인가
     Bank *ownerBank;
     User *owner;
-    int passward; // password는 순수 integer 구성, 카드와 동일
+    int password; // password는 순수 integer 구성, 카드와 동일
     int balance; // 잔액
     Database* accounthis;
 
 public:
-    Account() {};
-    ~Account() {};
+    Account() { numID = 0; }
+    Account(Bank* bank, User* owner, int pw, int balance) {
+    this->ownerBank = bank;
+    this->owner = owner;
+    this->password = pw;
+    this->balance = balance;
+    this->ID = numID;
+    // increaseID(); // id를 부여한 뒤에는 static id를 1 추가함
+    }
+    ~Account();
     int getID();
-    bool checkPassward(int);
-    // int 타입의 패스워드를 받아 해당 코드가 맞는지 확인
+    bool checkPassward(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
     void deposit(char, int); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
     void remittance(int, int); //송금 계좌번호, 액수 
     void widthrawal(int); // 출금
+    void increaseID() {numID++;}
+    int getNumID() {return numID; }
+    int getBalance() {return balance; }
 };
 

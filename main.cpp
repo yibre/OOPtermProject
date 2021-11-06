@@ -18,10 +18,31 @@ using namespace std;
 int main() {
 
     int UserStatus = 1; // 세션 시작
+    
+    Bank *uriBank = new Bank();
+    Bank *kakaoBank = new Bank("kakao");
 
+    User *U1 = new User("U1", "최가난");
+    User *U2 = new User("U2", "권부자");
+    User *U3 = new User("U3", "서모녀"); 
+    User *U4 = new User("U4", "김백규");
+    User *U5 = new User("U5", "버터");
+    
+    ATM *A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true);
+    ATM *A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false);
+    cout << A1->getATMremainCash() << endl;
+    /*
+    Account *AC1 = new Account(uriBank, U1, 2345, 10000);
+    Account *AC2 = new Account(uriBank, U2, 3344, 3000000);
+    Account *AC3 = new Account(kakaoBank, U3, 22, 450000);
+    cout << AC1->getBalance() << endl;
+    
+    
     while (UserStatus != 0) {
         string UserInput;
         getline(cin, UserInput);
+
+        // cout << AC1->getBalance() << endl;
 
         if (UserStatus == 1) {
             // ATM 선택 단계, 디버깅용으로 넣어둠
@@ -29,7 +50,17 @@ int main() {
 
             UserStatus = 2;
         } else if (UserStatus == 2) {
-            // admin인지 확인 후 
+            // after checking admin, and show the history
+
+            // if the admin menu is over, go back to the mainstream, User status ==1
+            UserStatus = 1;
+        } else if (UserStatus == 3){
+            // 세션 시작
+            cout << "계좌번호를 입력해주세요" << endl; // 카드 투입, 계좌번호 입력 단계. 추후 instruction에 따라 바뀔 수 있음
+            
+            //
+        } else if (UserStatus == 4) {
+
         }
         // exit 을 타입할 시 단계와 무관하게 세션 종료
         if (UserInput == "exit") {UserStatus = 0;}
@@ -39,6 +70,7 @@ int main() {
         cout << UserInput << endl;
 
     }
+       */
     
     cout << "계좌번호를 넣어주세요" << endl;
 
