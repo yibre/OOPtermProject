@@ -11,7 +11,7 @@
 5: 입금
 6: 출금
 7: 송금
-8. 
+8. 안녕 디지몬
 */
 using namespace std;
 
@@ -28,15 +28,17 @@ int main() {
 	User *U4 = new User("U4", "김백규");
 	User *U5 = new User("U5", "버터");
 
-	ATM *A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true);
-	ATM *A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false);
+	ATM *A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true); // 0
+	ATM *A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false); // 1
 	cout << A1->getATMremainCash() << endl;
-	
-	Account *AC1 = new Account(uriBank, U1, 2345, 10000);
-	Account *AC2 = new Account(uriBank, U2, 3344, 3000000);
-	Account *AC3 = new Account(kakaoBank, U3, 22, 450000);
-	Account *AC4 = new Account(kakaoBank, U1, 1024, 50000);
+
+	Account *AC1 = new Account(uriBank, U1, 2345, 10000); // 0
+	Account *AC2 = new Account(uriBank, U2, 3344, 3000000); // 1
+	Account *AC3 = new Account(kakaoBank, U3, 22, 450000); // 2
+	Account *AC4 = new Account(kakaoBank, U1, 1024, 50000); // 3
 	cout << AC1->getBalance() << endl;
+	cout << AC2->getID() << endl;
+	cout << AC3->getID() << endl;
 
 
 	while (UserStatus != 0) {
@@ -51,7 +53,7 @@ int main() {
 			else if (UserInput == 2) { UserStatus = 3; }
 			else if (UserInput == 3) { UserStatus = 0; }
 			else { cout << "Error" << endl; } // 에러 처리 부분 추가해야함
-		} 
+		}
 		if (UserStatus == 2) { // admin panal
 			cout << "admin panal" << endl;
 			// 1. admin 메뉴 들어감
@@ -62,8 +64,8 @@ int main() {
 
 			// 4. user history 
 			UserStatus = 1;
-		} 
-		if (UserStatus == 3){ // 계좌 선택 및 본인 확인
+		}
+		if (UserStatus == 3) { // 계좌 선택 및 본인 확인
 			cout << "계좌번호를 입력해주세요" << endl; // 카드 투입, 계좌번호 입력 단계. 추후 instruction에 따라 바뀔 수 있음
 			int userAnswer;
 			cin >> userAnswer; // 계좌번호 입력

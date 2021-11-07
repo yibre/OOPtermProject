@@ -74,7 +74,7 @@ public:
 	Account() { numID = 0; }
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account();
-	int getID();
+	int getID() { return ID; }
 	bool checkPassward(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void deposit(char, int); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
 	void remittance(int, int); //송금 계좌번호, 액수 
