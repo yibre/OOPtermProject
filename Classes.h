@@ -37,11 +37,11 @@ public:
 		cout << "this come from a get account by num fun" << endl;
 		return accountList[index];
 	} // 계좌번호로 account pointer를 가져옴
-	번호 username userid  거래타입(입출송) 거래계좌id 상대계좌id 거래액수 거래전잔액 거래후잔액 날짜
+	number	username	userid	거래타입(입출송)	거래계좌id	상대계좌id	거래액수	거래전잔액	거래후잔액	날짜
 	----------------------
-	1 김수한무     3        송금         1         3
+	1		김수한무		3		송금				1			3			
 	----------------------
-	2 거북이와두루미 4        출금         7         NULL       10
+	2		거북이와두루미	4		출금 			7			NULL		10
 	-----------------------
 	3
 	*/
