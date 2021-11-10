@@ -17,7 +17,9 @@ using namespace std;
 
 int main() {
 
-	int UserStatus = 1; // 세션 시작 
+	int UserStatus = 1; // 세션 시작
+
+	Database* database = Database::getInstance();
 
 	Bank* uriBank = new Bank();
 	Bank* kakaoBank = new Bank("kakao");
@@ -30,22 +32,23 @@ int main() {
 
 	ATM* A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true); // 0
 	ATM* A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false); // 1
-	//cout << A1->getATMremainCash() << endl;
 
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 0
+	database->addAccountList(AC1, 0);
 	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // 1
+	database->addAccountList(AC2, 1);
 	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 2
-	Account* AC4 = new Account(kakaoBank, U1, 1024, 50000); // 3
+	database->addAccountList(AC3, 2);
+	Account* AC4 = new Account(kakaoBank, U1, 1024, 50000); // 3.
+	database->addAccountList(AC4, 3);
 
 	Account* accountlist[100];
 	accountlist[0] = AC1;
 	accountlist[1] = AC2;
 	accountlist[2] = AC3;
 	accountlist[3] = AC4;
-	//cout << AC1->getBalance() << endl;
-	//cout << AC2->getID() << endl;
-	//cout << AC3->getID() << endl;
 
+	cout << database->getAccountByNum(2)->getBalance() << endl;
 
 	int currentuser = -1;
 	while (UserStatus != 0) {
@@ -104,7 +107,7 @@ int main() {
 			cout << "입금" << endl;
 			// 입금 함수 실행
 			int type;
-			while (true){
+			while (true) {
 				cout << "현금으로 입금하시겠습니까? \n 1. 현금 \n 2. 수표" << endl;
 				cin >> type;
 				if (type == 1 or type == 2) { break; }
@@ -117,8 +120,8 @@ int main() {
 			int paperNum;
 			cin >> paperNum;
 			bool success = A1->deposit(type, moneytype * paperNum, paperNum, accountlist[currentuser]);
-			if(success){ UserStatus = 4; }
-			else{ UserStatus = 5; }
+			if (success) { UserStatus = 4; }
+			else { UserStatus = 5; }
 			cout << "ATM기 현금 잔액 : " << A1->getATMremainCash() << endl;
 			cout << "ATM기 수표 장 수 : " << A1->getATMremainCheckNum() << endl;
 		}
@@ -128,7 +131,7 @@ int main() {
 			cin >> money;
 			// 출금 함수 실행
 			bool success = A1->withdrawal(money, accountlist[currentuser]);
-			if (success){ UserStatus = 4; }
+			if (success) { UserStatus = 4; }
 			else { UserStatus = 6; }
 			cout << "ATM기 잔액 : " << A1->getATMremainCash() << endl;
 		}

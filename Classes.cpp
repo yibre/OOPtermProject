@@ -1,13 +1,23 @@
 #include "Classes.h"
 
-Database* Database::getInstance() {
-	if (!instance) { instance = new Database(); }
-	return instance;
+Database* Database::instance;
+
+void Database::addAccountList(Account* newAccount, int index) {
+	accountList[index] = newAccount;
+}
+
+
+Account* Database::getAccountByNum(int index) {
+	cout << "this come from a get account by num fun" << endl;
+	return accountList[index];
+}
+
+Account::Account() {
+	database = Database::getInstance();
+	numID=0;
 }
 
 int Account::numID;
-
-Database* Database::instance;
 
 Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	this->ownerBank = bank;
