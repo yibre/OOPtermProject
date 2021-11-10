@@ -1,11 +1,23 @@
 #include "Classes.h"
 
 Database* Database::instance;
+int Database::listsize = 0;
 
-void Database::addAccountList(Account* newAccount, int index) {
-	accountList[index] = newAccount;
+void Database::addAccountList(Account* newAccount) {
+	accountList[this->listsize] = newAccount;
+	sizeincrease();
 }
 
+int Database::getIndexFromID(int ID) {
+	int index = -1;
+	for (int i = 0; i < getDatabaseSize(); i++) {
+		if (this->accountList[i]->getID() == ID) {
+			index = i;
+			break;
+		}
+	}
+	return index;
+}
 
 Account* Database::getAccountByNum(int index) {
 	cout << "this come from a get account by num fun" << endl;
@@ -38,3 +50,59 @@ ATM::ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engS
 }
 
 // Bank::Bank(string name) { this->name = name; }
+
+bool Account::checkPassward(int uswerAnswer) {
+	if (this->password == uswerAnswer) { return true; }
+	else { return false; }
+}
+
+void Account::deposit(int type, int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
+	this->balance += money;  
+}
+
+void Account::withdrawal(int money) { // 출금
+	this->balance -= money;
+}
+
+bool ATM::deposit(int type, int money, int paperNum, Account* acc) { // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
+	int fee = 0;
+	if (this->getBank() != acc->getBank()) { fee = 500; }
+	if (type == 1 && paperNum > 50) {
+		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; // 입금 가능 최대 장 수를 제한해야하는데 어떻게 구현해야할까?
+		return false;
+	}
+	if (type == 2 && paperNum > 30) {
+		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; // 입금 가능 최대 장 수를 제한해야하는데 어떻게 구현해야할까?
+		return false;
+	}
+	acc->deposit(type, money-fee);
+	if (type == 1) { this->remainCash += money; }
+	else { this->remainCheck += money; this->remainCheckNum += paperNum; }
+	cout << money-fee << "원이 입금되었습니다." << endl;
+	cout << "수수료 : " << fee << " 원"<<endl;
+	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
+	return true;
+};
+
+bool ATM::withdrawal(int money, Account* acc) { // 출금함수, 출금액
+	int fee = 500;
+	if (this->getBank() != acc->getBank()) { fee = 1000; }
+	if ((money + fee) > acc->getBalance()) {
+		cout << "계좌에 잔액이 부족합니다. 다시 시도해주십시오." << endl;
+		return false;
+	}
+	if (money > this->remainCash) {
+		cout << "ATM 기기에 현금이 부족합니다. 다시 시도해주십시오." << endl;
+		return false;
+	}
+	if (money > this->maxWithdrawal) {
+		cout << "1회 최대 출금 금액(30만원)을 초과하였습니다. 다시 시도해주십시오." << endl;
+		return false;
+	}
+	acc->withdrawal(money + fee);
+	this->remainCash -= money;
+	cout << money << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
+	cout << "수수료 : " << fee << " 원"<<endl;
+	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
+	return true;
+};

@@ -16,6 +16,7 @@ class Bank;
 class Database {
 private:
 	Account* accountList[100]; // 계좌 리스트
+	static int listsize;
 	static Database* instance; // 한 번만 생성되는 instance
 	vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
 	vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
@@ -27,7 +28,10 @@ public:
 		if (!instance) { instance = new Database(); }
 		return instance;
 	}
-	void addAccountList(Account*, int);
+	void addAccountList(Account*);
+	void sizeincrease() { listsize++; };
+	int getDatabaseSize() { return listsize; };
+	int getIndexFromID(int);
 	Account* getAccountByNum(int index);
 
 	// history 를 보관하는 2d 어레이
@@ -88,16 +92,13 @@ public:
 	~Account();
 	int getID() { return ID; }
 	bool checkPassward(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
-	void deposit(int type, int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
-		this->balance += money;
-	};
+	void deposit(int type, int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
 	void remittance(int, int); //송금 계좌번호, 액수 
-	void withdrawal(int money) { // 출금
-		this->balance -= money;
-	};
+	void withdrawal(int money); // 출금
 	void increaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getBalance() { return balance; }
+	Bank* getBank() { return ownerBank; }
 };
 
 class ATM {
@@ -111,7 +112,6 @@ private:
 	int remainCheck = 0; // atm 내부 수표 총액
 	int remainCheckNum = 0; // atm 내부 수표 갯수
 	int maxWithdrawal = 300000;
-	int fee = 500;
 	int maxCashNumber = 100;
 	bool engSupport;
 
@@ -121,46 +121,13 @@ public:
 	~ATM();
 	bool checkID(char);
 	bool checkpw(int);
-	bool deposit(int type, int money, int paperNum, Account* acc) { // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
-		if (type == 1 && paperNum > 50) {
-			cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; // 입금 가능 최대 장 수를 제한해야하는데 어떻게 구현해야할까?
-			return false;
-		}
-		if (type == 2 && paperNum > 30) {
-			cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; // 입금 가능 최대 장 수를 제한해야하는데 어떻게 구현해야할까?
-			return false;
-		}
-		acc->deposit(type, money);
-		if (type == 1) { this->remainCash += money; }
-		else { this->remainCheck += money; this->remainCheckNum += paperNum; }
-		cout << money << "원이 입금되었습니다." << endl;
-		cout << "잔액 : " << acc->getBalance() << " 원" << endl;
-		return true;
-	};
-	bool withdrawal(int money, Account* acc) { // 출금함수, 출금액
-		if ((money + fee) > acc->getBalance()) {
-			cout << "계좌에 잔액이 부족합니다. 다시 시도해주십시오." << endl;
-			return false;
-		}
-		if (money > this->remainCash) {
-			cout << "ATM 기기에 현금이 부족합니다. 다시 시도해주십시오." << endl;
-			return false;
-		}
-		if (money > this->maxWithdrawal) {
-			cout << "1회 최대 출금 금액(30만원)을 초과하였습니다. 다시 시도해주십시오." << endl;
-			return false;
-		}
-		acc->withdrawal(money + fee);
-		this->remainCash -= money;
-		cout << money << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
-		cout << "수수료 : " << fee << " 원";
-		cout << "잔액 : " << acc->getBalance() << " 원" << endl;
-		return true;
-	};
+	bool deposit(int type, int money, int paperNum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
+	bool withdrawal(int money, Account* acc); // 출금함수, 출금액
 	void IncreaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getATMremainCash() { return remainCash; }
 	int getATMremainCheckNum() { return remainCheckNum; }
+	Bank* getBank() { return ownerBank; }
 };
 
 bool checkExit(string);
