@@ -34,26 +34,19 @@ int main() {
 	ATM* A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false); // 1
 
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 0
-	database->addAccountList(AC1, 0);
+	database->addAccountList(AC1);
 	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // 1
-	database->addAccountList(AC2, 1);
+	database->addAccountList(AC2);
 	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 2
-	database->addAccountList(AC3, 2);
+	database->addAccountList(AC3);
 	Account* AC4 = new Account(kakaoBank, U1, 1024, 50000); // 3.
-	database->addAccountList(AC4, 3);
-
-	Account* accountlist[100];
-	accountlist[0] = AC1;
-	accountlist[1] = AC2;
-	accountlist[2] = AC3;
-	accountlist[3] = AC4;
+	database->addAccountList(AC4);
 
 	cout << database->getAccountByNum(2)->getBalance() << endl;
-
-	int currentuser = -1;
+	
+	int userIndex = -1;
 	while (UserStatus != 0) {
 		if (UserStatus == 1) {
-			currentuser = -1;
 			// [의논필요] input을 int 말고 string으로 받아야할까? type error가 안 나도록?
 			// [의논필요] instructor에 atm이 2중언어 지원하는 atm 지원안하는 atm 만들라고 했는데 그럼 atm 선택 단계도 넣어줘야할까?
 			cout << "메뉴를 선택하세요 \n 1. admin panal 보기 \n 2. 개인거래하기 \n 3. exit" << endl;
@@ -78,18 +71,34 @@ int main() {
 		}
 		if (UserStatus == 3) { // 계좌 선택 및 본인 확인
 			cout << "계좌번호를 입력해주세요" << endl; // 카드 투입, 계좌번호 입력 단계. 추후 instruction에 따라 바뀔 수 있음
-			int userAnswer;
-			cin >> userAnswer; // 계좌번호 입력
-			// 본인확인, [의논필요] 본인확인하고 틀리면 어디로 돌아가지?
-
-			// 아직 본인확인을 어떻게 할지는 정해지지 않아서 accountlist의 index를 입력받아 진행하는 식으로 구현하였음.
-			if (userAnswer >= 0 && userAnswer <= 3) {
-				currentuser = userAnswer;
-				UserStatus = 4;
+			int userIDAnswer;
+			cin >> userIDAnswer; // 계좌번호 입력
+			userIndex = database->getIndexFromID(userIDAnswer);
+			
+			if (userIndex == -1) {
+				cout << "존재하지 않는 계좌입니다. 다시 입력해주세요." << endl;
+				continue;
 			}
-			else {
-				cout << "존재하지 않는 계좌입니다. 다시 시도해주십시오." << endl;
-				UserStatus = 3;
+			
+			int passworderror = 0;
+			while (true) {
+				if (passworderror == 3) { break; }
+				cout << "비밀번호를 입력해주세요." << endl;
+				int userPWAnswer;
+				cin >> userPWAnswer;
+				if (database->getAccountByNum(userIndex)->checkPassward(userPWAnswer)) {
+					UserStatus = 4;
+					break;
+				}
+				else {
+					cout << "비밀번호가 틀렸습니다. 다시 시도해주세요." << endl;
+					passworderror++;
+					continue;
+				}
+			}
+			if (passworderror == 3) {
+				cout << "비밀번호를 3회 틀렸습니다. 처음부터 다시 시도해주세요." << endl;
+				UserStatus = 1;
 			}
 		}
 		if (UserStatus == 4) { // 거래 종류 선택
@@ -119,7 +128,7 @@ int main() {
 			cout << "입금하실 금액의 장 수를 입력해주십시오." << endl;
 			int paperNum;
 			cin >> paperNum;
-			bool success = A1->deposit(type, moneytype * paperNum, paperNum, accountlist[currentuser]);
+			bool success = A1->deposit(type, moneytype * paperNum, paperNum, database->getAccountByNum(userIndex));
 			if (success) { UserStatus = 4; }
 			else { UserStatus = 5; }
 			cout << "ATM기 현금 잔액 : " << A1->getATMremainCash() << endl;
@@ -130,7 +139,7 @@ int main() {
 			int money;
 			cin >> money;
 			// 출금 함수 실행
-			bool success = A1->withdrawal(money, accountlist[currentuser]);
+			bool success = A1->withdrawal(money, database->getAccountByNum(userIndex));
 			if (success) { UserStatus = 4; }
 			else { UserStatus = 6; }
 			cout << "ATM기 잔액 : " << A1->getATMremainCash() << endl;
@@ -142,6 +151,5 @@ int main() {
 		}
 
 	}
-
 	return 0;
 }
