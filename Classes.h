@@ -60,6 +60,7 @@ public:
 	User() { ID = "U0"; name = "john doe"; }
 	User(string ID, string name) { this->ID = ID; this->name = name; }
 	~User() {};
+	string getName() { return name; }
 };
 
 class Bank {
@@ -68,6 +69,7 @@ private:
 	static int addID; // 0부터 시작해서 1씩 증가
 	string name;
 	Account* accountlist[100];
+	// primary 여부 필요할듯(수수료 관련) (현주)
 
 public:
 	Bank() { ID = "B1"; name = "uriBank"; }
@@ -79,7 +81,7 @@ public:
 class Account {
 private:
 	Database* database;
-	int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자
+	int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자(계좌번호?)
 	static int numID; // 어떤 ID를 부여할것인가
 	Bank* ownerBank;
 	User* owner;
@@ -89,16 +91,17 @@ private:
 public:
 	Account();
 	Account(Bank* bank, User* owner, int pw, int balance);
-	~Account();
+	~Account() {}
 	int getID() { return ID; }
 	bool checkPassward(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void deposit(int type, int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
-	void remittance(int, int); //송금 계좌번호, 액수 
+	void remittance(int, int); //송금 계좌번호, 액수 <- transfer로 이름 바꾸는거 건의(현주)
 	void withdrawal(int money); // 출금
 	void increaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
+	User* getOwner() { return owner; }
 };
 
 class ATM {
@@ -118,15 +121,17 @@ private:
 public:
 	ATM() { numID = 0; }
 	ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engSupport);
-	~ATM();
+	~ATM() {}
 	bool checkID(char);
 	bool checkpw(int);
 	bool deposit(int type, int money, int paperNum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(int money, Account* acc); // 출금함수, 출금액
+	bool transfer(int money, Account* fromAcc, Account* toAcc);
 	void IncreaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getATMremainCash() { return remainCash; }
 	int getATMremainCheckNum() { return remainCheckNum; }
+	int insertCash(int cash) { remainCash += cash; return remainCash; } // 이걸로 통일할까? 아니면 void로 분화?
 	Bank* getBank() { return ownerBank; }
 };
 

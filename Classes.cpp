@@ -19,9 +19,11 @@ int Database::getIndexFromID(int ID) {
 	return index;
 }
 
-Account* Database::getAccountByNum(int index) {
-	cout << "this come from a get account by num fun" << endl;
-	return accountList[index];
+//isValid(int 계좌번호) 같은 함수 있었으면 좋겠다 
+
+Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계좌 찾아주는 함수; 계좌 유무 확인 옵션 원함(현주)
+	// cout << "Debug: This comes from a get account by num fun" << endl;
+	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
 Account::Account() {
@@ -82,7 +84,7 @@ bool ATM::deposit(int type, int money, int paperNum, Account* acc) { // 입금�
 	cout << "수수료 : " << fee << " 원"<<endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
 	return true;
-};
+}
 
 bool ATM::withdrawal(int money, Account* acc) { // 출금함수, 출금액
 	int fee = 500;
@@ -105,4 +107,15 @@ bool ATM::withdrawal(int money, Account* acc) { // 출금함수, 출금액
 	cout << "수수료 : " << fee << " 원"<<endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
 	return true;
-};
+}
+
+bool ATM::transfer(int money, Account* fromAcc, Account* toAcc) {
+	// 송금수수료 고려(primary끼리 1500; primary-nonprimary 2000; nonp-nonp 2500)
+	// 차후에 Bank class에 구현
+	cout << "Debug: ATM::transfer called" << endl;
+	cout << "\t\t" << money << "원이 [" << toAcc->getOwner()->getName();
+	cout << "] 님에게 송금 완료되었습니다." << endl;
+	
+	return true;
+	// 기록 저장
+}

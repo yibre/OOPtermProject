@@ -6,6 +6,8 @@ hw31.dSYM/
 main
 
 .vscode/
+*.exe
+test.cpp
 
 *.DS_Store
 hw3.cpp
