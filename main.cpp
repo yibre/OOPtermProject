@@ -61,12 +61,15 @@ int main() {
 		if (UserStatus == 2) { // admin panal
 			cout << "admin panal" << endl;
 			// 1. admin 메뉴 들어감
-
+			database->addATMHistory("출금", -3000, AC1);
+			database->addATMHistory("입금", 50000, AC2);
+			database->printATMhistory();
 			// 2. admin password check
 
 			// 3. 전체 history 보여줌
 
 			// 4. user history 
+			UserStatus = 1;
 			UserStatus = 1;
 		}
 		if (UserStatus == 3) { // 계좌 선택 및 본인 확인

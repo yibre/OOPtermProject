@@ -28,7 +28,11 @@ public:
 		if (!instance) { instance = new Database(); }
 		return instance;
 	}
-	void addAccountList(Account*);
+	void addAccountList(Account*, int);
+	Account* getAccountByNum(int index);
+	void addATMHistory(string transactionType, int money, Account* account);
+	vector<vector<string> > getATMHistory() { return atmhis; }
+	void printATMhistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
 	int getIndexFromID(int);

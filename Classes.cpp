@@ -19,6 +19,34 @@ int Database::getIndexFromID(int ID) {
 	return index;
 }
 
+void Database::addATMHistory(string transactionType, int money, Account* account) {
+	int order = transactionOrder;
+	transactionOrder++;
+	string username = account->getOwner()->getUserName();
+	int before = account->getBalance();
+	int after = before + money;
+
+	vector<string> temp = { to_string(order), username, to_string(account->getID()),
+		transactionType, to_string(before), to_string(after) };
+	atmhis.push_back(temp);
+}
+
+void Database::printATMhistory() {
+	// TODO: 도연 작업 중
+	// 1. ctime 추가, 2. 송금시 받는이 어케할지 추가 3. main함수에 admin password 확인과정 추가
+	vector<string> temp = {"순서", "계좌주", "계좌번호", "거래타입", "거래 전 잔액", "거래 후 잔액"};
+	for (int i = 0; i < CUL_NUM; i++ ) {
+		cout << temp[i] << " ";
+	}
+	cout << endl;
+	for (int i = 0; i < atmhis.size();  i++) {
+		for (int j = 0; j < CUL_NUM; j++) {
+			cout << atmhis[i][j] << " ";
+		}
+		cout << "\n" << endl;
+	}
+}
+
 Account* Database::getAccountByNum(int index) {
 	cout << "this come from a get account by num fun" << endl;
 	return accountList[index];
