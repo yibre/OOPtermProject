@@ -1,7 +1,10 @@
 #include "Classes.h"
+#define CUL_NUM 6
 
 Database* Database::instance;
 int Database::listsize = 0;
+bool Database::sessionEnd;
+int Database::transactionOrder;
 
 void Database::addAccountList(Account* newAccount) {
 	accountList[this->listsize] = newAccount;
@@ -19,6 +22,34 @@ int Database::getIndexFromID(int ID) {
 	return index;
 }
 
+void Database::addATMHistory(string transactionType, int money, Account* account) {
+	int order = transactionOrder;
+	transactionOrder++;
+	string username = account->getOwner()->getUserName();
+	int before = account->getBalance();
+	int after = before + money;
+
+	vector<string> temp = { to_string(order), username, to_string(account->getID()),
+		transactionType, to_string(before), to_string(after) };
+	atmhis.push_back(temp);
+}
+
+void Database::printATMhistory() {
+	// TODO: 도연 작업 중
+	// 1. ctime 추가, 2. 송금시 받는이 어케할지 추가 3. main함수에 admin password 확인과정 추가
+	vector<string> temp = { "순서", "계좌주", "계좌번호", "거래타입", "거래 전 잔액", "거래 후 잔액" };
+	for (int i = 0; i < CUL_NUM; i++) {
+		cout << temp[i] << " ";
+	}
+	cout << endl;
+	for (int i = 0; i < atmhis.size(); i++) {
+		for (int j = 0; j < CUL_NUM; j++) {
+			cout << atmhis[i][j] << " ";
+		}
+		cout << "\n" << endl;
+	}
+}
+
 Account* Database::getAccountByNum(int index) {
 	cout << "this come from a get account by num fun" << endl;
 	return accountList[index];
@@ -26,7 +57,7 @@ Account* Database::getAccountByNum(int index) {
 
 Account::Account() {
 	database = Database::getInstance();
-	numID=0;
+	numID = 0;
 }
 
 int Account::numID;
@@ -57,7 +88,7 @@ bool Account::checkPassward(int uswerAnswer) {
 }
 
 void Account::deposit(int type, int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
-	this->balance += money;  
+	this->balance += money;
 }
 
 void Account::withdrawal(int money) { // 출금
@@ -75,11 +106,11 @@ bool ATM::deposit(int type, int money, int paperNum, Account* acc) { // 입금�
 		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; // 입금 가능 최대 장 수를 제한해야하는데 어떻게 구현해야할까?
 		return false;
 	}
-	acc->deposit(type, money-fee);
+	acc->deposit(type, money - fee);
 	if (type == 1) { this->remainCash += money; }
 	else { this->remainCheck += money; this->remainCheckNum += paperNum; }
-	cout << money-fee << "원이 입금되었습니다." << endl;
-	cout << "수수료 : " << fee << " 원"<<endl;
+	cout << money - fee << "원이 입금되었습니다." << endl;
+	cout << "수수료 : " << fee << " 원" << endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
 	return true;
 };
@@ -102,7 +133,7 @@ bool ATM::withdrawal(int money, Account* acc) { // 출금함수, 출금액
 	acc->withdrawal(money + fee);
 	this->remainCash -= money;
 	cout << money << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
-	cout << "수수료 : " << fee << " 원"<<endl;
+	cout << "수수료 : " << fee << " 원" << endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
 	return true;
 };

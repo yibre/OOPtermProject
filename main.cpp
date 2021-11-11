@@ -1,6 +1,4 @@
 #include "Classes.h"
-#include <iostream>
-#include <string>
 
 /*
 0: 프로그램 종료시 0으로 종료
@@ -13,6 +11,7 @@
 7: 송금
 8. 안녕 디지몬
 */
+
 using namespace std;
 
 int main() {
@@ -43,7 +42,7 @@ int main() {
 	database->addAccountList(AC4);
 
 	cout << database->getAccountByNum(2)->getBalance() << endl;
-	
+
 	int userIndex = -1;
 	while (UserStatus != 0) {
 		if (UserStatus == 1) {
@@ -61,12 +60,15 @@ int main() {
 		if (UserStatus == 2) { // admin panal
 			cout << "admin panal" << endl;
 			// 1. admin 메뉴 들어감
-
+			database->addATMHistory("출금", -3000, AC1);
+			database->addATMHistory("입금", 50000, AC2);
+			database->printATMhistory();
 			// 2. admin password check
 
 			// 3. 전체 history 보여줌
 
 			// 4. user history 
+			UserStatus = 1;
 			UserStatus = 1;
 		}
 		if (UserStatus == 3) { // 계좌 선택 및 본인 확인
@@ -74,12 +76,12 @@ int main() {
 			int userIDAnswer;
 			cin >> userIDAnswer; // 계좌번호 입력
 			userIndex = database->getIndexFromID(userIDAnswer);
-			
+
 			if (userIndex == -1) {
 				cout << "존재하지 않는 계좌입니다. 다시 입력해주세요." << endl;
 				continue;
 			}
-			
+
 			int passworderror = 0;
 			while (true) {
 				if (passworderror == 3) { break; }

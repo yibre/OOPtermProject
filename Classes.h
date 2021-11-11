@@ -20,7 +20,8 @@ private:
 	static Database* instance; // 한 번만 생성되는 instance
 	vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
 	vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
-
+	static bool sessionEnd; // 세션이 진행 중일땐 false임
+	static int transactionOrder;
 public:
 	Database() {};
 	virtual ~Database() {};
@@ -29,10 +30,13 @@ public:
 		return instance;
 	}
 	void addAccountList(Account*);
+	Account* getAccountByNum(int index);
+	void addATMHistory(string transactionType, int money, Account* account);
+	vector<vector<string> > getATMHistory() { return atmhis; }
+	void printATMhistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
 	int getIndexFromID(int);
-	Account* getAccountByNum(int index);
 
 	// history 를 보관하는 2d 어레이
 	/*
@@ -43,7 +47,7 @@ public:
 	} // 계좌번호로 account pointer를 가져옴
 	number	username	userid	거래타입(입출송)	거래계좌id	상대계좌id	거래액수	거래전잔액	거래후잔액	날짜
 	----------------------
-	1		김수한무		3		송금				1			3			
+	1		김수한무		3		송금				1			3
 	----------------------
 	2		거북이와두루미	4		출금 			7			NULL		10
 	-----------------------
@@ -60,6 +64,7 @@ public:
 	User() { ID = "U0"; name = "john doe"; }
 	User(string ID, string name) { this->ID = ID; this->name = name; }
 	~User() {};
+	string getUserName() { return name; }
 };
 
 class Bank {
@@ -99,6 +104,7 @@ public:
 	int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
+	User* getOwner() { return owner; }
 };
 
 class ATM {
