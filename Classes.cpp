@@ -29,7 +29,7 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	// cout << "Debug: This comes from a get account by num fun" << endl;
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
-  
+
 void Database::addATMHistory(string transactionType, int money, Account* account) {
 	int order = transactionOrder;
 	transactionOrder++;
@@ -146,9 +146,9 @@ bool ATM::transfer(int money, Account* fromAcc, Account* toAcc) {
 	// 송금수수료 고려(primary끼리 1500; primary-nonprimary 2000; nonp-nonp 2500)
 	// 차후에 Bank class에 구현
 	cout << "Debug: ATM::transfer called" << endl;
-	cout << "\t\t" << money << "원이 [" << toAcc->getOwner()->getName();
+	cout << "\t\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
 	cout << "] 님에게 송금 완료되었습니다." << endl;
-	
+
 	return true;
 	// 기록 저장
 }

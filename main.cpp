@@ -1,4 +1,4 @@
-#include "Classes.cpp"
+#include "Classes.h"
 #include <iostream>
 #include <string>
 /*
@@ -43,7 +43,7 @@ int main() {
 	database->addAccountList(AC4);
 
 	cout << database->getAccountByNum(2)->getBalance() << endl; // 현재 존재하는 계좌번호 이외 입력하면 버그남
-	
+
 	int userIndex = -1;
 	while (UserStatus != 0) {
 		if (UserStatus == 1) {
@@ -78,7 +78,7 @@ int main() {
 			cin >> userIDAnswer; // 계좌번호 입력
 
 			userIndex = database->getIndexFromID(userIDAnswer); // 앞으로 이사람 계좌 접근하고싶으면 database->getAccountByNum(userIndex)하면 된다(Account*)
-			
+
 			if (userIndex == -1) {
 				cout << "Non existing account error. 존재하지 않는 계좌입니다. Please try again. 다시 입력해 주십시오." << endl;
 				continue;
@@ -97,7 +97,7 @@ int main() {
 				else {
 					passworderror++;
 					cout << "Wrong password error. 비밀번호가 틀렸습니다. Please try again. 다시 시도하십시오. You have left 남은 시도 횟수: ";
-					cout << 3-passworderror << "회 chance(s)." << endl;
+					cout << 3 - passworderror << "회 chance(s)." << endl;
 					continue;
 				}
 			}
@@ -124,7 +124,7 @@ int main() {
 			while (true) {
 				cout << "Which would be your input? 현금으로 입금하시겠습니까?\n\t1. cash 현금\t2. check 수표" << endl;
 				cin >> type;
-				if (type == 1 or type == 2) { break; }
+				if (type == 1 || type == 2) { break; }
 				else { cout << "잘못된 입력입니다. 다시 시도해 주십시오." << endl; }
 			}
 			cout << "입금하실 금액의 장당 액수를 입력해주십시오." << endl;
@@ -149,18 +149,18 @@ int main() {
 			else { UserStatus = 6; }
 			cout << "ATM기 잔액 : " << A1->getATMremainCash() << endl;
 		}
-		
+
 		if (UserStatus == 7) {
 			cout << "You have chosen [transfer]. 송금을 선택하셨습니다." << endl;
-			
+
 			for (;;) {
-			
+
 				// cash transfer인지 account transfer인지 묻기
 				int transferType; // for loop 안에서의 local variable; 재정의 issue 없음
 				for (;;) {
 					cout << "Please select transfer options. 원하시는 송금 옵션을 선택해 주십시오.\n\t1. cash transfer 현금 송금\t2. account transfer 계좌 송금\n\tcancel 취소: -1" << endl;
 					cin >> transferType; // Exception handling 필요
-					
+
 					if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 					else if (transferType == 1) { cout << "You have chosen [cash transfer]. 현금 송금을 선택하셨습니다." << endl; break; }
 					else if (transferType == 2) { cout << "You have chosen [account transfer]. 계좌 송금을 선택하셨습니다." << endl; break; }
@@ -168,7 +168,7 @@ int main() {
 					else { cout << "Wrong input error. 잘못된 입력입니다.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 				}
 				if (transferType == -1) { UserStatus = 4; break; }
-				
+
 				// 송금할 계좌 묻기
 				int toAcc;
 				int confirm;
@@ -178,17 +178,17 @@ int main() {
 					if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 					if (toAcc == -1) { break; }
 					if (database->getIndexFromID(toAcc) == -1) {
-						cout << "Invalid account error. 존재하지 않는 계좌입니다.(code 703)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; 
+						cout << "Invalid account error. 존재하지 않는 계좌입니다.(code 703)" << endl; cin.clear(); cin.ignore(256, '\n'); continue;
 					}
 					if (userIndex == toAcc) {
-						cout << "You cannot transfer from this account to the same account. 같은 계좌로 송금할 수 없습니다. (You mean deposit? 입금을 원하신다면 입금 기능을 이용해 주십시오.)" << endl; 
-						cin.clear(); 
-						continue; 
+						cout << "You cannot transfer from this account to the same account. 같은 계좌로 송금할 수 없습니다. (You mean deposit? 입금을 원하신다면 입금 기능을 이용해 주십시오.)" << endl;
+						cin.clear();
+						continue;
 					}
-					
+
 					// 금융실명제
 					for (;;) {
-						cout << "[" << database->getAccountByNum(toAcc)->getOwner()->getName();
+						cout << "[" << database->getAccountByNum(toAcc)->getOwner()->getUserName();
 						cout << "] 님의 계좌 [" << toAcc << "]가 맞습니까?\n\t1. yes 예\t2. try different account 다시 입력\n\tcancel 취소: -1" << endl;
 						cin >> confirm;
 						if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
@@ -199,20 +199,21 @@ int main() {
 					}
 					if (confirm == 2) { continue; }
 					if (confirm == -1) { break; }
-					
+
 					break;
 				}
 				if (toAcc == -1) { UserStatus = 4; break; }
 				if (confirm == -1) { UserStatus = 4; break; }
-				
+
 				// cash transfer일 경우 remainCash 늘리기; Cash 넣을 때 액수초과 오류 함수로 따로 만들면 편할듯)
 				// 일단 전부 현금이고 한계 없다고 가정했음; 
 				// 장당 액수, 장수, 그리고 수표까지 고려할 경우 입금함수랑 같이 쓸 수 있는 함수 만드는 게 좋을듯
 				// 얼마나 송금할지 묻기
 				int transferMoney;
 				for (;;) {
-					if (transferType == 1) { cout << "Please insert cash you would like to transfer. 송금할 현금을 투입해 주십시오.\n\tcancel 취소: -1" << endl; // 여기도 뒤로가기 기능 구현하고 싶은데 어떻게??
-						// 투입 valid한지 check하기(장수, 금액, 송금한도 등; 입금이랑 같이 사용할 수 있는 함수 만들기)
+					if (transferType == 1) {
+						cout << "Please insert cash you would like to transfer. 송금할 현금을 투입해 주십시오.\n\tcancel 취소: -1" << endl; // 여기도 뒤로가기 기능 구현하고 싶은데 어떻게??
+  // 투입 valid한지 check하기(장수, 금액, 송금한도 등; 입금이랑 같이 사용할 수 있는 함수 만들기)
 						cin >> transferMoney; // Exception handling 필요
 						if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 						if (transferMoney == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
@@ -223,9 +224,9 @@ int main() {
 						cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
 						break;
 					}
-					else if (transferType == 2) { 
+					else if (transferType == 2) {
 						cout << "Please input the amount of money you would like to transfer. 송금할 금액을 입력해 주십시오. (Your current balance 계좌 잔액: ";
-						cout << database->getAccountByNum(userIndex)->getBalance() << ")\n\tcancel 취소: -1" << endl; 
+						cout << database->getAccountByNum(userIndex)->getBalance() << ")\n\tcancel 취소: -1" << endl;
 						// 액수 valid한지 check하기(계좌 잔액, 송금한도 등;)
 						cin >> transferMoney; // Exception handling 필요
 						if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
@@ -237,13 +238,13 @@ int main() {
 						}
 						break;
 					}
-					
+
 				}
 				if (transferMoney == -1) { UserStatus = 4; break; }
-				
+
 				confirm = 0;
 				for (;;) {
-					cout << "[" << database->getAccountByNum(toAcc)->getOwner()->getName();
+					cout << "[" << database->getAccountByNum(toAcc)->getOwner()->getUserName();
 					cout << "] 님에게 [" << transferMoney << "]원 송금하시겠습니까?\n\t1. confirm 확인\n\tcancel 취소: -1" << endl;
 					cin >> confirm;
 					if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
@@ -252,16 +253,16 @@ int main() {
 					else { cout << "Wrong input error. 잘못된 입력입니다.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 				}
 				if (confirm == -1) {
-					if (transferType == 1) { 
-					cout << "Your cash has returned. Please make sure to take your cash." << endl; 
-					A1->insertCash(-transferMoney); // ATM A1이라고 가정
-					cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
+					if (transferType == 1) {
+						cout << "Your cash has returned. Please make sure to take your cash." << endl;
+						A1->insertCash(-transferMoney); // ATM A1이라고 가정
+						cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
 					}
-				UserStatus = 4; 
-				break; 
+					UserStatus = 4;
+					break;
 				}
-				
-				
+
+
 				// 송금함수 호출
 				bool success = A1->transfer(transferMoney, database->getAccountByNum(userIndex), database->getAccountByNum(toAcc));
 				if (success) { UserStatus = 4; }
@@ -270,25 +271,25 @@ int main() {
 			}
 		}
 	}
-	
+
 	// delete session
 	delete AC4;
 	delete AC3;
 	delete AC2;
 	delete AC1;
-	
+
 	delete A2;
 	delete A1;
-	
+
 	delete U5;
 	delete U4;
 	delete U3;
 	delete U2;
 	delete U1;
-	
+
 	delete kakaoBank;
 	delete uriBank;
-	
-	
+
+
 	return 0;
 }
