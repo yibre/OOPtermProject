@@ -108,6 +108,12 @@ void Account::changeBalance(int money) {
 입출송금에 모두 공통으로 사용하면 어떨지?
 */
 
+bool Account::isPrimary(ATM* A) {
+	if (this->ownerBank->getBankName() == A->getBank()->getBankName()) { return true; } 
+	// BankID로 같은지 아닌지 확인할 수도 있지만 현재 ID 구현이 덜 돼 있는 상태인듯
+	return false;
+}
+
 /***********************	  ATM   	***********************/
 
 ATM::ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engSupport) {
@@ -163,20 +169,13 @@ bool ATM::withdrawal(int money, Account* acc) { // 출금함수, 출금액
 	return true;
 }
 
-bool ATM::transfer(int type, int money, int fee, Account* fromAcc, Account* toAcc) {
+bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 	cout << "Debug: ATM::transfer called" << endl;
 	cout << "Debug: (송금 전)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 	cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 	cout << toAcc->getBalance() << "]원" << endl;
 	
-	// 송금수수료 고려(primary끼리 1500; primary-nonprimary 2000; nonp-nonp 2500)
-	// 수수료 함수로 대체하길 원함
-	/*
-	int fee;
-	if ( fromAcc->getBank()->isPrimary() && toAcc->getBank()->isPrimary() ) { fee = 1500; } // prim-prim
-	else if ( fromAcc->getBank()->isPrimary() || toAcc->getBank()->isPrimary() ) { fee = 2000; } // prim-nonp
-	else { fee = 2500; } // nonp-nonp
-	*/
+	int fee = this->fee(7, fromAcc, toAcc);
 	
 	if (type == 1) {
 		if (fromAcc->getBalance() >= fee) {
@@ -211,4 +210,27 @@ bool ATM::transfer(int type, int money, int fee, Account* fromAcc, Account* toAc
 	// transaction history 저장
 	return true;
 }
+
+int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송금일 때만 a2 필요
+	if (transactionType == 5) { // deposit
+		if (a1->isPrimary(this)) { return 0; }
+		else { return 500; }
+	}
+	else if (transactionType == 6) { // withdrawal
+		if (a1->isPrimary(this)) { return 500; }
+		else { return 1000; }
+	}
+	else if (transactionType == 7) { // transfer
+		if (a1->isPrimary(this) && a2->isPrimary(this)) { return 1500; } // prim-prim
+		else if (a1->isPrimary(this) || a2->isPrimary(this)) { return 2000; } // prim-nonp
+		else { return 2500; } // nonp-nonp
+	}
+	else { cout << "Debug: Wrong transactionType in int ATM::fee(int, Bank*, Bank*)" << endl; exit(0); }
+}
+
+/***********************	  Bill  	***********************/
+
+Bill::Bill(int n1k, int n5k, int n10k, int n50k) : b1k(n1k), b5k(n5k), b10k(n10k), b50k(n50k) {}
+
+int Bill::sum() { return b1k + b5k + b10k + b50k; }
 
