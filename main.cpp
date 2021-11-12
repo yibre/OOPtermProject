@@ -1,4 +1,4 @@
-#include "Classes.h"
+#include "Classes.cpp"
 #include <iostream>
 #include <string>
 /*
@@ -22,7 +22,7 @@ int main() {
 	Database* database = Database::getInstance();
 
 	Bank* uriBank = new Bank(); // new로 할당한것들 main 끝에 delete해준다
-	Bank* kakaoBank = new Bank("kakao");
+	Bank* kakaoBank = new Bank("kakao", false); // Classes.h 보니까 이놈도 ID가 B1이게 생겼는데?
 
 	User* U1 = new User("U1", "최가난");
 	User* U2 = new User("U2", "권부자");
@@ -39,7 +39,7 @@ int main() {
 	database->addAccountList(AC2);
 	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 계좌번호 2
 	database->addAccountList(AC3);
-	Account* AC4 = new Account(kakaoBank, U1, 1024, 50000); // 계좌번호 3
+	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 3
 	database->addAccountList(AC4);
 
 	cout << database->getAccountByNum(2)->getBalance() << endl; // 현재 존재하는 계좌번호 이외 입력하면 버그남
@@ -204,7 +204,14 @@ int main() {
 				}
 				if (toAcc == -1) { UserStatus = 4; break; }
 				if (confirm == -1) { UserStatus = 4; break; }
-
+				
+				// 수수료 계산
+				int fee;
+				if ( database->getAccountByNum(userIndex)->getBank()->isPrimary() && database->getAccountByNum(toAcc)->getBank()->isPrimary() ) { fee = 1500; } // prim-prim
+				else if ( database->getAccountByNum(userIndex)->getBank()->isPrimary() || database->getAccountByNum(toAcc)->getBank()->isPrimary() ) { fee = 2000; } // prim-nonp
+				else { fee = 2500; } // nonp-nonp
+				cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
+				
 				// cash transfer일 경우 remainCash 늘리기; Cash 넣을 때 액수초과 오류 함수로 따로 만들면 편할듯)
 				// 일단 전부 현금이고 한계 없다고 가정했음; 
 				// 장당 액수, 장수, 그리고 수표까지 고려할 경우 입금함수랑 같이 쓸 수 있는 함수 만드는 게 좋을듯
@@ -213,7 +220,7 @@ int main() {
 				for (;;) {
 					if (transferType == 1) {
 						cout << "Please insert cash you would like to transfer. 송금할 현금을 투입해 주십시오.\n\tcancel 취소: -1" << endl; // 여기도 뒤로가기 기능 구현하고 싶은데 어떻게??
-  // 투입 valid한지 check하기(장수, 금액, 송금한도 등; 입금이랑 같이 사용할 수 있는 함수 만들기)
+						// 투입 valid한지 check하기(장수, 금액, 송금한도 등; 입금이랑 같이 사용할 수 있는 함수 만들기)
 						cin >> transferMoney; // Exception handling 필요
 						if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 						if (transferMoney == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
@@ -233,7 +240,7 @@ int main() {
 						if (transferMoney == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
 						if (transferMoney <= 0) { cout << "Wrong input error. 잘못된 입력입니다.(code 705)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 						if (transferMoney > database->getAccountByNum(userIndex)->getBalance()) {
-							cout << "Not enough balance error. 잔액이 부족합니다." << endl;
+							cout << "Not enough balance error. 잔액이 부족합니다.(code 706)" << endl; // 잔액 부족 말하기는 최종 송금 확인 후에만 할까? (수수료 고려 위해)
 							continue;
 						}
 						break;
@@ -241,11 +248,14 @@ int main() {
 
 				}
 				if (transferMoney == -1) { UserStatus = 4; break; }
-
+				
+				// 송금 최종 확인하기
 				confirm = 0;
 				for (;;) {
 					cout << "[" << database->getAccountByNum(toAcc)->getOwner()->getUserName();
-					cout << "] 님에게 [" << transferMoney << "]원 송금하시겠습니까?\n\t1. confirm 확인\n\tcancel 취소: -1" << endl;
+					cout << "] 님에게 [" << transferMoney << "]원 송금하시겠습니까?\n수수료는 [";
+					cout << /*여기에 수수료 함수*/ fee << "]원입니다. 수수료는 현재 계좌 잔액 [" << database->getAccountByNum(userIndex)->getBalance();
+					cout << "]원에서 자동 차감됩니다.\n\t1. confirm 확인\n\tcancel 취소: -1" << endl;
 					cin >> confirm;
 					if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 					if (confirm == 1) { break; }
@@ -262,11 +272,10 @@ int main() {
 					break;
 				}
 
-
 				// 송금함수 호출
-				bool success = A1->transfer(transferMoney, database->getAccountByNum(userIndex), database->getAccountByNum(toAcc));
+				bool success = A1->transfer(transferType, transferMoney, fee, database->getAccountByNum(userIndex), database->getAccountByNum(toAcc));
 				if (success) { UserStatus = 4; }
-				else { UserStatus = 5; }
+				else { cout << "Not enough balance error. 잔액이 부족합니다.(code 707)" << endl; continue; }
 				break;
 			}
 		}

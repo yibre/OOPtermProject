@@ -1,5 +1,7 @@
 #include "Classes.h"
-#define CUL_NUM 6
+#define CUL_NUM 6 // 이 기능 써서 main에 전부 include하면 gcc랑 VScode 다 되는지?
+
+/***********************	Database	***********************/
 
 Database* Database::instance;
 int Database::listsize = 0;
@@ -21,7 +23,6 @@ int Database::getIndexFromID(int ID) {
 	}
 	return index;
 }
-
 
 //isValid(int 계좌번호) 같은 함수 있었으면 좋겠다 
 
@@ -58,6 +59,14 @@ void Database::printATMhistory() {
 	}
 }
 
+/***********************	  User  	***********************/
+
+
+/***********************	  Bank  	***********************/
+
+// Bank::Bank(string name) { this->name = name; }
+
+/***********************	Account 	***********************/
 
 Account::Account() {
 	database = Database::getInstance();
@@ -75,6 +84,32 @@ Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	increaseID(); // id를 부여한 뒤에는 static id를 1 추가함
 }
 
+bool Account::checkPassward(int uswerAnswer) {
+	if (this->password == uswerAnswer) { return true; }
+	else { return false; }
+}
+
+void Account::deposit(int type, int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
+	this->balance += money;
+} // 현재는 type이 하는 일이 없다
+
+void Account::withdrawal(int money) { // 출금
+	this->balance -= money;
+}
+
+/*	건의(윤성이에게 현주가)	*/
+
+void Account::changeBalance(int money) {
+	this->balance += money;
+}
+
+/* 
+로 해서 계좌금액 바꾸는 함수 하나 두고(money가 양수이면 더하기, 음수이면 빼기)
+입출송금에 모두 공통으로 사용하면 어떨지?
+*/
+
+/***********************	  ATM   	***********************/
+
 ATM::ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engSupport) {
 	this->engSupport = engSupport;
 	this->ownerBank = bank;
@@ -84,20 +119,6 @@ ATM::ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engS
 	this->remainCheck = check;
 }
 
-// Bank::Bank(string name) { this->name = name; }
-
-bool Account::checkPassward(int uswerAnswer) {
-	if (this->password == uswerAnswer) { return true; }
-	else { return false; }
-}
-
-void Account::deposit(int type, int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
-	this->balance += money;
-}
-
-void Account::withdrawal(int money) { // 출금
-	this->balance -= money;
-}
 
 bool ATM::deposit(int type, int money, int paperNum, Account* acc) { // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	int fee = 0;
@@ -142,14 +163,52 @@ bool ATM::withdrawal(int money, Account* acc) { // 출금함수, 출금액
 	return true;
 }
 
-bool ATM::transfer(int money, Account* fromAcc, Account* toAcc) {
-	// 송금수수료 고려(primary끼리 1500; primary-nonprimary 2000; nonp-nonp 2500)
-	// 차후에 Bank class에 구현
+bool ATM::transfer(int type, int money, int fee, Account* fromAcc, Account* toAcc) {
 	cout << "Debug: ATM::transfer called" << endl;
-	cout << "\t\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
-	cout << "] 님에게 송금 완료되었습니다." << endl;
-
+	cout << "Debug: (송금 전)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
+	cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
+	cout << toAcc->getBalance() << "]원" << endl;
+	
+	// 송금수수료 고려(primary끼리 1500; primary-nonprimary 2000; nonp-nonp 2500)
+	// 수수료 함수로 대체하길 원함
+	/*
+	int fee;
+	if ( fromAcc->getBank()->isPrimary() && toAcc->getBank()->isPrimary() ) { fee = 1500; } // prim-prim
+	else if ( fromAcc->getBank()->isPrimary() || toAcc->getBank()->isPrimary() ) { fee = 2000; } // prim-nonp
+	else { fee = 2500; } // nonp-nonp
+	*/
+	
+	if (type == 1) {
+		if (fromAcc->getBalance() >= fee) {
+			fromAcc->changeBalance(-fee); 
+			toAcc->changeBalance(money);
+			
+			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
+			cout << "] 님에게 송금 완료되었습니다." << endl;
+			
+			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
+			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
+			cout << toAcc->getBalance() << "]원" << endl;
+		}
+		else { cout << "Debug: 잔액 부족" << endl; return false; }
+	}
+	else if (type == 2) {
+		if (fromAcc->getBalance() >= (money+fee)) {
+			fromAcc->changeBalance(-(money+fee)); 
+			toAcc->changeBalance(money);
+			
+			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
+			cout << "] 님에게 송금 완료되었습니다." << endl;
+			
+			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
+			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
+			cout << toAcc->getBalance() << "]원" << endl;
+		}
+		else { cout << "Debug: 잔액 부족" << endl; return false; }
+	}
+	
+	
+	// transaction history 저장
 	return true;
-	// 기록 저장
 }
 

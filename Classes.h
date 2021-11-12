@@ -12,6 +12,8 @@ class User;
 class Bank;
 
 
+/***********************	Database	***********************/
+
 // 쓸 수 있으면 map 쓰는게 제일 좋을듯
 class Database {
 private:
@@ -55,6 +57,8 @@ public:
 	*/
 };
 
+/***********************	  User  	***********************/
+
 class User {
 private:
 	string ID; // user는 U1, U2, U3 이렇게 시작
@@ -67,20 +71,25 @@ public:
 	string getUserName() { return name; }
 };
 
+/***********************	  Bank  	***********************/
+
 class Bank {
 private:
 	string ID; // bank는 B1, B2, B3 이렇게 시작
 	static int addID; // 0부터 시작해서 1씩 증가
 	string name;
 	Account* accountlist[100];
-	// primary 여부 필요할듯(수수료 관련) (현주)
+	bool primary; // primary 여부 필요할듯(수수료 관련) (현주)
 
 public:
-	Bank() { ID = "B1"; name = "uriBank"; }
-	Bank(string name) { this->name = name; }
+	Bank() { ID = "B1"; name = "uriBank"; primary = true; }
+	Bank(string name, bool primary) { this->name = name; this->primary = primary; }
 	~Bank() { };
 	string getBankName() { return name; }
+	bool isPrimary() { return primary; }
 };
+
+/***********************	Account 	***********************/
 
 class Account {
 private:
@@ -99,14 +108,17 @@ public:
 	int getID() { return ID; }
 	bool checkPassward(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void deposit(int type, int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
-	void remittance(int, int); //송금 계좌번호, 액수 <- transfer로 이름 바꾸는거 건의(현주)
+	void remittance(int, int); // 송금 계좌번호, 액수 <- transfer로 이름 바꾸는거 건의(현주)
 	void withdrawal(int money); // 출금
+	void changeBalance(int money);
 	void increaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
 	User* getOwner() { return owner; }
 };
+
+/***********************	  ATM   	***********************/
 
 class ATM {
 private:
@@ -130,7 +142,7 @@ public:
 	bool checkpw(int);
 	bool deposit(int type, int money, int paperNum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(int money, Account* acc); // 출금함수, 출금액
-	bool transfer(int money, Account* fromAcc, Account* toAcc);
+	bool transfer(int type, int money, int fee, Account* fromAcc, Account* toAcc);
 	void IncreaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getATMremainCash() { return remainCash; }
