@@ -1,7 +1,6 @@
 #include "Classes.cpp"
 #include <iostream>
 #include <string>
-
 /*
 0: 프로그램 종료시 0으로 종료
 1: 세션 진행중.  admin이냐 아니면 개인거래할거냐 선택
@@ -62,25 +61,29 @@ int main() {
 		if (UserStatus == 2) { // admin panal
 			cout << "admin panal" << endl;
 			// 1. admin 메뉴 들어감
-
+			database->addATMHistory("출금", -3000, AC1);
+			database->addATMHistory("입금", 50000, AC2);
+			database->printATMhistory();
 			// 2. admin password check
 
 			// 3. 전체 history 보여줌
 
 			// 4. user history 
 			UserStatus = 1;
+			UserStatus = 1;
 		}
 		if (UserStatus == 3) { // 계좌 선택 및 본인 확인
 			cout << "Please insert your card. 계좌번호를 입력해 주십시오." << endl; // 카드 투입, 계좌번호 입력 단계. 추후 instruction에 따라 바뀔 수 있음
 			int userIDAnswer;
 			cin >> userIDAnswer; // 계좌번호 입력
+
 			userIndex = database->getIndexFromID(userIDAnswer); // 앞으로 이사람 계좌 접근하고싶으면 database->getAccountByNum(userIndex)하면 된다(Account*)
 			
 			if (userIndex == -1) {
 				cout << "Non existing account error. 존재하지 않는 계좌입니다. Please try again. 다시 입력해 주십시오." << endl;
 				continue;
 			}
-			
+
 			int passworderror = 0;
 			while (true) {
 				if (passworderror == 3) { break; }
