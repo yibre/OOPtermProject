@@ -226,7 +226,18 @@ int main() {
 						if (transferMoney == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
 						if (transferMoney <= 0) { cout << "Wrong input error. 잘못된 입력입니다.(code 705)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 						// 장수, 금액 체크는 아직; 입금이랑 같이 사용할 수 있는 함수 만들기
-						// remainCash transferMoney만큼 늘리기
+						// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3
+						confirm = 0;
+						for (;;) {
+							cout << "투입하신 금액이 맞는지 확인해 주십시오.\n\t[" << /*합계*/ transferMoney << "]원\n\t1. confirm 확인\n\tcancel 취소: -1" << endl;
+							cin >> confirm; // Exception handling 필요
+							if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+							if (confirm == 1) { break; }
+							if (confirm == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
+							else { cout << "Wrong input error. 잘못된 입력입니다.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
+						}
+						if (confirm == -1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; break; }
+						
 						A1->insertCash(transferMoney); // ATM A1이라고 가정
 						cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
 						break;
@@ -247,6 +258,7 @@ int main() {
 					}
 
 				}
+				if (confirm == -1) { UserStatus = 4; break; }
 				if (transferMoney == -1) { UserStatus = 4; break; }
 				
 				// 송금 최종 확인하기
@@ -263,19 +275,24 @@ int main() {
 					else { cout << "Wrong input error. 잘못된 입력입니다.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 				}
 				if (confirm == -1) {
-					if (transferType == 1) {
-						cout << "Your cash has returned. Please make sure to take your cash." << endl;
-						A1->insertCash(-transferMoney); // ATM A1이라고 가정
-						cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
-					}
+					if (transferType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
 					UserStatus = 4;
 					break;
 				}
 
 				// 송금함수 호출
 				bool success = A1->transfer(transferType, transferMoney, fee, database->getAccountByNum(userIndex), database->getAccountByNum(toAcc));
-				if (success) { UserStatus = 4; }
-				else { cout << "Not enough balance error. 잔액이 부족합니다.(code 707)" << endl; continue; }
+				if (success) { 
+					// 송금 확인되어 반환의 여지 없을 때 remainCash transferMoney만큼 늘리기
+					A1->insertCash(-transferMoney); // ATM A1이라고 가정
+					cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
+					UserStatus = 4; 
+				}
+				else { 
+					cout << "Not enough balance error. 잔액이 부족합니다.(code 707)" << endl; 
+					if (transferType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
+					UserStatus = 4;
+				}
 				break;
 			}
 		}
