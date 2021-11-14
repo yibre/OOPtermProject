@@ -1,5 +1,4 @@
 #include "Classes.h"
-#define CUL_NUM 6 // 이 기능 써서 main에 전부 include하면 gcc랑 VScode 다 되는지?
 
 /***********************	Database	***********************/
 
@@ -7,6 +6,7 @@ Database* Database::instance;
 int Database::listsize = 0;
 bool Database::sessionEnd;
 int Database::transactionOrder;
+vector<vector<string > > Database::atmhis;
 
 void Database::addAccountList(Account* newAccount) {
 	accountList[this->listsize] = newAccount;
@@ -31,34 +31,59 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
-void Database::addATMHistory(string transactionType, int money, Account* account) {
+void Database::addHistory(vector<vector<string> > history, string transactionType, int money, Account* account, Account* recieverAcc) {
 	int order = transactionOrder;
 	transactionOrder++;
 	string username = account->getOwner()->getUserName();
 	int before = account->getBalance();
-	int after = before + money;
-
-	vector<string> temp = { to_string(order), username, to_string(account->getID()),
-		transactionType, to_string(before), to_string(after) };
-	atmhis.push_back(temp);
+	int after;
+	string receiverName = "-";
+	if (transactionType == "입금") {
+		after = before + money;
+	} else if (transactionType == "출금") {
+		after = before - money;
+	} else if (transactionType == "송금") {
+		receiverName = recieverAcc->getOwner()->getUserName();
+		after = before - money;
+	}
+	vector<string> temp;
+	temp.push_back(to_string(order));
+	temp.push_back(username);
+	temp.push_back(to_string(account->getID()));
+	temp.push_back(transactionType);
+	temp.push_back(to_string(before));
+	temp.push_back(to_string(after));
+	temp.push_back(receiverName);
+	// vector<string> temp{ to_string(order), username, to_string(account->getID()), transactionType, to_string(before), to_string(after), receiverName };
+	history.push_back(temp);
 }
 
-void Database::printATMhistory() {
-	// TODO: 도연 작업 중
-	// 1. ctime 추가, 2. 송금시 받는이 어케할지 추가 3. main함수에 admin password 확인과정 추가
-	vector<string> temp = { "순서", "계좌주", "계좌번호", "거래타입", "거래 전 잔액", "거래 후 잔액" };
-	for (int i = 0; i < CUL_NUM; i++) {
-		cout << temp[i] << " ";
+void Database::printHistory(vector<vector<string> > history) {
+	vector<string> column;
+	column.push_back("순서");
+	column.push_back("계좌주");
+	column.push_back("계좌번호");
+	column.push_back("거래 타입");
+	column.push_back("거래 전 잔액");
+	column.push_back("거래 후 잔액");
+	column.push_back("송금시 수신인");
+	for (int i = 0; i < column.size(); i++) {
+		cout << column[i] << " ";
 	}
 	cout << endl;
-	for (int i = 0; i < atmhis.size(); i++) {
-		for (int j = 0; j < CUL_NUM; j++) {
-			cout << atmhis[i][j] << " ";
+	for (int i = 0; i < history.size(); i++) {
+		for (int j = 0; j < column.size(); j++) {
+			cout << history[i][j] << " ";
 		}
 		cout << "\n" << endl;
 	}
 }
 
+void Database::clearSessionHistory() {
+	for (int i = 0; i < sessionhis.size(); i++) {
+		sessionhis.pop_back();
+	}
+}
 /***********************	  User  	***********************/
 
 
