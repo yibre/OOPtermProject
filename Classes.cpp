@@ -1,12 +1,13 @@
 #include "Classes.h"
-#define CUL_NUM 6 // 이 기능 써서 main에 전부 include하면 gcc랑 VScode 다 되는지?
 
 /***********************	Database	***********************/
 
 Database* Database::instance;
 int Database::listsize = 0;
 bool Database::sessionEnd;
-int Database::transactionOrder;
+int Database::transactionOrder = 1;
+vector<vector<string > > Database::atmhis;
+vector<vector<string > > Database::sessionhis;
 
 void Database::addAccountList(Account* newAccount) {
 	accountList[this->listsize] = newAccount;
@@ -31,34 +32,63 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
-void Database::addATMHistory(string transactionType, int money, Account* account) {
+void Database::addHistory(string transactionType, int money, Account* account, Account* recieverAcc) {
 	int order = transactionOrder;
 	transactionOrder++;
 	string username = account->getOwner()->getUserName();
 	int before = account->getBalance();
-	int after = before + money;
-
-	vector<string> temp = { to_string(order), username, to_string(account->getID()),
-		transactionType, to_string(before), to_string(after) };
-	atmhis.push_back(temp);
+	int after;
+	string receiverName = "-";
+	if (transactionType == "입금") {
+		after = before + money;
+	}
+	else if (transactionType == "출금") {
+		after = before - money;
+	}
+	else if (transactionType == "송금") {
+		receiverName = recieverAcc->getOwner()->getUserName();
+		after = before - money;
+	}
+	vector<string> temp;
+	temp.push_back(to_string(order));
+	temp.push_back(username);
+	temp.push_back(to_string(account->getID()));
+	temp.push_back(transactionType);
+	temp.push_back(to_string(before));
+	temp.push_back(to_string(after));
+	temp.push_back(receiverName);
+	// vector<string> temp{ to_string(order), username, to_string(account->getID()), transactionType, to_string(before), to_string(after), receiverName };
+	sessionhis.push_back(temp);
 }
 
-void Database::printATMhistory() {
-	// TODO: 도연 작업 중
-	// 1. ctime 추가, 2. 송금시 받는이 어케할지 추가 3. main함수에 admin password 확인과정 추가
-	vector<string> temp = { "순서", "계좌주", "계좌번호", "거래타입", "거래 전 잔액", "거래 후 잔액" };
-	for (int i = 0; i < CUL_NUM; i++) {
-		cout << temp[i] << " ";
+void Database::printHistory() {
+	vector<string> column;
+	column.push_back("순서");
+	column.push_back("계좌주");
+	column.push_back("계좌번호");
+	column.push_back("거래 타입");
+	column.push_back("거래 전 잔액");
+	column.push_back("거래 후 잔액");
+	column.push_back("송금시 수신인");
+	for (int i = 0; i < column.size(); i++) {
+		cout << column[i] << " ";
 	}
 	cout << endl;
-	for (int i = 0; i < atmhis.size(); i++) {
-		for (int j = 0; j < CUL_NUM; j++) {
-			cout << atmhis[i][j] << " ";
+	for (int i = 0; i < sessionhis.size(); i++) {
+		for (int j = 0; j < column.size(); j++) {
+			cout << sessionhis[i][j] << " ";
 		}
 		cout << "\n" << endl;
 	}
 }
 
+void Database::clearSessionHistory() {
+	cout << sessionhis.size() << endl;
+	for (int i = 0; i < sessionhis.size()+1; i++) {
+		cout << i << endl;
+		sessionhis.pop_back();
+	}
+}
 /***********************	  User  	***********************/
 
 
@@ -103,13 +133,13 @@ void Account::changeBalance(int money) {
 	this->balance += money;
 }
 
-/* 
+/*
 로 해서 계좌금액 바꾸는 함수 하나 두고(money가 양수이면 더하기, 음수이면 빼기)
 입출송금에 모두 공통으로 사용하면 어떨지?
 */
 
 bool Account::isPrimary(ATM* A) {
-	if (this->ownerBank->getBankName() == A->getBank()->getBankName()) { return true; } 
+	if (this->ownerBank->getBankName() == A->getBank()->getBankName()) { return true; }
 	// BankID로 같은지 아닌지 확인할 수도 있지만 현재 ID 구현이 덜 돼 있는 상태인듯
 	return false;
 }
@@ -174,17 +204,17 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 	cout << "Debug: (송금 전)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 	cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 	cout << toAcc->getBalance() << "]원" << endl;
-	
+
 	int fee = this->fee(7, fromAcc, toAcc);
-	
+
 	if (type == 1) {
 		if (fromAcc->getBalance() >= fee) {
-			fromAcc->changeBalance(-fee); 
+			fromAcc->changeBalance(-fee);
 			toAcc->changeBalance(money);
-			
+
 			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
 			cout << "] 님에게 송금 완료되었습니다." << endl;
-			
+
 			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 			cout << toAcc->getBalance() << "]원" << endl;
@@ -192,21 +222,21 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 		else { cout << "Debug: 잔액 부족" << endl; return false; }
 	}
 	else if (type == 2) {
-		if (fromAcc->getBalance() >= (money+fee)) {
-			fromAcc->changeBalance(-(money+fee)); 
+		if (fromAcc->getBalance() >= (money + fee)) {
+			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
-			
+
 			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
 			cout << "] 님에게 송금 완료되었습니다." << endl;
-			
+
 			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 			cout << toAcc->getBalance() << "]원" << endl;
 		}
 		else { cout << "Debug: 잔액 부족" << endl; return false; }
 	}
-	
-	
+
+
 	// transaction history 저장
 	return true;
 }

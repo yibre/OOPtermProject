@@ -21,8 +21,8 @@ private:
 	Account* accountList[100]; // 계좌 리스트
 	static int listsize;
 	static Database* instance; // 한 번만 생성되는 instance
-	vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
-	vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
+	static vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
+	static vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
 	static bool sessionEnd; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 public:
@@ -34,28 +34,17 @@ public:
 	}
 	void addAccountList(Account*);
 	Account* getAccountByNum(int index);
-	void addATMHistory(string transactionType, int money, Account* account);
+	// void addATMHistory(string transactionType, int money, Account* account, Account* recieverAcc);
 	vector<vector<string> > getATMHistory() { return atmhis; }
-	void printATMhistory();
+	vector<vector<string> > getSessionHistory() { return sessionhis; }
+	void addHistory(string, int, Account*, Account*);
+	void printHistory();
+	// void printATMHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
 	int getIndexFromID(int);
-
-	// history 를 보관하는 2d 어레이
-	/*
-
-		Account* getAccountByNum(int index) {
-		cout << "this come from a get account by num fun" << endl;
-		return accountList[index];
-	} // 계좌번호로 account pointer를 가져옴
-	number	username	userid	거래타입(입출송)	거래계좌id	상대계좌id	거래액수	거래전잔액	거래후잔액	날짜
-	----------------------
-	1		김수한무		3		송금				1			3
-	----------------------
-	2		거북이와두루미	4		출금 			7			NULL		10
-	-----------------------
-	3
-	*/
+	// void printSessionHistory();
+	void clearSessionHistory();
 };
 
 /***********************	  User  	***********************/
@@ -162,16 +151,16 @@ private:
 	int b10k = 0; // 만원권
 	int b50k = 0; // 오만원권
 	// check도 액수 안다면 넣을 수 있다(현금들 기본 0으로 하고 check수만 넣는 C'tor)
-	
+
 public:
 	Bill() {}
 	Bill(int n1k, int n5k, int n10k, int n50k);
 	// Bill(const Bill& rhs); // copy C'tor (필요한가?)
 	int sum();
-	void acceptCash() {/*구현필요*/} // 현금 투입시
+	void acceptCash() {/*구현필요*/ } // 현금 투입시
 	// 멤버변수 하나라도 0 안 되게 하기
-	void withdraw(/*구현필요*/) {/*구현필요*/} // 출금시
-	
+	void withdraw(/*구현필요*/) {/*구현필요*/ } // 출금시
+
 };
 
 /*******************	Other Functions 	*******************/
