@@ -5,8 +5,9 @@
 Database* Database::instance;
 int Database::listsize = 0;
 bool Database::sessionEnd;
-int Database::transactionOrder;
+int Database::transactionOrder = 1;
 vector<vector<string > > Database::atmhis;
+vector<vector<string > > Database::sessionhis;
 
 void Database::addAccountList(Account* newAccount) {
 	accountList[this->listsize] = newAccount;
@@ -31,7 +32,7 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
-void Database::addHistory(vector<vector<string> > history, string transactionType, int money, Account* account, Account* recieverAcc) {
+void Database::addHistory(string transactionType, int money, Account* account, Account* recieverAcc) {
 	int order = transactionOrder;
 	transactionOrder++;
 	string username = account->getOwner()->getUserName();
@@ -40,9 +41,11 @@ void Database::addHistory(vector<vector<string> > history, string transactionTyp
 	string receiverName = "-";
 	if (transactionType == "입금") {
 		after = before + money;
-	} else if (transactionType == "출금") {
+	}
+	else if (transactionType == "출금") {
 		after = before - money;
-	} else if (transactionType == "송금") {
+	}
+	else if (transactionType == "송금") {
 		receiverName = recieverAcc->getOwner()->getUserName();
 		after = before - money;
 	}
@@ -55,10 +58,10 @@ void Database::addHistory(vector<vector<string> > history, string transactionTyp
 	temp.push_back(to_string(after));
 	temp.push_back(receiverName);
 	// vector<string> temp{ to_string(order), username, to_string(account->getID()), transactionType, to_string(before), to_string(after), receiverName };
-	history.push_back(temp);
+	sessionhis.push_back(temp);
 }
 
-void Database::printHistory(vector<vector<string> > history) {
+void Database::printHistory() {
 	vector<string> column;
 	column.push_back("순서");
 	column.push_back("계좌주");
@@ -71,16 +74,18 @@ void Database::printHistory(vector<vector<string> > history) {
 		cout << column[i] << " ";
 	}
 	cout << endl;
-	for (int i = 0; i < history.size(); i++) {
+	for (int i = 0; i < sessionhis.size(); i++) {
 		for (int j = 0; j < column.size(); j++) {
-			cout << history[i][j] << " ";
+			cout << sessionhis[i][j] << " ";
 		}
 		cout << "\n" << endl;
 	}
 }
 
 void Database::clearSessionHistory() {
-	for (int i = 0; i < sessionhis.size(); i++) {
+	cout << sessionhis.size() << endl;
+	for (int i = 0; i < sessionhis.size()+1; i++) {
+		cout << i << endl;
 		sessionhis.pop_back();
 	}
 }
@@ -128,13 +133,13 @@ void Account::changeBalance(int money) {
 	this->balance += money;
 }
 
-/* 
+/*
 로 해서 계좌금액 바꾸는 함수 하나 두고(money가 양수이면 더하기, 음수이면 빼기)
 입출송금에 모두 공통으로 사용하면 어떨지?
 */
 
 bool Account::isPrimary(ATM* A) {
-	if (this->ownerBank->getBankName() == A->getBank()->getBankName()) { return true; } 
+	if (this->ownerBank->getBankName() == A->getBank()->getBankName()) { return true; }
 	// BankID로 같은지 아닌지 확인할 수도 있지만 현재 ID 구현이 덜 돼 있는 상태인듯
 	return false;
 }
@@ -199,17 +204,17 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 	cout << "Debug: (송금 전)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 	cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 	cout << toAcc->getBalance() << "]원" << endl;
-	
+
 	int fee = this->fee(7, fromAcc, toAcc);
-	
+
 	if (type == 1) {
 		if (fromAcc->getBalance() >= fee) {
-			fromAcc->changeBalance(-fee); 
+			fromAcc->changeBalance(-fee);
 			toAcc->changeBalance(money);
-			
+
 			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
 			cout << "] 님에게 송금 완료되었습니다." << endl;
-			
+
 			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 			cout << toAcc->getBalance() << "]원" << endl;
@@ -217,21 +222,21 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 		else { cout << "Debug: 잔액 부족" << endl; return false; }
 	}
 	else if (type == 2) {
-		if (fromAcc->getBalance() >= (money+fee)) {
-			fromAcc->changeBalance(-(money+fee)); 
+		if (fromAcc->getBalance() >= (money + fee)) {
+			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
-			
+
 			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
 			cout << "] 님에게 송금 완료되었습니다." << endl;
-			
+
 			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 			cout << toAcc->getBalance() << "]원" << endl;
 		}
 		else { cout << "Debug: 잔액 부족" << endl; return false; }
 	}
-	
-	
+
+
 	// transaction history 저장
 	return true;
 }

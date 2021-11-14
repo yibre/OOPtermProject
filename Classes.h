@@ -22,7 +22,7 @@ private:
 	static int listsize;
 	static Database* instance; // 한 번만 생성되는 instance
 	static vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
-	vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
+	static vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
 	static bool sessionEnd; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 public:
@@ -36,9 +36,9 @@ public:
 	Account* getAccountByNum(int index);
 	// void addATMHistory(string transactionType, int money, Account* account, Account* recieverAcc);
 	vector<vector<string> > getATMHistory() { return atmhis; }
-	vector<vector<string> > getSessionHistory() {return sessionhis;}
-	void addHistory(vector<vector<string> >, string, int, Account*, Account*);
-	void printHistory(vector<vector<string> >);
+	vector<vector<string> > getSessionHistory() { return sessionhis; }
+	void addHistory(string, int, Account*, Account*);
+	void printHistory();
 	// void printATMHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
@@ -151,16 +151,16 @@ private:
 	int b10k = 0; // 만원권
 	int b50k = 0; // 오만원권
 	// check도 액수 안다면 넣을 수 있다(현금들 기본 0으로 하고 check수만 넣는 C'tor)
-	
+
 public:
 	Bill() {}
 	Bill(int n1k, int n5k, int n10k, int n50k);
 	// Bill(const Bill& rhs); // copy C'tor (필요한가?)
 	int sum();
-	void acceptCash() {/*구현필요*/} // 현금 투입시
+	void acceptCash() {/*구현필요*/ } // 현금 투입시
 	// 멤버변수 하나라도 0 안 되게 하기
-	void withdraw(/*구현필요*/) {/*구현필요*/} // 출금시
-	
+	void withdraw(/*구현필요*/) {/*구현필요*/ } // 출금시
+
 };
 
 /*******************	Other Functions 	*******************/
