@@ -15,15 +15,15 @@ class Bill;
 
 /***********************	Database	***********************/
 
-// ì“¸ ìˆ˜ ìˆìœ¼ë©´ map ì“°ëŠ”ê²Œ ì œì¼ ì¢‹ì„ë“¯
+// ¾µ ¼ö ÀÖÀ¸¸é map ¾²´Â°Ô Á¦ÀÏ ÁÁÀ»µí
 class Database {
 private:
-	Account* accountList[100]; // ê³„ì¢Œ ë¦¬ìŠ¤íŠ¸
+	Account* accountList[100]; // °èÁÂ ¸®½ºÆ®
 	static int listsize;
-	static Database* instance; // í•œ ë²ˆë§Œ ìƒì„±ë˜ëŠ” instance
-	static vector<vector<string> > atmhis; // atm ì–´ë“œë¯¼ì´ ë³¼ ìˆ˜ ìˆëŠ” ê±°ë˜ ë‚´ì—­
-	static vector<vector<string> > sessionhis; // ì„¸ì…˜ ì¢…ë£Œ í›„ ìœ ì €ê°€ ë°›ëŠ” ë‚´ì—­
-	static bool sessionEnd; // ì„¸ì…˜ì´ ì§„í–‰ ì¤‘ì¼ë• falseì„
+	static Database* instance; // ÇÑ ¹ø¸¸ »ı¼ºµÇ´Â instance
+	static vector<vector<string> > atmhis; // atm ¾îµå¹ÎÀÌ º¼ ¼ö ÀÖ´Â °Å·¡ ³»¿ª
+	static vector<vector<string> > sessionhis; // ¼¼¼Ç Á¾·á ÈÄ À¯Àú°¡ ¹Ş´Â ³»¿ª
+	static bool sessionEnd; // ¼¼¼ÇÀÌ ÁøÇà ÁßÀÏ¶© falseÀÓ
 	static int transactionOrder;
 public:
 	Database() {};
@@ -51,7 +51,7 @@ public:
 
 class User {
 private:
-	string ID; // userëŠ” U1, U2, U3 ì´ë ‡ê²Œ ì‹œì‘
+	string ID; // user´Â U1, U2, U3 ÀÌ·¸°Ô ½ÃÀÛ
 	string name;
 
 public:
@@ -65,8 +65,8 @@ public:
 
 class Bank {
 private:
-	string ID; // bankëŠ” B1, B2, B3 ì´ë ‡ê²Œ ì‹œì‘
-	static int addID; // 0ë¶€í„° ì‹œì‘í•´ì„œ 1ì”© ì¦ê°€
+	string ID; // bank´Â B1, B2, B3 ÀÌ·¸°Ô ½ÃÀÛ
+	static int addID; // 0ºÎÅÍ ½ÃÀÛÇØ¼­ 1¾¿ Áõ°¡
 	string name;
 	Account* accountlist[100];
 
@@ -79,25 +79,25 @@ public:
 
 /***********************	Account 	***********************/
 
-class Account { // Bankì™€ Userë¥¼ ìƒì†í•´ë„ ë ë“¯
+class Account { // Bank¿Í User¸¦ »ó¼ÓÇØµµ µÉµí
 private:
 	Database* database;
-	int ID; // IDëŠ” 0ë¶€í„° ì‹œì‘í•´ 1ì”© ëŠ˜ë ¤ê°, ìˆœìˆ˜ ìˆ«ì(ê³„ì¢Œë²ˆí˜¸?)
-	static int numID; // ì–´ë–¤ IDë¥¼ ë¶€ì—¬í• ê²ƒì¸ê°€
+	int ID; // ID´Â 0ºÎÅÍ ½ÃÀÛÇØ 1¾¿ ´Ã·Á°¨, ¼ø¼ö ¼ıÀÚ(°èÁÂ¹øÈ£?)
+	static int numID; // ¾î¶² ID¸¦ ºÎ¿©ÇÒ°ÍÀÎ°¡
 	Bank* ownerBank;
 	User* owner;
-	int password; // passwordëŠ” ìˆœìˆ˜ integer êµ¬ì„±, ì¹´ë“œì™€ ë™ì¼
-	int balance; // ì”ì•¡
+	int password; // password´Â ¼ø¼ö integer ±¸¼º, Ä«µå¿Í µ¿ÀÏ
+	int balance; // ÀÜ¾×
 
 public:
 	Account();
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
 	int getID() { return ID; }
-	bool checkPassword(int); // int íƒ€ì…ì˜ íŒ¨ìŠ¤ì›Œë“œë¥¼ ë°›ì•„ í•´ë‹¹ íŒ¨ìŠ¤ì›Œë“œê°€ ë§ëŠ”ì§€ í™•ì¸
-	void deposit(int type, int money); // ì…ê¸ˆ, ì…ê¸ˆì•¡ íƒ€ì…(ìºì‹œ, ìˆ˜í‘œ) ì…ê¸ˆì•¡ ì¸í’‹,};
-	void remittance(int, int); // ì†¡ê¸ˆ ê³„ì¢Œë²ˆí˜¸, ì•¡ìˆ˜ <- transferë¡œ ì´ë¦„ ë°”ê¾¸ëŠ”ê±° ê±´ì˜(í˜„ì£¼)
-	void withdrawal(int money); // ì¶œê¸ˆ
+	bool checkPassword(int); // int Å¸ÀÔÀÇ ÆĞ½º¿öµå¸¦ ¹Ş¾Æ ÇØ´ç ÆĞ½º¿öµå°¡ ¸Â´ÂÁö È®ÀÎ
+	void deposit(int type, int money); // ÀÔ±İ, ÀÔ±İ¾× Å¸ÀÔ(Ä³½Ã, ¼öÇ¥) ÀÔ±İ¾× ÀÎÇ²,};
+	void remittance(int, int); // ¼Û±İ °èÁÂ¹øÈ£, ¾×¼ö <- transfer·Î ÀÌ¸§ ¹Ù²Ù´Â°Å °ÇÀÇ(ÇöÁÖ)
+	void withdrawal(int money); // Ãâ±İ
 	void changeBalance(int money);
 	void increaseID() { numID++; }
 	int getNumID() { return numID; }
@@ -109,16 +109,16 @@ public:
 
 /***********************	  ATM   	***********************/
 
-class ATM { // Bankë¥¼ ìƒì†í•´ë„ ë ë“¯
+class ATM { // Bank¸¦ »ó¼ÓÇØµµ µÉµí
 private:
-	string ID; // atmì€ A1 A2 A3 ì´ë ‡ê²Œ ì‹œì‘
-	static int numID; // id ë¶€ì—¬ìš© ë„˜ë²„, 0ë¶€í„° ì‹œì‘í•´ì„œ 1ì”© ì¦ê°€
+	string ID; // atmÀº A1 A2 A3 ÀÌ·¸°Ô ½ÃÀÛ
+	static int numID; // id ºÎ¿©¿ë ³Ñ¹ö, 0ºÎÅÍ ½ÃÀÛÇØ¼­ 1¾¿ Áõ°¡
 	Bank* ownerBank;
 	string adminID;
 	int adminpw;
-	int remainCash; // atm ë‚´ë¶€ í˜„ê¸ˆ ì´ì•¡; Bill.sum()ìœ¼ë¡œ ëŒ€ì²´í•´ë³´ê¸°
-	int remainCheck = 0; // atm ë‚´ë¶€ ìˆ˜í‘œ ì´ì•¡
-	int remainCheckNum = 0; // atm ë‚´ë¶€ ìˆ˜í‘œ ê°¯ìˆ˜
+	int remainCash; // atm ³»ºÎ Çö±İ ÃÑ¾×; Bill.sum()À¸·Î ´ëÃ¼ÇØº¸±â
+	int remainCheck = 0; // atm ³»ºÎ ¼öÇ¥ ÃÑ¾×
+	int remainCheckNum = 0; // atm ³»ºÎ ¼öÇ¥ °¹¼ö
 	int maxWithdrawal = 300000;
 	int maxCashNumber = 100;
 	bool engSupport;
@@ -130,14 +130,14 @@ public:
 	~ATM() {}
 	bool checkID(char);
 	bool checkpw(int);
-	bool deposit(int type, int money, int paperNum, Account* acc); // ì…ê¸ˆí•¨ìˆ˜, ì…ê¸ˆì•¡ (type1 : í˜„ê¸ˆ type2 : ìˆ˜í‘œ)
-	bool withdrawal(int money, Account* acc); // ì¶œê¸ˆí•¨ìˆ˜, ì¶œê¸ˆì•¡
-	bool transfer(int type, int money, Account* fromAcc, Account* toAcc); // int fee ì—†ì• ëŠ”ê±° ê³ ë ¤
+	bool deposit(int type, int money, int paperNum, Account* acc); // ÀÔ±İÇÔ¼ö, ÀÔ±İ¾× (type1 : Çö±İ type2 : ¼öÇ¥)
+	bool withdrawal(int money, Account* acc); // Ãâ±İÇÔ¼ö, Ãâ±İ¾×
+	bool transfer(int type, int money, Account* fromAcc, Account* toAcc); // int fee ¾ø¾Ö´Â°Å °í·Á
 	void IncreaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getATMremainCash() { return remainCash; }
 	int getATMremainCheckNum() { return remainCheckNum; }
-	int insertCash(int cash) { remainCash += cash; return remainCash; } // ì´ê±¸ë¡œ í†µì¼í• ê¹Œ? ì•„ë‹ˆë©´ voidë¡œ ë¶„í™”?
+	int insertCash(int cash) { remainCash += cash; return remainCash; } // ÀÌ°É·Î ÅëÀÏÇÒ±î? ¾Æ´Ï¸é void·Î ºĞÈ­?
 	int fee(int, Account*, Account*);
 	Bank* getBank() { return ownerBank; }
 };
@@ -146,20 +146,20 @@ public:
 
 class Bill {
 private:
-	int b1k = 0; // ì²œì›ê¶Œ
-	int b5k = 0; // ì˜¤ì²œì›ê¶Œ
-	int b10k = 0; // ë§Œì›ê¶Œ
-	int b50k = 0; // ì˜¤ë§Œì›ê¶Œ
-	// checkë„ ì•¡ìˆ˜ ì•ˆë‹¤ë©´ ë„£ì„ ìˆ˜ ìˆë‹¤(í˜„ê¸ˆë“¤ ê¸°ë³¸ 0ìœ¼ë¡œ í•˜ê³  checkìˆ˜ë§Œ ë„£ëŠ” C'tor)
+	int b1k = 0; // Ãµ¿ø±Ç
+	int b5k = 0; // ¿ÀÃµ¿ø±Ç
+	int b10k = 0; // ¸¸¿ø±Ç
+	int b50k = 0; // ¿À¸¸¿ø±Ç
+	// checkµµ ¾×¼ö ¾È´Ù¸é ³ÖÀ» ¼ö ÀÖ´Ù(Çö±İµé ±âº» 0À¸·Î ÇÏ°í check¼ö¸¸ ³Ö´Â C'tor)
 
 public:
 	Bill() {}
 	Bill(int n1k, int n5k, int n10k, int n50k);
-	// Bill(const Bill& rhs); // copy C'tor (í•„ìš”í•œê°€?)
+	// Bill(const Bill& rhs); // copy C'tor (ÇÊ¿äÇÑ°¡?)
 	int sum();
-	void acceptCash() {/*êµ¬í˜„í•„ìš”*/ } // í˜„ê¸ˆ íˆ¬ì…ì‹œ
-	// ë©¤ë²„ë³€ìˆ˜ í•˜ë‚˜ë¼ë„ 0 ì•ˆ ë˜ê²Œ í•˜ê¸°
-	void withdraw(/*êµ¬í˜„í•„ìš”*/) {/*êµ¬í˜„í•„ìš”*/ } // ì¶œê¸ˆì‹œ
+	void acceptCash() {/*±¸ÇöÇÊ¿ä*/ } // Çö±İ ÅõÀÔ½Ã
+	// ¸â¹öº¯¼ö ÇÏ³ª¶óµµ 0 ¾È µÇ°Ô ÇÏ±â
+	void withdraw(/*±¸ÇöÇÊ¿ä*/) {/*±¸ÇöÇÊ¿ä*/ } // Ãâ±İ½Ã
 
 };
 
