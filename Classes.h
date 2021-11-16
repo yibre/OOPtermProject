@@ -94,7 +94,7 @@ public:
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
 	int getID() { return ID; }
-	bool checkPassward(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
+	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void deposit(int type, int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
 	void remittance(int, int); // 송금 계좌번호, 액수 <- transfer로 이름 바꾸는거 건의(현주)
 	void withdrawal(int money); // 출금

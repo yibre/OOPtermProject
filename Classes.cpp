@@ -25,7 +25,7 @@ int Database::getIndexFromID(int ID) {
 	return index;
 }
 
-// isValid(int 계좌번호) 같은 함수 있었으면 좋겠다 
+//isValid(int 계좌번호) 같은 함수 있었으면 좋겠다 
 
 Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계좌 찾아주는 함수; 계좌 유무 확인 옵션 원함(현주)
 	// cout << "Debug: This comes from a get account by num fun" << endl;
@@ -114,7 +114,7 @@ Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	increaseID(); // id를 부여한 뒤에는 static id를 1 추가함
 }
 
-bool Account::checkPassward(int uswerAnswer) {
+bool Account::checkPassword(int uswerAnswer) {
 	if (this->password == uswerAnswer) { return true; }
 	else { return false; }
 }
