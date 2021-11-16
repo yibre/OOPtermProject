@@ -11,7 +11,8 @@ private:
 		AccessAccount,
 		VerifyAccount,
 		CheckAccount,
-		EnterAdmin,
+		VerifyAdmin,
+		ShowAdmin,
 		ChooseTransaction,
 		Deposit,
 		Transfer,
@@ -36,6 +37,7 @@ private:
 	int SecondDigit = 0;
 	Account* acc = nullptr;
 	ATM* atm = nullptr; // the ATM we are using
+	Database* database;
 
 public:
 	int run();
@@ -45,6 +47,8 @@ private:
 	State getAccountNum();
 	State accessAccount();
 	State verifyAccount();
+	State verifyAdmin();
+	State showAdmin();
 	State checkAccount();
 	State enterAdmin();
 	State chooseTransaction();

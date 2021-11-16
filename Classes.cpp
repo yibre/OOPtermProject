@@ -241,6 +241,11 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 	return true;
 }
 
+bool ATM::checkPW(int password) {
+	if (password == adminpw) { return true; }
+	else return false;
+}
+
 int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송금일 때만 a2 필요
 	if (transactionType == 5) { // deposit
 		if (a1->isPrimary(this)) { return 0; }

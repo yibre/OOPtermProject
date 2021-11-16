@@ -20,6 +20,12 @@ int UI::run() {
 		case State::AccessAccount: // 0 <- admin, 
 			state = accessAccount();
 			break;
+		case State::VerifyAdmin:
+			state = verifyAdmin();
+			break;
+		case State::ShowAdmin: // 본인 확인
+			state = showAdmin();
+			break;
 		case State::CheckAccount: // 0 <- admin, 
 			state = checkAccount();
 			break;
@@ -28,9 +34,6 @@ int UI::run() {
 			break;
 		case State::ChooseTransaction: // 거래 선택
 			state = chooseTransaction();
-			break;
-		case State::EnterAdmin: // admin panel
-			state = enterAdmin();
 			break;
 		case State::Deposit: // 입금 출금 송금 선택
 			state = deposit();
@@ -75,15 +78,36 @@ UI::State UI::getAccountNum() {
 UI::State UI::accessAccount() {
 	// from: getAccountNum()
 	// 유저로부터 계좌번호 입력받는다
-	int input = getInput("your account: ", 99);
+	int input = getInput("your account: ", 100000);
 	cout << input << endl;
 	if (input == 1) {
 		// acc (Account*) 에 계좌 할당
 		accountNum = input;
 		return State::CheckAccount;
 	}
+	else if (input == 99999) {
+		return State::VerifyAdmin;
+	}
 	cout << "Canceled; Goto session 0" << endl;
 	return State::End;
+}
+
+UI::State UI::verifyAdmin() {
+	cout << "you inserted admin card." << endl;
+	int input = getInput("Enter the password to access admin panel: ", 10000);
+	if (atm->checkPW(input)) { return State::ShowAdmin; }
+	else {
+		cout << "You entered wrong password." << endl;
+		return State::GetAccountNum;
+	}
+}
+
+UI::State UI::showAdmin() {
+	// TODO: show history 
+	cout << "enter admin class" << endl;
+	database->addHistory("입금", 15000, acc, acc);
+	database->printHistory();
+	return State::GetAccountNum;
 }
 
 UI::State UI::checkAccount() {

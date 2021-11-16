@@ -129,7 +129,7 @@ public:
 	ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engSupport);
 	~ATM() {}
 	bool checkID(char);
-	bool checkpw(int);
+	bool checkPW(int);
 	bool deposit(int type, int money, int paperNum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(int money, Account* acc); // 출금함수, 출금액
 	bool transfer(int type, int money, Account* fromAcc, Account* toAcc); // int fee 없애는거 고려
