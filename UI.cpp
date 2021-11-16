@@ -10,7 +10,7 @@ int UI::run() {
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000);
 
 	atm = A1;
-	myAccount = AC1;
+	acc = AC1;
 
 	while (state != State::End) {
 		switch (state) {
@@ -46,47 +46,54 @@ int UI::run() {
 	return 0;
 }
 
-int UI::getInput(const string& prompt, int maximum, int minimum = 0) {
+int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enableCancel = true) { // maximum 미만, minimum 이상;
 	int input;
 	for (;;) {
 		cout << prompt;
 		cout.flush(); // Similar to endl, without new line.
 		cin >> input;
 		if (cin.fail()) { cout << "Wrong type error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+		if (enableCancel && input == -1) { cin.clear(); cin.ignore(256, '\n'); break; } // -1은 취소 (range check 이전에 확인)
 		if (input < minimum || input > maximum) { cout << "Wrong range error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 		cin.ignore(256, '\n'); break;
 	}
 	return input;
 }
 
+UI::State UI::getATM() {
+	// 필요시 구현
+	return State::End;
+}
+
 UI::State UI::getAccountNum() {
-	cout << "\t[session 1]" << endl;
-	cout << "type the account number." << endl;
-	cout << "Account Num" << endl;
+	cout << "\t[*** Welcome ***]" << endl;
+	cout << "Please insert your debit card(Enter the account number.)" << endl;
+	cout << "Account Num" << endl; // Debug
 	return State::AccessAccount;
 }
 
 UI::State UI::accessAccount() {
+	// from: getAccountNum()
+	// 유저로부터 계좌번호 입력받는다
 	int input = getInput("your account: ", 99);
 	cout << input << endl;
 	if (input == 1) {
-		// myAccount (Account*) 계좌 할당
-		cout << "hello1" << endl;
+		// acc (Account*) 에 계좌 할당
 		accountNum = input;
 		return State::CheckAccount;
 	}
-	cout << "hello3" << endl;
 	cout << "Canceled; Goto session 0" << endl;
 	return State::End;
 }
 
 UI::State UI::checkAccount() {
-	cout << "hello2" << endl;
+	// from: accessAccount
+	// 입력받은 계좌번호가 맞는지 물어본다 (생략가능한 단계)
 	string prompt = "\t your account number is: ";
 	prompt += to_string(accountNum);
-	prompt += "\n\tIs this correct?\t\t(1 to confirm; 0 to cancel)\n";
+	prompt += "\n\tIs this correct?\t\t(1 to confirm; -1 to cancel)\n";
 	int input = getInput(prompt, 1);
-	if (input == 0) {
+	if (input == -1) {
 		return State::GetAccountNum;
 	}
 	else if (input == 1) {
@@ -95,13 +102,14 @@ UI::State UI::checkAccount() {
 }
 
 UI::State UI::verifyAccount() {
+	// from: checkAccount
+	// 비밀번호 물어본다
 	string prompt = "\t enter the password: ";
-	int input = getInput(prompt, 100000, 1000);
-	if (input == 0) { return State::CheckAccount; }
+	int input = getInput(prompt, 100000, /*1000,*/ false);
+	if (input == -1) { return State::CheckAccount; }
 	else {
-		if (myAccount->checkPassword(input)) {
+		if (acc->checkPassword(input)) {
 			// TODO: pw 3번 틀리면 뒤로 돌아가는 기능 추가 -by DY
-			cout << "hello6" << endl;
 			return State::ChooseTransaction;
 		}
 		cout << "Wrong password" << endl;
@@ -115,28 +123,50 @@ UI::State UI::enterAdmin() {
 }
 
 UI::State UI::chooseTransaction() {
-	string prompt = "\t choose your transaction type. 1. deposit 2. withdrawal, 3. transfer \n";
+	//from: verifyAccount
+	string prompt = "\tWhat would you like to do?\n\t1. deposit\t 2. withdrawal\t 3. transfer\n";
 	int input = getInput(prompt, 4);
-	if (input == 1) return State::Deposit;
-	else if (input == 2) return State::Withdrawal;
-	else if (input == 3) return State::Transfer;
+	if (input == -1) {
+		// 취소시 카드 반환해 주고 카드 받는 단계로 돌아감
+		cout << "Your card has returned." << endl;
+		return State::GetAccountNum;
+		}
+	if (input == 1) { return State::Deposit; }
+	else if (input == 2) { return State::Withdrawal; }
+	else if (input == 3) { return State::Transfer; }
 	else cout << "wrong input, choose it again" << endl;
 	return State::ChooseTransaction;
 }
 
 UI::State UI::deposit() {
-	cout << "[deposit]" << endl;
+	cout << "\t[deposit]" << endl;
 	return State::ChooseTransaction;
 }
 
 UI::State UI::withdrawal() {
-	cout << "[withdrawal]" << endl;
+	cout << "\t[withdrawal]" << endl;
 	return State::ChooseTransaction;
 }
 
 UI::State UI::transfer() {
-	cout << "[transfer]" << endl;
-	return State::ChooseTransaction;
+	cout << "\t[transfer]" << endl;
+	int input = 0;
+	/*
+	// cash transfer인지 account transfer인지 묻기
+				int transferType; // for loop 안에서의 local variable; 재정의 issue 없음
+				string prompt = "Which transfer option would you like? 원하시는 송금 옵션을 선택해 주십시오.\n"
+				prompt += "\t1. cash transfer 현금 송금\t 2. account transfer 계좌 송금\n\tcancel 취소: -1"
+				input = getInput(prompt, 4);
+
+				transferType = input; // Exception handling 필요
+					if (transferType == 1) { cout << "You have chosen [cash transfer]. 현금 송금을 선택하셨습니다." << endl; break; }
+					if (transferType == 2) { cout << "You have chosen [account transfer]. 계좌 송금을 선택하셨습니다." << endl; break; }
+					if (transferType == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
+				if (transferType == -1) { UserStatus = 4; break; }
+	*/
+	
+	
+	if (input == -1) { return State::ChooseTransaction; }
 }
 
 UI::State UI::session3Confirm() {

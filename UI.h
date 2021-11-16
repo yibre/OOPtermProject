@@ -1,11 +1,12 @@
 #pragma once
-#include "Classes.h"
+#include "Classes.cpp"
 #include <iostream>
 #include <string>
 
 class UI {
 private:
 	enum class State {
+		GetATM,
 		GetAccountNum,
 		AccessAccount,
 		VerifyAccount,
@@ -14,6 +15,9 @@ private:
 		ChooseTransaction,
 		Deposit,
 		Transfer,
+		T_AskTransferType,
+		T_GetToAcc,
+		T_ConfirmToAcc,
 		Withdrawal,
 		Session1Prompt,
 		Session1Digit,
@@ -30,13 +34,14 @@ private:
 	int accountNum = 0;
 	int FirstDigit = 0;
 	int SecondDigit = 0;
-	Account* myAccount = nullptr;
+	Account* acc = nullptr;
 	ATM* atm = nullptr; // the ATM we are using
 
 public:
 	int run();
 private:
-	static int getInput(const std::string& prompt, int minimum, int maximum);
+	static int getInput(const std::string& prompt, int minimum, int maximum, bool);
+	State getATM();
 	State getAccountNum();
 	State accessAccount();
 	State verifyAccount();
