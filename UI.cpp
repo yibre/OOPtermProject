@@ -12,19 +12,19 @@ int UI::run() {
 	ATM* A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true);
 	ATM* A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false);
 	
-	User* U1 = new User("U1", "ÃÖ°¡³­");
-	User* U2 = new User("U2", "±ÇºÎÀÚ");
-	User* U3 = new User("U3", "¼­¸ğ³à");
-	User* U4 = new User("U4", "±è¹é±Ô");
-	User* U5 = new User("U5", "¹öÅÍ");
+	User* U1 = new User("U1", "ìµœê°€ë‚œ");
+	User* U2 = new User("U2", "ê¶Œë¶€ì");
+	User* U3 = new User("U3", "ì„œëª¨ë…€");
+	User* U4 = new User("U4", "ê¹€ë°±ê·œ");
+	User* U5 = new User("U5", "ë²„í„°");
 	
-	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // °èÁÂ¹øÈ£ 1
+	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // ê³„ì¢Œë²ˆí˜¸ 1
 	DB->addAccountList(AC1);
-	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // °èÁÂ¹øÈ£ 2
+	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // ê³„ì¢Œë²ˆí˜¸ 2
 	DB->addAccountList(AC2);
-	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // °èÁÂ¹øÈ£ 3
+	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // ê³„ì¢Œë²ˆí˜¸ 3
 	DB->addAccountList(AC3);
-	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // °èÁÂ¹øÈ£ 4
+	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // ê³„ì¢Œë²ˆí˜¸ 4
 	DB->addAccountList(AC4);
 
 	atm = A1;
@@ -34,7 +34,7 @@ int UI::run() {
 
 	while (state != State::End) {
 		switch (state) {
-		case State::GetAccountNum: // °èÁÂ¹øÈ£ ÀÔ·Â, ÇÑ ¿µ ¼±ÅÃ
+		case State::GetAccountNum: // ê³„ì¢Œë²ˆí˜¸ ì…ë ¥, í•œ ì˜ ì„ íƒ
 			state = getAccountNum();
 			break;
 		case State::AccessAccount: // 0 <- admin, 
@@ -43,22 +43,22 @@ int UI::run() {
 		case State::CheckAccount: // 0 <- admin, 
 			state = checkAccount();
 			break;
-		case State::VerifyAccount: // º»ÀÎ È®ÀÎ
+		case State::VerifyAccount: // ë³¸ì¸ í™•ì¸
 			state = verifyAccount();
 			break;
-		case State::ChooseTransaction: // °Å·¡ ¼±ÅÃ
+		case State::ChooseTransaction: // ê±°ë˜ ì„ íƒ
 			state = chooseTransaction();
 			break;
 		case State::EnterAdmin: // admin panel
 			state = enterAdmin();
 			break;
-		case State::Deposit: // ÀÔ±İ Ãâ±İ ¼Û±İ ¼±ÅÃ
+		case State::Deposit: // ì…ê¸ˆ ì¶œê¸ˆ ì†¡ê¸ˆ ì„ íƒ
 			state = deposit();
 			break;
-		case State::Withdrawal: // ÀÔ±İ
+		case State::Withdrawal: // ì…ê¸ˆ
 			state = withdrawal();
 			break;
-		case State::Transfer: // Ãâ±İ
+		case State::Transfer: // ì¶œê¸ˆ
 			state = transfer();
 			break;
 		case State::T_AskTransferType:
@@ -109,14 +109,14 @@ int UI::run() {
 	return 0;
 }
 
-int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enableCancel = true) { // maximum ¹Ì¸¸, minimum ÀÌ»ó;
+int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enableCancel = true) { // maximum ë¯¸ë§Œ, minimum ì´ìƒ;
 	int input;
 	for (;;) {
 		cout << prompt;
 		cout.flush(); // Similar to endl, without new line.
 		cin >> input;
 		if (cin.fail()) { cout << "Wrong type error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
-		if (enableCancel && input == -1) { cin.clear(); cin.ignore(256, '\n'); break; } // -1Àº Ãë¼Ò (range check ÀÌÀü¿¡ È®ÀÎ)
+		if (enableCancel && input == -1) { cin.clear(); cin.ignore(256, '\n'); break; } // -1ì€ ì·¨ì†Œ (range check ì´ì „ì— í™•ì¸)
 		if (input < minimum || input > maximum) { cout << "Wrong range error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 		cin.ignore(256, '\n'); break;
 	}
@@ -124,7 +124,7 @@ int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enable
 }
 
 UI::State UI::getATM() {
-	// ÇÊ¿ä½Ã ±¸Çö
+	// í•„ìš”ì‹œ êµ¬í˜„
 	return State::End;
 }
 
@@ -137,11 +137,11 @@ UI::State UI::getAccountNum() {
 
 UI::State UI::accessAccount() {
 	// from: getAccountNum()
-	// À¯Àú·ÎºÎÅÍ °èÁÂ¹øÈ£ ÀÔ·Â¹Ş´Â´Ù
+	// ìœ ì €ë¡œë¶€í„° ê³„ì¢Œë²ˆí˜¸ ì…ë ¥ë°›ëŠ”ë‹¤
 	int input = getInput("your account: ", 99);
 	cout << input << endl;
 	if (input == 1) {
-		// acc (Account*) ¿¡ °èÁÂ ÇÒ´ç
+		// acc (Account*) ì— ê³„ì¢Œ í• ë‹¹
 		accountNum = input;
 		return State::CheckAccount;
 	}
@@ -151,7 +151,7 @@ UI::State UI::accessAccount() {
 
 UI::State UI::checkAccount() {
 	// from: accessAccount
-	// ÀÔ·Â¹ŞÀº °èÁÂ¹øÈ£°¡ ¸Â´ÂÁö ¹°¾îº»´Ù (»ı·«°¡´ÉÇÑ ´Ü°è)
+	// ì…ë ¥ë°›ì€ ê³„ì¢Œë²ˆí˜¸ê°€ ë§ëŠ”ì§€ ë¬¼ì–´ë³¸ë‹¤ (ìƒëµê°€ëŠ¥í•œ ë‹¨ê³„)
 	string prompt = "\t your account number is: ";
 	prompt += to_string(accountNum);
 	prompt += "\n\tIs this correct?\t\t(0 to confirm; -1 to cancel)\n";
@@ -166,13 +166,13 @@ UI::State UI::checkAccount() {
 
 UI::State UI::verifyAccount() {
 	// from: checkAccount
-	// ºñ¹Ğ¹øÈ£ ¹°¾îº»´Ù
+	// ë¹„ë°€ë²ˆí˜¸ ë¬¼ì–´ë³¸ë‹¤
 	string prompt = "\t enter the password: ";
-	int input = getInput(prompt, 9999, 0, false); // 4ÀÚ¸® ¼öÀÌÁö¸¸ ÀÌ °æ¿ì¿¡´Â 0000~9999
-	if (input == -1) { return State::CheckAccount; } // ÇöÀç ¾²ÀÌÁö ¾Ê´Â´Ù(enableCancel = false)
+	int input = getInput(prompt, 9999, 0, false); // 4ìë¦¬ ìˆ˜ì´ì§€ë§Œ ì´ ê²½ìš°ì—ëŠ” 0000~9999
+	if (input == -1) { return State::CheckAccount; } // í˜„ì¬ ì“°ì´ì§€ ì•ŠëŠ”ë‹¤(enableCancel = false)
 	else {
 		if (acc->checkPassword(input)) {
-			// TODO: pw 3¹ø Æ²¸®¸é µÚ·Î µ¹¾Æ°¡´Â ±â´É Ãß°¡ -by DY
+			// TODO: pw 3ë²ˆ í‹€ë¦¬ë©´ ë’¤ë¡œ ëŒì•„ê°€ëŠ” ê¸°ëŠ¥ ì¶”ê°€ -by DY
 			return State::ChooseTransaction;
 		}
 		cout << "Wrong password" << endl;
@@ -191,7 +191,7 @@ UI::State UI::chooseTransaction() {
 	string prompt = "\tWhat would you like to do?\n\t1. deposit\t 2. withdrawal\t 3. transfer\n";
 	int input = getInput(prompt, 3);
 	if (input == -1) {
-		// Ãë¼Ò½Ã Ä«µå ¹İÈ¯ÇØ ÁÖ°í Ä«µå ¹Ş´Â ´Ü°è·Î µ¹¾Æ°¨
+		// ì·¨ì†Œì‹œ ì¹´ë“œ ë°˜í™˜í•´ ì£¼ê³  ì¹´ë“œ ë°›ëŠ” ë‹¨ê³„ë¡œ ëŒì•„ê°
 		cout << "Your card has returned." << endl;
 		return State::GetAccountNum;
 		}
@@ -224,7 +224,7 @@ UI::State UI::transfer() {
 	// from: chooseTransaction
 	// from: 
 	cout << "\t[transfer]" << endl;
-	// È¤½Ã ¸ğ¸£´Ï ÃÊ±âÈ­
+	// í˜¹ì‹œ ëª¨ë¥´ë‹ˆ ì´ˆê¸°í™”
 	fee = 0;
 	toAccID = 0;
 	toAcc = nullptr; 
@@ -235,17 +235,17 @@ UI::State UI::t_askTransferType() {
 	// from: transfer
 	int input;
 	
-	string prompt = "Which transfer option would you like? ¿øÇÏ½Ã´Â ¼Û±İ ¿É¼ÇÀ» ¼±ÅÃÇØ ÁÖ½Ê½Ã¿À.\n";
-	prompt += "\t1. cash transfer Çö±İ ¼Û±İ\t 2. account transfer °èÁÂ ¼Û±İ\n\tcancel Ãë¼Ò: -1\n";
+	string prompt = "Which transfer option would you like? ì›í•˜ì‹œëŠ” ì†¡ê¸ˆ ì˜µì…˜ì„ ì„ íƒí•´ ì£¼ì‹­ì‹œì˜¤.\n";
+	prompt += "\t1. cash transfer í˜„ê¸ˆ ì†¡ê¸ˆ\t 2. account transfer ê³„ì¢Œ ì†¡ê¸ˆ\n\tcancel ì·¨ì†Œ: -1\n";
 	input = getInput(prompt, 2);
 	if (input == -1) { 
-	cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl;
+	cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl;
 	return State::ChooseTransaction;
 	}
 
-	transferType = input; // Exception handling ÇÊ¿ä
-	if (transferType == 1) { cout << "You have chosen [cash transfer]. Çö±İ ¼Û±İÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù." << endl; }
-	if (transferType == 2) { cout << "You have chosen [account transfer]. °èÁÂ ¼Û±İÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù." << endl; }
+	transferType = input; // Exception handling í•„ìš”
+	if (transferType == 1) { cout << "You have chosen [cash transfer]. í˜„ê¸ˆ ì†¡ê¸ˆì„ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; }
+	if (transferType == 2) { cout << "You have chosen [account transfer]. ê³„ì¢Œ ì†¡ê¸ˆì„ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; }
 	return State::T_AskToAcc;
 }
 
@@ -254,26 +254,26 @@ UI::State UI::t_askToAcc() {
 	// from: 
 	int input;
 	string prompt = "Please enter the account you would like to transfer your money to.";
-	prompt += " ¼Û±İÇÏ½Ç °èÁÂÀÇ °èÁÂ¹øÈ£¸¦ ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À.\n\tcancel Ãë¼Ò: -1\n";
-	// input = getInput(prompt, 99999, 10000); // °èÁÂ¹øÈ£ ¹Ş¾Æ¾ß ÇÏ´Ï±î
-	input = getInput(prompt, 5); // ÀÓ½Ã
+	prompt += " ì†¡ê¸ˆí•˜ì‹¤ ê³„ì¢Œì˜ ê³„ì¢Œë²ˆí˜¸ë¥¼ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤.\n\tcancel ì·¨ì†Œ: -1\n";
+	// input = getInput(prompt, 99999, 10000); // ê³„ì¢Œë²ˆí˜¸ ë°›ì•„ì•¼ í•˜ë‹ˆê¹Œ
+	input = getInput(prompt, 5); // ì„ì‹œ
 	if (input == -1) { return State::Transfer; }
 	toAccID = input;
-	toAcc = database->getAccountByNum(toAccID); // database »ç¿ë (³ªÁß¿¡ ¹Ù²ã¾ß ÇÒ ¼öµµ)
+	toAcc = database->getAccountByNum(toAccID); // database ì‚¬ìš© (ë‚˜ì¤‘ì— ë°”ê¿”ì•¼ í•  ìˆ˜ë„)
 	return State::T_ConfirmToAcc;
 }
 
-UI::State UI::t_confirmToAcc() { // ±İÀ¶½Ç¸íÁ¦
+UI::State UI::t_confirmToAcc() { // ê¸ˆìœµì‹¤ëª…ì œ
 	// from: t_askToAcc
 	
-	fee = atm->fee(7, acc, toAcc); // fee ÇÔ¼ö ¼öÁ¤µÇ¸é µû¶ó ¹Ù²ã¾ß
+	fee = atm->fee(7, acc, toAcc); // fee í•¨ìˆ˜ ìˆ˜ì •ë˜ë©´ ë”°ë¼ ë°”ê¿”ì•¼
 	
 	int input;
 	string prompt = "[" + toAcc->getOwner()->getUserName();
-	prompt += ("] ´ÔÀÇ °èÁÂ [" + std::to_string(toAccID));
-	prompt += "]°¡ ¸Â½À´Ï±î?\n\t0. yes ¿¹\t1. try different account ´Ù½Ã ÀÔ·Â\n\tcancel Ãë¼Ò: -1\n";
+	prompt += ("] ë‹˜ì˜ ê³„ì¢Œ [" + std::to_string(toAccID));
+	prompt += "]ê°€ ë§ìŠµë‹ˆê¹Œ?\n\t0. yes ì˜ˆ\t1. try different account ë‹¤ì‹œ ì…ë ¥\n\tcancel ì·¨ì†Œ: -1\n";
 	input = getInput(prompt, 1);
-	// °°Àº °èÁÂÀÎÁö È®ÀÎÇÏ±â - to be done
+	// ê°™ì€ ê³„ì¢Œì¸ì§€ í™•ì¸í•˜ê¸° - to be done
 	if (input == -1) { return State::ChooseTransaction; }
 	if (input == 0) {
 		if (transferType == 1) { return State::T_AskAmount_C; }
@@ -288,29 +288,29 @@ UI::State UI::t_confirmToAcc() { // ±İÀ¶½Ç¸íÁ¦
 UI::State UI::t_askAmount_c() {
 	// from: t_askToAcc (when transferType == 1)
 	
-	cout << "Debug: ¼ö¼ö·á´Â [" << fee << "]¿øÀÔ´Ï´Ù." << endl;
+	cout << "Debug: ìˆ˜ìˆ˜ë£ŒëŠ” [" << fee << "]ì›ì…ë‹ˆë‹¤." << endl;
 	
 	int input;
 	transferAmount = 0; // = insertedBill.sum();
 	string prompt = "Please insert cash you would like to transfer.";
-	prompt += " ¼Û±İÇÒ Çö±İÀ» ÅõÀÔÇØ ÁÖ½Ê½Ã¿À.\n\tcancel Ãë¼Ò: -1\n";
-	// ÅõÀÔ validÇÑÁö check; Bill »ç¿ëÇÏ°Ô ¹Ù²Ù±â (ÀÔ±İÂÊ¿¡¼­ ±¸ÇöµÈ ÇÔ¼ö »ç¿ë)
+	prompt += " ì†¡ê¸ˆí•  í˜„ê¸ˆì„ íˆ¬ì…í•´ ì£¼ì‹­ì‹œì˜¤.\n\tcancel ì·¨ì†Œ: -1\n";
+	// íˆ¬ì… validí•œì§€ check; Bill ì‚¬ìš©í•˜ê²Œ ë°”ê¾¸ê¸° (ì…ê¸ˆìª½ì—ì„œ êµ¬í˜„ëœ í•¨ìˆ˜ ì‚¬ìš©)
 	// transferAmount = insertedBill.sum();
 	cout << "Debug: cash transfer; transfer amount: ";
 	cin >> transferAmount; // temporary; to be done
 	
-	// Çö±İ¼Û±İ¿¡ ÇÑÇØ ÅõÀÔÇÑ ¾×¼ö ±â°è°¡ ¼¾ ÈÄ ¾×¼ö ¸Â´ÂÁö È®ÀÎ ÇÊ¿ä REQ6.3
-	prompt = "ÅõÀÔÇÏ½Å ±İ¾×À» È®ÀÎÇØ ÁÖ½Ê½Ã¿À.\n\t[" + std::to_string(transferAmount);
-	prompt += "]¿ø\n\t0. confirm È®ÀÎ\n\tcancel Ãë¼Ò: -1\n";
+	// í˜„ê¸ˆì†¡ê¸ˆì— í•œí•´ íˆ¬ì…í•œ ì•¡ìˆ˜ ê¸°ê³„ê°€ ì„¼ í›„ ì•¡ìˆ˜ ë§ëŠ”ì§€ í™•ì¸ í•„ìš” REQ6.3
+	prompt = "íˆ¬ì…í•˜ì‹  ê¸ˆì•¡ì„ í™•ì¸í•´ ì£¼ì‹­ì‹œì˜¤.\n\t[" + std::to_string(transferAmount);
+	prompt += "]ì›\n\t0. confirm í™•ì¸\n\tcancel ì·¨ì†Œ: -1\n";
 	input = getInput(prompt, 0);
-	// ÀÌºÎºĞ µû·Î ÇÔ¼ö·Î »©±â
+	// ì´ë¶€ë¶„ ë”°ë¡œ í•¨ìˆ˜ë¡œ ë¹¼ê¸°
 	
 	if (input == 0) { return State::T_Confirm; }
 	if (input == -1) { 
-		cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; // ¾îµğ·Î °¡°Ô ÇÒ °Í?
-		cout << "Your cash has returned. ÅõÀÔÇÏ½Å Çö±İÀÌ ¹İÈ¯µÇ¾ú½À´Ï´Ù.";
-		cout << " Please make sure to take your cash. ÅõÀÔ±¸¸¦ È®ÀÎÇØÁÖ¼¼¿ä." << endl;
-		return State::ChooseTransaction; // ¾îµğ·Î °¡°Ô ÇÒ °Í?
+		cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; // ì–´ë””ë¡œ ê°€ê²Œ í•  ê²ƒ?
+		cout << "Your cash has returned. íˆ¬ì…í•˜ì‹  í˜„ê¸ˆì´ ë°˜í™˜ë˜ì—ˆìŠµë‹ˆë‹¤.";
+		cout << " Please make sure to take your cash. íˆ¬ì…êµ¬ë¥¼ í™•ì¸í•´ì£¼ì„¸ìš”." << endl;
+		return State::ChooseTransaction; // ì–´ë””ë¡œ ê°€ê²Œ í•  ê²ƒ?
 	}
 	
 	cout << "Debug: Unexpected behavior in UI::t_askAmount_c" << endl;
@@ -321,17 +321,17 @@ UI::State UI::t_askAmount_c() {
 UI::State UI::t_askAmount_a() {
 	// from: t_askToAcc (when transferType == 2)
 	
-	cout << "Debug: ¼ö¼ö·á´Â [" << fee << "]¿øÀÔ´Ï´Ù." << endl;
+	cout << "Debug: ìˆ˜ìˆ˜ë£ŒëŠ” [" << fee << "]ì›ì…ë‹ˆë‹¤." << endl;
 	
 	transferAmount = 0;
 	string prompt = "Please enter the amount of money you would like to transfer.";
-	prompt += " ¼Û±İÇÒ ±İ¾×À» ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À. (Your current balance °èÁÂ ÀÜ¾×: ";
+	prompt += " ì†¡ê¸ˆí•  ê¸ˆì•¡ì„ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤. (Your current balance ê³„ì¢Œ ì”ì•¡: ";
 	prompt += std::to_string(acc->getBalance());
-	prompt += ")\n\tcancel Ãë¼Ò: -1\n";
-	// ¾×¼ö validÇÑÁö checkÇÏ±â(°èÁÂ ÀÜ¾×, ¼Û±İÇÑµµ µî;) - to be done
+	prompt += ")\n\tcancel ì·¨ì†Œ: -1\n";
+	// ì•¡ìˆ˜ validí•œì§€ checkí•˜ê¸°(ê³„ì¢Œ ì”ì•¡, ì†¡ê¸ˆí•œë„ ë“±;) - to be done
 	/*
 	if (transferMoney > fromAcc->getBalance()) {
-		cout << "Not enough balance error. ÀÜ¾×ÀÌ ºÎÁ·ÇÕ´Ï´Ù.(code 706)" << endl; // ÀÜ¾× ºÎÁ· ¸»ÇÏ±â´Â ÃÖÁ¾ ¼Û±İ È®ÀÎ ÈÄ¿¡¸¸ ÇÒ±î? (¼ö¼ö·á °í·Á À§ÇØ)
+		cout << "Not enough balance error. ì”ì•¡ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.(code 706)" << endl; // ì”ì•¡ ë¶€ì¡± ë§í•˜ê¸°ëŠ” ìµœì¢… ì†¡ê¸ˆ í™•ì¸ í›„ì—ë§Œ í• ê¹Œ? (ìˆ˜ìˆ˜ë£Œ ê³ ë ¤ ìœ„í•´)
 	}
 	*/
 	cout << "Debug: account transfer; transfer amount: ";
@@ -341,8 +341,8 @@ UI::State UI::t_askAmount_a() {
 	input = getInput(prompt, 0);
 	if (input == 0) { return State::T_Confirm; }
 	if (input == -1) {
-		cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; // ¾îµğ·Î °¡°Ô ÇÒ °Í?
-		return State::ChooseTransaction; // ¾îµğ·Î °¡°Ô ÇÒ °Í?
+		cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; // ì–´ë””ë¡œ ê°€ê²Œ í•  ê²ƒ?
+		return State::ChooseTransaction; // ì–´ë””ë¡œ ê°€ê²Œ í•  ê²ƒ?
 	}
 	
 	cout << "Debug: Unexpected behavior in UI::t_askAmount_a" << endl;
@@ -353,20 +353,20 @@ UI::State UI::t_confirm() {
 	// from: t_askAmount_a
 	// from: t_askAmount_c
 	
-	string prompt = "[" + toAcc->getOwner()->getUserName() + "] ´Ô¿¡°Ô [";
-	prompt += (std::to_string(transferAmount) + "]¿ø ¼Û±İÇÏ½Ã°Ú½À´Ï±î?\n¼ö¼ö·á´Â [");
-	prompt += (std::to_string(fee) + "]¿øÀÔ´Ï´Ù. ¼ö¼ö·á´Â ÇöÀç °èÁÂ ÀÜ¾× [");
+	string prompt = "[" + toAcc->getOwner()->getUserName() + "] ë‹˜ì—ê²Œ [";
+	prompt += (std::to_string(transferAmount) + "]ì› ì†¡ê¸ˆí•˜ì‹œê² ìŠµë‹ˆê¹Œ?\nìˆ˜ìˆ˜ë£ŒëŠ” [");
+	prompt += (std::to_string(fee) + "]ì›ì…ë‹ˆë‹¤. ìˆ˜ìˆ˜ë£ŒëŠ” í˜„ì¬ ê³„ì¢Œ ì”ì•¡ [");
 	prompt += std::to_string(acc->getBalance());
-	prompt += "]¿ø¿¡¼­ ÀÚµ¿ Â÷°¨µË´Ï´Ù.\n\t0. confirm È®ÀÎ\n\tcancel Ãë¼Ò: -1\n";
+	prompt += "]ì›ì—ì„œ ìë™ ì°¨ê°ë©ë‹ˆë‹¤.\n\t0. confirm í™•ì¸\n\tcancel ì·¨ì†Œ: -1\n";
 	
 	int input;
 	input = getInput(prompt, 0);
 	if (input == 0) { return State::T_Transfer; }
 	if (input == -1) { 
-		cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl;
+		cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl;
 		if (transferType == 1) {
-			cout << "Your cash has returned. ÅõÀÔÇÏ½Å Çö±İÀÌ ¹İÈ¯µÇ¾ú½À´Ï´Ù.";
-			cout << " Please make sure to take your cash. ÅõÀÔ±¸¸¦ È®ÀÎÇØÁÖ¼¼¿ä." << endl;
+			cout << "Your cash has returned. íˆ¬ì…í•˜ì‹  í˜„ê¸ˆì´ ë°˜í™˜ë˜ì—ˆìŠµë‹ˆë‹¤.";
+			cout << " Please make sure to take your cash. íˆ¬ì…êµ¬ë¥¼ í™•ì¸í•´ì£¼ì„¸ìš”." << endl;
 		}
 		return State::ChooseTransaction; 
 	}
@@ -379,21 +379,21 @@ UI::State UI::t_transfer() {
 	// from: t_confirm
 	bool success = atm->transfer(transferType, transferAmount, acc, toAcc);
 	if (success) {
-		// ¼Û±İ È®ÀÎµÇ¾î ¹İÈ¯ÀÇ ¿©Áö ¾øÀ» ¶§ remainCash transferAmount¸¸Å­ ´Ã¸®±â
+		// ì†¡ê¸ˆ í™•ì¸ë˜ì–´ ë°˜í™˜ì˜ ì—¬ì§€ ì—†ì„ ë•Œ remainCash transferAmountë§Œí¼ ëŠ˜ë¦¬ê¸°
 		if (transferType == 1) {
-			atm->insertCash(transferAmount); // Bill class ±¸Çö¿¡ µû¶ó ´Ù¸¦ ¼ö ÀÖÀ½
-			cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl; // ¼öÁ¤ ÇÊ¿ä
+			atm->insertCash(transferAmount); // Bill class êµ¬í˜„ì— ë”°ë¼ ë‹¤ë¥¼ ìˆ˜ ìˆìŒ
+			cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl; // ìˆ˜ì • í•„ìš”
 		}
-		// ¸í¼¼Ç¥ Ãâ·Â?
+		// ëª…ì„¸í‘œ ì¶œë ¥?
 		return State::ChooseTransaction;
 	}
 	else {
-		cout << "Not enough balance. ÀÜ¾×ÀÌ ºÎÁ·ÇÕ´Ï´Ù." << endl;
+		cout << "Not enough balance. ì”ì•¡ì´ ë¶€ì¡±í•©ë‹ˆë‹¤." << endl;
 		if (transferType == 1) { 
-			cout << "Your cash has returned. ÅõÀÔÇÏ½Å Çö±İÀÌ ¹İÈ¯µÇ¾ú½À´Ï´Ù.";
-			cout << "Please make sure to take your cash. ÅõÀÔ±¸¸¦ È®ÀÎÇØÁÖ¼¼¿ä." << endl;  // ÀÌ°É ¾Æ¿¹ ´Ù¸¥ ´Ü°è·Î ¸¸µé±î?
+			cout << "Your cash has returned. íˆ¬ì…í•˜ì‹  í˜„ê¸ˆì´ ë°˜í™˜ë˜ì—ˆìŠµë‹ˆë‹¤.";
+			cout << "Please make sure to take your cash. íˆ¬ì…êµ¬ë¥¼ í™•ì¸í•´ì£¼ì„¸ìš”." << endl;  // ì´ê±¸ ì•„ì˜ˆ ë‹¤ë¥¸ ë‹¨ê³„ë¡œ ë§Œë“¤ê¹Œ?
 		}
-		return State::ChooseTransaction; // ¾îµğ·Î °¡°Ô ÇÒ °Í?
+		return State::ChooseTransaction; // ì–´ë””ë¡œ ê°€ê²Œ í•  ê²ƒ?
 	}
 }
 

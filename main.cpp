@@ -3,14 +3,14 @@
 #include <iostream>
 #include <string>
 /*
-0: ÇÁ·Î±×·¥ Á¾·á½Ã 0À¸·Î Á¾·á
-1: ¼¼¼Ç ÁøÇàÁß.  adminÀÌ³Ä ¾Æ´Ï¸é °³ÀÎ°Å·¡ÇÒ°Å³Ä ¼±ÅÃ
-2: admin¸Ş´º
-3: °èÁÂ¹øÈ£ ÀÔ·Â ¹× º»ÀÎÈ®ÀÎ
-4: °Å·¡ Á¾·ù ¼±ÅÃ: ÀÔ Ãâ ¼Û±İ
-5: ÀÔ±İ
-6: Ãâ±İ
-7: ¼Û±İ
+0: í”„ë¡œê·¸ë¨ ì¢…ë£Œì‹œ 0ìœ¼ë¡œ ì¢…ë£Œ
+1: ì„¸ì…˜ ì§„í–‰ì¤‘.  adminì´ëƒ ì•„ë‹ˆë©´ ê°œì¸ê±°ë˜í• ê±°ëƒ ì„ íƒ
+2: adminë©”ë‰´
+3: ê³„ì¢Œë²ˆí˜¸ ì…ë ¥ ë° ë³¸ì¸í™•ì¸
+4: ê±°ë˜ ì¢…ë¥˜ ì„ íƒ: ì… ì¶œ ì†¡ê¸ˆ
+5: ì…ê¸ˆ
+6: ì¶œê¸ˆ
+7: ì†¡ê¸ˆ
 */
 
 using namespace std;
@@ -26,84 +26,84 @@ int main() {
 /*
 int main() {
 
-	int UserStatus = 1; // ¼¼¼Ç ½ÃÀÛ
+	int UserStatus = 1; // ì„¸ì…˜ ì‹œì‘
 
 	Database* database = Database::getInstance();
 
-	Bank* uriBank = new Bank(); // new·Î ÇÒ´çÇÑ°Íµé main ³¡¿¡ deleteÇØÁØ´Ù
-	Bank* kakaoBank = new Bank("kakao"); // Classes.h º¸´Ï±î ÀÌ³ğµµ ID°¡ B1ÀÌ°Ô »ı°å´Âµ¥?
+	Bank* uriBank = new Bank(); // newë¡œ í• ë‹¹í•œê²ƒë“¤ main ëì— deleteí•´ì¤€ë‹¤
+	Bank* kakaoBank = new Bank("kakao"); // Classes.h ë³´ë‹ˆê¹Œ ì´ë†ˆë„ IDê°€ B1ì´ê²Œ ìƒê²¼ëŠ”ë°?
 
-	User* U1 = new User("U1", "ÃÖ°¡³­");
-	User* U2 = new User("U2", "±ÇºÎÀÚ");
-	User* U3 = new User("U3", "¼­¸ğ³à");
-	User* U4 = new User("U4", "±è¹é±Ô");
-	User* U5 = new User("U5", "¹öÅÍ");
+	User* U1 = new User("U1", "ìµœê°€ë‚œ");
+	User* U2 = new User("U2", "ê¶Œë¶€ì");
+	User* U3 = new User("U3", "ì„œëª¨ë…€");
+	User* U4 = new User("U4", "ê¹€ë°±ê·œ");
+	User* U5 = new User("U5", "ë²„í„°");
 
-	ATM* A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true); // 0; Çö±İÀÜ¾× 100000000À¸·Î ½ÃÀÛ
+	ATM* A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true); // 0; í˜„ê¸ˆì”ì•¡ 100000000ìœ¼ë¡œ ì‹œì‘
 	ATM* A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false); // 1
 
-	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // °èÁÂ¹øÈ£ 0
+	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // ê³„ì¢Œë²ˆí˜¸ 0
 	database->addAccountList(AC1);
-	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // °èÁÂ¹øÈ£ 1
+	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // ê³„ì¢Œë²ˆí˜¸ 1
 	database->addAccountList(AC2);
-	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // °èÁÂ¹øÈ£ 2
+	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // ê³„ì¢Œë²ˆí˜¸ 2
 	database->addAccountList(AC3);
-	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // °èÁÂ¹øÈ£ 3
+	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // ê³„ì¢Œë²ˆí˜¸ 3
 	database->addAccountList(AC4);
 
-	cout << database->getAccountByNum(2)->getBalance() << endl; // ÇöÀç Á¸ÀçÇÏ´Â °èÁÂ¹øÈ£ ÀÌ¿Ü ÀÔ·ÂÇÏ¸é ¹ö±×³²
+	cout << database->getAccountByNum(2)->getBalance() << endl; // í˜„ì¬ ì¡´ì¬í•˜ëŠ” ê³„ì¢Œë²ˆí˜¸ ì´ì™¸ ì…ë ¥í•˜ë©´ ë²„ê·¸ë‚¨
 
 	int userIndex = -1;
 	while (UserStatus != 0) {
 		if (UserStatus == 1) {
-			// [ÀÇ³íÇÊ¿ä] inputÀ» int ¸»°í stringÀ¸·Î ¹Ş¾Æ¾ßÇÒ±î? type error°¡ ¾È ³ªµµ·Ï?
-			// [ÀÇ³íÇÊ¿ä] instructor¿¡ atmÀÌ 2Áß¾ğ¾î Áö¿øÇÏ´Â atm Áö¿ø¾ÈÇÏ´Â atm ¸¸µé¶ó°í Çß´Âµ¥ ±×·³ atm ¼±ÅÃ ´Ü°èµµ ³Ö¾îÁà¾ßÇÒ±î?
-			cout << "¸Ş´º¸¦ ¼±ÅÃÇÏ¼¼¿ä.\n\t1. admin panal º¸±â\t2. °³ÀÎ°Å·¡ÇÏ±â\t3. exit" << endl;
+			// [ì˜ë…¼í•„ìš”] inputì„ int ë§ê³  stringìœ¼ë¡œ ë°›ì•„ì•¼í• ê¹Œ? type errorê°€ ì•ˆ ë‚˜ë„ë¡?
+			// [ì˜ë…¼í•„ìš”] instructorì— atmì´ 2ì¤‘ì–¸ì–´ ì§€ì›í•˜ëŠ” atm ì§€ì›ì•ˆí•˜ëŠ” atm ë§Œë“¤ë¼ê³  í–ˆëŠ”ë° ê·¸ëŸ¼ atm ì„ íƒ ë‹¨ê³„ë„ ë„£ì–´ì¤˜ì•¼í• ê¹Œ?
+			cout << "ë©”ë‰´ë¥¼ ì„ íƒí•˜ì„¸ìš”.\n\t1. admin panal ë³´ê¸°\t2. ê°œì¸ê±°ë˜í•˜ê¸°\t3. exit" << endl;
 			int UserInput;
-			// admin panal º¸±â or °³ÀÎ°Å·¡ÇÏ±â ¼±ÅÃ
+			// admin panal ë³´ê¸° or ê°œì¸ê±°ë˜í•˜ê¸° ì„ íƒ
 			cin >> UserInput;
 			if (UserInput == 1) { UserStatus = 2; }
 			else if (UserInput == 2) { UserStatus = 3; }
 			else if (UserInput == 3) { UserStatus = 0; }
-			else { cout << "Error" << endl; } // ¿¡·¯ Ã³¸® ºÎºĞ Ãß°¡ÇØ¾ßÇÔ
+			else { cout << "Error" << endl; } // ì—ëŸ¬ ì²˜ë¦¬ ë¶€ë¶„ ì¶”ê°€í•´ì•¼í•¨
 		}
 		if (UserStatus == 2) { // admin panal
 			cout << "admin panal" << endl;
-			// 1. admin ¸Ş´º µé¾î°¨
+			// 1. admin ë©”ë‰´ ë“¤ì–´ê°
 
 			// 2. admin password check
-			database->addHistory("ÀÔ±İ", 30000, AC1, AC1);
-			database->addHistory("¼Û±İ", 20000, AC1, AC2);
-			database->addHistory("Ãâ±İ", 5000, AC1, AC1);
-			// 3. ÀüÃ¼ history º¸¿©ÁÜ
+			database->addHistory("ì…ê¸ˆ", 30000, AC1, AC1);
+			database->addHistory("ì†¡ê¸ˆ", 20000, AC1, AC2);
+			database->addHistory("ì¶œê¸ˆ", 5000, AC1, AC1);
+			// 3. ì „ì²´ history ë³´ì—¬ì¤Œ
 			database->printHistory();
 			// 4. user history 
-			cout << "---------------- ½ÇÇè 2 ----------- " << endl;
+			cout << "---------------- ì‹¤í—˜ 2 ----------- " << endl;
 			database->clearSessionHistory();
 			database->printHistory();
-			cout << "---------------- ½ÇÇè 3 ----------- " << endl;
-			database->addHistory("ÀÔ±İ", 30000, AC1, AC1);
-			database->addHistory("Ãâ±İ", 5000, AC1, AC1);
+			cout << "---------------- ì‹¤í—˜ 3 ----------- " << endl;
+			database->addHistory("ì…ê¸ˆ", 30000, AC1, AC1);
+			database->addHistory("ì¶œê¸ˆ", 5000, AC1, AC1);
 			database->printHistory();
 
 			UserStatus = 1;
 		}
-		if (UserStatus == 3) { // °èÁÂ ¼±ÅÃ ¹× º»ÀÎ È®ÀÎ
-			cout << "Please insert your card. °èÁÂ¹øÈ£¸¦ ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À." << endl; // Ä«µå ÅõÀÔ, °èÁÂ¹øÈ£ ÀÔ·Â ´Ü°è. ÃßÈÄ instruction¿¡ µû¶ó ¹Ù²ğ ¼ö ÀÖÀ½
+		if (UserStatus == 3) { // ê³„ì¢Œ ì„ íƒ ë° ë³¸ì¸ í™•ì¸
+			cout << "Please insert your card. ê³„ì¢Œë²ˆí˜¸ë¥¼ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤." << endl; // ì¹´ë“œ íˆ¬ì…, ê³„ì¢Œë²ˆí˜¸ ì…ë ¥ ë‹¨ê³„. ì¶”í›„ instructionì— ë”°ë¼ ë°”ë€” ìˆ˜ ìˆìŒ
 			int userIDAnswer;
-			cin >> userIDAnswer; // °èÁÂ¹øÈ£ ÀÔ·Â
+			cin >> userIDAnswer; // ê³„ì¢Œë²ˆí˜¸ ì…ë ¥
 
-			userIndex = database->getIndexFromID(userIDAnswer); // ¾ÕÀ¸·Î ÀÌ»ç¶÷ °èÁÂ Á¢±ÙÇÏ°í½ÍÀ¸¸é database->getAccountByNum(userIndex)ÇÏ¸é µÈ´Ù(Account*)
+			userIndex = database->getIndexFromID(userIDAnswer); // ì•ìœ¼ë¡œ ì´ì‚¬ëŒ ê³„ì¢Œ ì ‘ê·¼í•˜ê³ ì‹¶ìœ¼ë©´ database->getAccountByNum(userIndex)í•˜ë©´ ëœë‹¤(Account*)
 
 			if (userIndex == -1) {
-				cout << "Non existing account error. Á¸ÀçÇÏÁö ¾Ê´Â °èÁÂÀÔ´Ï´Ù. Please try again. ´Ù½Ã ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À." << endl;
+				cout << "Non existing account error. ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê³„ì¢Œì…ë‹ˆë‹¤. Please try again. ë‹¤ì‹œ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤." << endl;
 				continue;
 			}
 
 			int passworderror = 0;
 			while (true) {
 				if (passworderror == 3) { break; }
-				cout << "Please input your password. ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À." << endl;
+				cout << "Please input your password. ë¹„ë°€ë²ˆí˜¸ë¥¼ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤." << endl;
 				int userPWAnswer;
 				cin >> userPWAnswer;
 				if (database->getAccountByNum(userIndex)->checkPassword(userPWAnswer)) {
@@ -112,18 +112,18 @@ int main() {
 				}
 				else {
 					passworderror++;
-					cout << "Wrong password error. ºñ¹Ğ¹øÈ£°¡ Æ²·È½À´Ï´Ù. Please try again. ´Ù½Ã ½ÃµµÇÏ½Ê½Ã¿À. You have left ³²Àº ½Ãµµ È½¼ö: ";
-					cout << 3 - passworderror << "È¸ chance(s)." << endl;
+					cout << "Wrong password error. ë¹„ë°€ë²ˆí˜¸ê°€ í‹€ë ¸ìŠµë‹ˆë‹¤. Please try again. ë‹¤ì‹œ ì‹œë„í•˜ì‹­ì‹œì˜¤. You have left ë‚¨ì€ ì‹œë„ íšŸìˆ˜: ";
+					cout << 3 - passworderror << "íšŒ chance(s)." << endl;
 					continue;
 				}
 			}
 			if (passworderror == 3) {
-				cout << "ºñ¹Ğ¹øÈ£¸¦ 3È¸ Æ²·È½À´Ï´Ù. Ã³À½ºÎÅÍ ´Ù½Ã ½ÃµµÇÏ½Ê½Ã¿À." << endl;
+				cout << "ë¹„ë°€ë²ˆí˜¸ë¥¼ 3íšŒ í‹€ë ¸ìŠµë‹ˆë‹¤. ì²˜ìŒë¶€í„° ë‹¤ì‹œ ì‹œë„í•˜ì‹­ì‹œì˜¤." << endl;
 				UserStatus = 1;
 			}
 		}
-		if (UserStatus == 4) { // °Å·¡ Á¾·ù ¼±ÅÃ
-			cout << "Which transaction do you want? ¾î¶² °Å·¡¸¦ ÇÏ½Ã°Ú½À´Ï±î?\n\t1. deposit ÀÔ±İ\t2. withdraw Ãâ±İ\t3. transfer ¼Û±İ\t4. undo µÚ·Î°¡±â\t5. quit Á¾·á" << endl;
+		if (UserStatus == 4) { // ê±°ë˜ ì¢…ë¥˜ ì„ íƒ
+			cout << "Which transaction do you want? ì–´ë–¤ ê±°ë˜ë¥¼ í•˜ì‹œê² ìŠµë‹ˆê¹Œ?\n\t1. deposit ì…ê¸ˆ\t2. withdraw ì¶œê¸ˆ\t3. transfer ì†¡ê¸ˆ\t4. undo ë’¤ë¡œê°€ê¸°\t5. quit ì¢…ë£Œ" << endl;
 			int userAnswer;
 			cin >> userAnswer;
 			if (userAnswer == 1) { UserStatus = 5; }
@@ -131,88 +131,88 @@ int main() {
 			else if (userAnswer == 3) { UserStatus = 7; }
 			else if (userAnswer == 4) { UserStatus = 3; }
 			else if (userAnswer == 5) { UserStatus = 0; }
-			else { cout << "error" << endl; } // TODO: ÀûÀıÇÏÁö ¾ÊÀº data input¿¡ ´ëÇÑ ¿¡·¯ Ã³¸® ÇÊ¿ä
+			else { cout << "error" << endl; } // TODO: ì ì ˆí•˜ì§€ ì•Šì€ data inputì— ëŒ€í•œ ì—ëŸ¬ ì²˜ë¦¬ í•„ìš”
 		}
 		if (UserStatus == 5) {
-			cout << "ÀÔ±İ" << endl;
-			// ÀÔ±İ ÇÔ¼ö ½ÇÇà
+			cout << "ì…ê¸ˆ" << endl;
+			// ì…ê¸ˆ í•¨ìˆ˜ ì‹¤í–‰
 			int type;
 			while (true) {
-				cout << "Which would be your input? Çö±İÀ¸·Î ÀÔ±İÇÏ½Ã°Ú½À´Ï±î?\n\t1. cash Çö±İ\t2. check ¼öÇ¥" << endl;
+				cout << "Which would be your input? í˜„ê¸ˆìœ¼ë¡œ ì…ê¸ˆí•˜ì‹œê² ìŠµë‹ˆê¹Œ?\n\t1. cash í˜„ê¸ˆ\t2. check ìˆ˜í‘œ" << endl;
 				cin >> type;
 				if (type == 1 || type == 2) { break; }
-				else { cout << "Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù. ´Ù½Ã ½ÃµµÇØ ÁÖ½Ê½Ã¿À." << endl; }
+				else { cout << "ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ ì£¼ì‹­ì‹œì˜¤." << endl; }
 			}
-			cout << "ÀÔ±İÇÏ½Ç ±İ¾×ÀÇ Àå´ç ¾×¼ö¸¦ ÀÔ·ÂÇØÁÖ½Ê½Ã¿À." << endl;
+			cout << "ì…ê¸ˆí•˜ì‹¤ ê¸ˆì•¡ì˜ ì¥ë‹¹ ì•¡ìˆ˜ë¥¼ ì…ë ¥í•´ì£¼ì‹­ì‹œì˜¤." << endl;
 			int moneytype;
 			cin >> moneytype;
-			cout << "ÀÔ±İÇÏ½Ç ±İ¾×ÀÇ Àå ¼ö¸¦ ÀÔ·ÂÇØÁÖ½Ê½Ã¿À." << endl;
+			cout << "ì…ê¸ˆí•˜ì‹¤ ê¸ˆì•¡ì˜ ì¥ ìˆ˜ë¥¼ ì…ë ¥í•´ì£¼ì‹­ì‹œì˜¤." << endl;
 			int paperNum;
 			cin >> paperNum;
-			bool success = A1->deposit(type, moneytype * paperNum, paperNum, database->getAccountByNum(userIndex)); // ÀÏ´Ü ATM A1ÀÌ¶ó°í °¡Á¤
+			bool success = A1->deposit(type, moneytype * paperNum, paperNum, database->getAccountByNum(userIndex)); // ì¼ë‹¨ ATM A1ì´ë¼ê³  ê°€ì •
 			if (success) { UserStatus = 4; }
 			else { UserStatus = 5; }
-			cout << "Remaining cash of the ATM / ATM±â Çö±İ ÀÜ¾× : " << A1->getATMremainCash() << endl;
-			cout << "Remaining checkNum of the ATM / ATM±â ¼öÇ¥ Àå ¼ö : " << A1->getATMremainCheckNum() << endl;
+			cout << "Remaining cash of the ATM / ATMê¸° í˜„ê¸ˆ ì”ì•¡ : " << A1->getATMremainCash() << endl;
+			cout << "Remaining checkNum of the ATM / ATMê¸° ìˆ˜í‘œ ì¥ ìˆ˜ : " << A1->getATMremainCheckNum() << endl;
 		}
 		if (UserStatus == 6) {
-			cout << "Ãâ±İÇÏ½Ç ±İ¾×À» ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À." << endl;
+			cout << "ì¶œê¸ˆí•˜ì‹¤ ê¸ˆì•¡ì„ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤." << endl;
 			int money;
 			cin >> money;
-			// Ãâ±İ ÇÔ¼ö ½ÇÇà
-			bool success = A1->withdrawal(money, database->getAccountByNum(userIndex)); // ÀÏ´Ü ATM A1ÀÌ¶ó°í °¡Á¤
+			// ì¶œê¸ˆ í•¨ìˆ˜ ì‹¤í–‰
+			bool success = A1->withdrawal(money, database->getAccountByNum(userIndex)); // ì¼ë‹¨ ATM A1ì´ë¼ê³  ê°€ì •
 			if (success) { UserStatus = 4; }
 			else { UserStatus = 6; }
-			cout << "ATM±â ÀÜ¾× : " << A1->getATMremainCash() << endl;
+			cout << "ATMê¸° ì”ì•¡ : " << A1->getATMremainCash() << endl;
 		}
 
 		if (UserStatus == 7) {
-			cout << "You have chosen [transfer]. ¼Û±İÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù." << endl;
+			cout << "You have chosen [transfer]. ì†¡ê¸ˆì„ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤." << endl;
 			Account* fromAcc = database->getAccountByNum(userIndex);
 
 			for (;;) {
 
-				// cash transferÀÎÁö account transferÀÎÁö ¹¯±â
-				int transferType; // for loop ¾È¿¡¼­ÀÇ local variable; ÀçÁ¤ÀÇ issue ¾øÀ½
+				// cash transferì¸ì§€ account transferì¸ì§€ ë¬»ê¸°
+				int transferType; // for loop ì•ˆì—ì„œì˜ local variable; ì¬ì •ì˜ issue ì—†ìŒ
 				for (;;) {
-					cout << "Please select transfer options. ¿øÇÏ½Ã´Â ¼Û±İ ¿É¼ÇÀ» ¼±ÅÃÇØ ÁÖ½Ê½Ã¿À.\n\t1. cash transfer Çö±İ ¼Û±İ\t2. account transfer °èÁÂ ¼Û±İ\n\tcancel Ãë¼Ò: -1" << endl;
-					cin >> transferType; // Exception handling ÇÊ¿ä
+					cout << "Please select transfer options. ì›í•˜ì‹œëŠ” ì†¡ê¸ˆ ì˜µì…˜ì„ ì„ íƒí•´ ì£¼ì‹­ì‹œì˜¤.\n\t1. cash transfer í˜„ê¸ˆ ì†¡ê¸ˆ\t2. account transfer ê³„ì¢Œ ì†¡ê¸ˆ\n\tcancel ì·¨ì†Œ: -1" << endl;
+					cin >> transferType; // Exception handling í•„ìš”
 
-					if (cin.fail()) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); }
-					else if (transferType == 1) { cout << "You have chosen [cash transfer]. Çö±İ ¼Û±İÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-					else if (transferType == 2) { cout << "You have chosen [account transfer]. °èÁÂ ¼Û±İÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-					else if (transferType == -1) { cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-					else { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
+					if (cin.fail()) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); }
+					else if (transferType == 1) { cout << "You have chosen [cash transfer]. í˜„ê¸ˆ ì†¡ê¸ˆì„ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+					else if (transferType == 2) { cout << "You have chosen [account transfer]. ê³„ì¢Œ ì†¡ê¸ˆì„ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+					else if (transferType == -1) { cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+					else { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 				}
 				if (transferType == -1) { UserStatus = 4; break; }
 
-				// ¼Û±İÇÒ °èÁÂ ¹¯±â
+				// ì†¡ê¸ˆí•  ê³„ì¢Œ ë¬»ê¸°
 				int toAccID;
 				int confirm;
 				for (;;) {
-					cout << "Please input the account you would like to transfer your money to. ¼Û±İÇÏ½Ç °èÁÂÀÇ °èÁÂ¹øÈ£¸¦ ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À.\n\tcancel Ãë¼Ò: -1" << endl;
-					cin >> toAccID; // Exception handling ÇÊ¿ä
-					if (cin.fail()) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+					cout << "Please input the account you would like to transfer your money to. ì†¡ê¸ˆí•˜ì‹¤ ê³„ì¢Œì˜ ê³„ì¢Œë²ˆí˜¸ë¥¼ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤.\n\tcancel ì·¨ì†Œ: -1" << endl;
+					cin >> toAccID; // Exception handling í•„ìš”
+					if (cin.fail()) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 					if (toAccID == -1) { break; }
 					if (database->getIndexFromID(toAccID) == -1) {
-						cout << "Invalid account error. Á¸ÀçÇÏÁö ¾Ê´Â °èÁÂÀÔ´Ï´Ù.(code 703)" << endl; cin.clear(); cin.ignore(256, '\n'); continue;
+						cout << "Invalid account error. ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê³„ì¢Œì…ë‹ˆë‹¤.(code 703)" << endl; cin.clear(); cin.ignore(256, '\n'); continue;
 					}
 					if (userIndex == toAccID) {
-						cout << "You cannot transfer from this account to the same account. °°Àº °èÁÂ·Î ¼Û±İÇÒ ¼ö ¾ø½À´Ï´Ù. (You mean deposit? ÀÔ±İÀ» ¿øÇÏ½Å´Ù¸é ÀÔ±İ ±â´ÉÀ» ÀÌ¿ëÇØ ÁÖ½Ê½Ã¿À.)" << endl;
+						cout << "You cannot transfer from this account to the same account. ê°™ì€ ê³„ì¢Œë¡œ ì†¡ê¸ˆí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. (You mean deposit? ì…ê¸ˆì„ ì›í•˜ì‹ ë‹¤ë©´ ì…ê¸ˆ ê¸°ëŠ¥ì„ ì´ìš©í•´ ì£¼ì‹­ì‹œì˜¤.)" << endl;
 						cin.clear();
 						continue;
 					}
 
-					// ±İÀ¶½Ç¸íÁ¦
+					// ê¸ˆìœµì‹¤ëª…ì œ
 					for (;;) {
 						cout << "[" << database->getAccountByNum(toAccID)->getOwner()->getUserName();
-						cout << "] ´ÔÀÇ °èÁÂ [" << toAccID << "]°¡ ¸Â½À´Ï±î?\n\t1. yes ¿¹\t2. try different account ´Ù½Ã ÀÔ·Â\n\tcancel Ãë¼Ò: -1" << endl;
+						cout << "] ë‹˜ì˜ ê³„ì¢Œ [" << toAccID << "]ê°€ ë§ìŠµë‹ˆê¹Œ?\n\t1. yes ì˜ˆ\t2. try different account ë‹¤ì‹œ ì…ë ¥\n\tcancel ì·¨ì†Œ: -1" << endl;
 						cin >> confirm;
-						if (cin.fail()) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+						if (cin.fail()) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 						if (confirm == 1) { break; }
 						if (confirm == 2) { break; }
-						if (confirm == -1) { cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-						else { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
+						if (confirm == -1) { cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+						else { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 					}
 					if (confirm == 2) { continue; }
 					if (confirm == -1) { break; }
@@ -223,50 +223,50 @@ int main() {
 				if (confirm == -1) { UserStatus = 4; break; }
 				Account* toAcc = database->getAccountByNum(toAccID);
 
-				// ¼ö¼ö·á °è»ê
+				// ìˆ˜ìˆ˜ë£Œ ê³„ì‚°
 				int fee = A1->fee(UserStatus, fromAcc, toAcc);
-				cout << "Debug: ¼ö¼ö·á´Â [" << fee << "]¿øÀÔ´Ï´Ù." << endl;
+				cout << "Debug: ìˆ˜ìˆ˜ë£ŒëŠ” [" << fee << "]ì›ì…ë‹ˆë‹¤." << endl;
 
-				// cash transferÀÏ °æ¿ì remainCash ´Ã¸®±â; Cash ³ÖÀ» ¶§ ¾×¼öÃÊ°ú ¿À·ù ÇÔ¼ö·Î µû·Î ¸¸µé¸é ÆíÇÒµí)
-				// ÀÏ´Ü ÀüºÎ Çö±İÀÌ°í ÇÑ°è ¾ø´Ù°í °¡Á¤ÇßÀ½; 
-				// Àå´ç ¾×¼ö, Àå¼ö, ±×¸®°í ¼öÇ¥±îÁö °í·ÁÇÒ °æ¿ì ÀÔ±İÇÔ¼ö¶û °°ÀÌ ¾µ ¼ö ÀÖ´Â ÇÔ¼ö ¸¸µå´Â °Ô ÁÁÀ»µí
-				// ¾ó¸¶³ª ¼Û±İÇÒÁö ¹¯±â
+				// cash transferì¼ ê²½ìš° remainCash ëŠ˜ë¦¬ê¸°; Cash ë„£ì„ ë•Œ ì•¡ìˆ˜ì´ˆê³¼ ì˜¤ë¥˜ í•¨ìˆ˜ë¡œ ë”°ë¡œ ë§Œë“¤ë©´ í¸í• ë“¯)
+				// ì¼ë‹¨ ì „ë¶€ í˜„ê¸ˆì´ê³  í•œê³„ ì—†ë‹¤ê³  ê°€ì •í–ˆìŒ; 
+				// ì¥ë‹¹ ì•¡ìˆ˜, ì¥ìˆ˜, ê·¸ë¦¬ê³  ìˆ˜í‘œê¹Œì§€ ê³ ë ¤í•  ê²½ìš° ì…ê¸ˆí•¨ìˆ˜ë‘ ê°™ì´ ì“¸ ìˆ˜ ìˆëŠ” í•¨ìˆ˜ ë§Œë“œëŠ” ê²Œ ì¢‹ì„ë“¯
+				// ì–¼ë§ˆë‚˜ ì†¡ê¸ˆí• ì§€ ë¬»ê¸°
 				int transferMoney;
 				for (;;) {
 					if (transferType == 1) {
-						cout << "Please insert cash you would like to transfer. ¼Û±İÇÒ Çö±İÀ» ÅõÀÔÇØ ÁÖ½Ê½Ã¿À.\n\tcancel Ãë¼Ò: -1" << endl; // ¿©±âµµ µÚ·Î°¡±â ±â´É ±¸ÇöÇÏ°í ½ÍÀºµ¥ ¾î¶»°Ô??
-						// ÅõÀÔ validÇÑÁö checkÇÏ±â(Àå¼ö, ±İ¾×, ¼Û±İÇÑµµ µî; ÀÔ±İÀÌ¶û °°ÀÌ »ç¿ëÇÒ ¼ö ÀÖ´Â ÇÔ¼ö ¸¸µé±â)
-						cin >> transferMoney; // Exception handling ÇÊ¿ä
-						if (cin.fail()) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
-						if (transferMoney == -1) { cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-						if (transferMoney <= 0) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 705)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
-						// Àå¼ö, ±İ¾× Ã¼Å©´Â ¾ÆÁ÷; ÀÔ±İÀÌ¶û °°ÀÌ »ç¿ëÇÒ ¼ö ÀÖ´Â ÇÔ¼ö ¸¸µé±â
-						// Çö±İ¼Û±İ¿¡ ÇÑÇØ ÅõÀÔÇÑ ¾×¼ö ±â°è°¡ ¼¾ ÈÄ ¾×¼ö ¸Â´ÂÁö È®ÀÎ ÇÊ¿ä REQ6.3
+						cout << "Please insert cash you would like to transfer. ì†¡ê¸ˆí•  í˜„ê¸ˆì„ íˆ¬ì…í•´ ì£¼ì‹­ì‹œì˜¤.\n\tcancel ì·¨ì†Œ: -1" << endl; // ì—¬ê¸°ë„ ë’¤ë¡œê°€ê¸° ê¸°ëŠ¥ êµ¬í˜„í•˜ê³  ì‹¶ì€ë° ì–´ë–»ê²Œ??
+						// íˆ¬ì… validí•œì§€ checkí•˜ê¸°(ì¥ìˆ˜, ê¸ˆì•¡, ì†¡ê¸ˆí•œë„ ë“±; ì…ê¸ˆì´ë‘ ê°™ì´ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” í•¨ìˆ˜ ë§Œë“¤ê¸°)
+						cin >> transferMoney; // Exception handling í•„ìš”
+						if (cin.fail()) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+						if (transferMoney == -1) { cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+						if (transferMoney <= 0) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 705)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+						// ì¥ìˆ˜, ê¸ˆì•¡ ì²´í¬ëŠ” ì•„ì§; ì…ê¸ˆì´ë‘ ê°™ì´ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” í•¨ìˆ˜ ë§Œë“¤ê¸°
+						// í˜„ê¸ˆì†¡ê¸ˆì— í•œí•´ íˆ¬ì…í•œ ì•¡ìˆ˜ ê¸°ê³„ê°€ ì„¼ í›„ ì•¡ìˆ˜ ë§ëŠ”ì§€ í™•ì¸ í•„ìš” REQ6.3
 						confirm = 0;
 						for (;;) {
-							// transferMoney : ÇÕ°è
-							cout << "ÅõÀÔÇÏ½Å ±İ¾×ÀÌ ¸Â´ÂÁö È®ÀÎÇØ ÁÖ½Ê½Ã¿À.\n\t[" << transferMoney << "]¿ø\n\t1. confirm È®ÀÎ\n\tcancel Ãë¼Ò: -1" << endl;
-							cin >> confirm; // Exception handling ÇÊ¿ä
-							if (cin.fail()) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+							// transferMoney : í•©ê³„
+							cout << "íˆ¬ì…í•˜ì‹  ê¸ˆì•¡ì´ ë§ëŠ”ì§€ í™•ì¸í•´ ì£¼ì‹­ì‹œì˜¤.\n\t[" << transferMoney << "]ì›\n\t1. confirm í™•ì¸\n\tcancel ì·¨ì†Œ: -1" << endl;
+							cin >> confirm; // Exception handling í•„ìš”
+							if (cin.fail()) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 							if (confirm == 1) { break; }
-							if (confirm == -1) { cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-							else { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
+							if (confirm == -1) { cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+							else { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 						}
-						if (confirm == -1) { cout << "Your cash has returned. ÅõÀÔÇÏ½Å Çö±İÀÌ ¹İÈ¯µÇ¾ú½À´Ï´Ù. Please make sure to take your cash. ÅõÀÔ±¸¸¦ È®ÀÎÇØÁÖ¼¼¿ä." << endl; break; }
+						if (confirm == -1) { cout << "Your cash has returned. íˆ¬ì…í•˜ì‹  í˜„ê¸ˆì´ ë°˜í™˜ë˜ì—ˆìŠµë‹ˆë‹¤. Please make sure to take your cash. íˆ¬ì…êµ¬ë¥¼ í™•ì¸í•´ì£¼ì„¸ìš”." << endl; break; }
 
 						cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
 						break;
 					}
 					else if (transferType == 2) {
-						cout << "Please input the amount of money you would like to transfer. ¼Û±İÇÒ ±İ¾×À» ÀÔ·ÂÇØ ÁÖ½Ê½Ã¿À. (Your current balance °èÁÂ ÀÜ¾×: ";
-						cout << database->getAccountByNum(userIndex)->getBalance() << ")\n\tcancel Ãë¼Ò: -1" << endl;
-						// ¾×¼ö validÇÑÁö checkÇÏ±â(°èÁÂ ÀÜ¾×, ¼Û±İÇÑµµ µî;)
-						cin >> transferMoney; // Exception handling ÇÊ¿ä
-						if (cin.fail()) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
-						if (transferMoney == -1) { cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-						if (transferMoney <= 0) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 705)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+						cout << "Please input the amount of money you would like to transfer. ì†¡ê¸ˆí•  ê¸ˆì•¡ì„ ì…ë ¥í•´ ì£¼ì‹­ì‹œì˜¤. (Your current balance ê³„ì¢Œ ì”ì•¡: ";
+						cout << database->getAccountByNum(userIndex)->getBalance() << ")\n\tcancel ì·¨ì†Œ: -1" << endl;
+						// ì•¡ìˆ˜ validí•œì§€ checkí•˜ê¸°(ê³„ì¢Œ ì”ì•¡, ì†¡ê¸ˆí•œë„ ë“±;)
+						cin >> transferMoney; // Exception handling í•„ìš”
+						if (cin.fail()) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+						if (transferMoney == -1) { cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+						if (transferMoney <= 0) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 705)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 						if (transferMoney > fromAcc->getBalance()) {
-							cout << "Not enough balance error. ÀÜ¾×ÀÌ ºÎÁ·ÇÕ´Ï´Ù.(code 706)" << endl; // ÀÜ¾× ºÎÁ· ¸»ÇÏ±â´Â ÃÖÁ¾ ¼Û±İ È®ÀÎ ÈÄ¿¡¸¸ ÇÒ±î? (¼ö¼ö·á °í·Á À§ÇØ)
+							cout << "Not enough balance error. ì”ì•¡ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.(code 706)" << endl; // ì”ì•¡ ë¶€ì¡± ë§í•˜ê¸°ëŠ” ìµœì¢… ì†¡ê¸ˆ í™•ì¸ í›„ì—ë§Œ í• ê¹Œ? (ìˆ˜ìˆ˜ë£Œ ê³ ë ¤ ìœ„í•´)
 							continue;
 						}
 						break;
@@ -276,36 +276,36 @@ int main() {
 				if (confirm == -1) { UserStatus = 4; break; }
 				if (transferMoney == -1) { UserStatus = 4; break; }
 
-				// ¼Û±İ ÃÖÁ¾ È®ÀÎÇÏ±â
+				// ì†¡ê¸ˆ ìµœì¢… í™•ì¸í•˜ê¸°
 				confirm = 0;
 				for (;;) {
 					cout << "[" << toAcc->getOwner()->getUserName();
-					cout << "] ´Ô¿¡°Ô [" << transferMoney << "]¿ø ¼Û±İÇÏ½Ã°Ú½À´Ï±î?\n¼ö¼ö·á´Â [";
-					cout << fee << "]¿øÀÔ´Ï´Ù. ¼ö¼ö·á´Â ÇöÀç °èÁÂ ÀÜ¾× [" << fromAcc->getBalance();
-					cout << "]¿ø¿¡¼­ ÀÚµ¿ Â÷°¨µË´Ï´Ù.\n\t1. confirm È®ÀÎ\n\tcancel Ãë¼Ò: -1" << endl;
+					cout << "] ë‹˜ì—ê²Œ [" << transferMoney << "]ì› ì†¡ê¸ˆí•˜ì‹œê² ìŠµë‹ˆê¹Œ?\nìˆ˜ìˆ˜ë£ŒëŠ” [";
+					cout << fee << "]ì›ì…ë‹ˆë‹¤. ìˆ˜ìˆ˜ë£ŒëŠ” í˜„ì¬ ê³„ì¢Œ ì”ì•¡ [" << fromAcc->getBalance();
+					cout << "]ì›ì—ì„œ ìë™ ì°¨ê°ë©ë‹ˆë‹¤.\n\t1. confirm í™•ì¸\n\tcancel ì·¨ì†Œ: -1" << endl;
 					cin >> confirm;
-					if (cin.fail()) { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
+					if (cin.fail()) { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 					if (confirm == 1) { break; }
-					if (confirm == -1) { cout << "You have exited [transfer] session. ¼Û±İÀ» Ãë¼ÒÇÏ¼Ì½À´Ï´Ù." << endl; break; }
-					else { cout << "Wrong input error. Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
+					if (confirm == -1) { cout << "You have exited [transfer] session. ì†¡ê¸ˆì„ ì·¨ì†Œí•˜ì…¨ìŠµë‹ˆë‹¤." << endl; break; }
+					else { cout << "Wrong input error. ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 				}
 				if (confirm == -1) {
-					if (transferType == 1) { cout << "Your cash has returned. ÅõÀÔÇÏ½Å Çö±İÀÌ ¹İÈ¯µÇ¾ú½À´Ï´Ù. Please make sure to take your cash. ÅõÀÔ±¸¸¦ È®ÀÎÇØÁÖ¼¼¿ä." << endl; }
+					if (transferType == 1) { cout << "Your cash has returned. íˆ¬ì…í•˜ì‹  í˜„ê¸ˆì´ ë°˜í™˜ë˜ì—ˆìŠµë‹ˆë‹¤. Please make sure to take your cash. íˆ¬ì…êµ¬ë¥¼ í™•ì¸í•´ì£¼ì„¸ìš”." << endl; }
 					UserStatus = 4;
 					break;
 				}
 
-				// ¼Û±İÇÔ¼ö È£Ãâ
+				// ì†¡ê¸ˆí•¨ìˆ˜ í˜¸ì¶œ
 				bool success = A1->transfer(transferType, transferMoney, fromAcc, toAcc);
 				if (success) {
-					// ¼Û±İ È®ÀÎµÇ¾î ¹İÈ¯ÀÇ ¿©Áö ¾øÀ» ¶§ remainCash transferMoney¸¸Å­ ´Ã¸®±â
-					A1->insertCash(transferMoney); // ATM A1ÀÌ¶ó°í °¡Á¤
-					cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl; // ¼öÁ¤ ÇÊ¿ä
+					// ì†¡ê¸ˆ í™•ì¸ë˜ì–´ ë°˜í™˜ì˜ ì—¬ì§€ ì—†ì„ ë•Œ remainCash transferMoneyë§Œí¼ ëŠ˜ë¦¬ê¸°
+					A1->insertCash(transferMoney); // ATM A1ì´ë¼ê³  ê°€ì •
+					cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl; // ìˆ˜ì • í•„ìš”
 					UserStatus = 4;
 				}
 				else {
-					cout << "Not enough balance error. ÀÜ¾×ÀÌ ºÎÁ·ÇÕ´Ï´Ù.(code 707)" << endl;
-					if (transferType == 1) { cout << "Your cash has returned. ÅõÀÔÇÏ½Å Çö±İÀÌ ¹İÈ¯µÇ¾ú½À´Ï´Ù. Please make sure to take your cash. ÅõÀÔ±¸¸¦ È®ÀÎÇØÁÖ¼¼¿ä." << endl; }
+					cout << "Not enough balance error. ì”ì•¡ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.(code 707)" << endl;
+					if (transferType == 1) { cout << "Your cash has returned. íˆ¬ì…í•˜ì‹  í˜„ê¸ˆì´ ë°˜í™˜ë˜ì—ˆìŠµë‹ˆë‹¤. Please make sure to take your cash. íˆ¬ì…êµ¬ë¥¼ í™•ì¸í•´ì£¼ì„¸ìš”." << endl; }
 					UserStatus = 4;
 				}
 				break;

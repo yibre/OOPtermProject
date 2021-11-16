@@ -25,11 +25,11 @@ int Database::getIndexFromID(int ID) {
 	return index;
 }
 
-//isValid(int °èÁÂ¹øÈ£) °°Àº ÇÔ¼ö ÀÖ¾úÀ¸¸é ÁÁ°Ú´Ù 
+//isValid(int ê³„ì¢Œë²ˆí˜¸) ê°™ì€ í•¨ìˆ˜ ìˆì—ˆìœ¼ë©´ ì¢‹ê² ë‹¤ 
 
-Account* Database::getAccountByNum(int index) { // °èÁÂ¹øÈ£ ÀÔ·ÂÇÏ¸é °èÁÂ Ã£¾ÆÁÖ´Â ÇÔ¼ö; °èÁÂ À¯¹« È®ÀÎ ¿É¼Ç ¿øÇÔ(ÇöÁÖ)
+Account* Database::getAccountByNum(int index) { // ê³„ì¢Œë²ˆí˜¸ ì…ë ¥í•˜ë©´ ê³„ì¢Œ ì°¾ì•„ì£¼ëŠ” í•¨ìˆ˜; ê³„ì¢Œ ìœ ë¬´ í™•ì¸ ì˜µì…˜ ì›í•¨(í˜„ì£¼)
 	// cout << "Debug: This comes from a get account by num fun" << endl;
-	return accountList[index]; // ÀÌ´ë·Î¸é ÃÖ´ë index ÃÊ°úÇÏ´Â ¼ıÀÚ µé¾î¿Íµµ dummy ¹ñÀ»µí? exception handling ¿øÇÔ(ÇöÁÖ)
+	return accountList[index]; // ì´ëŒ€ë¡œë©´ ìµœëŒ€ index ì´ˆê³¼í•˜ëŠ” ìˆ«ì ë“¤ì–´ì™€ë„ dummy ë±‰ì„ë“¯? exception handling ì›í•¨(í˜„ì£¼)
 }
 
 void Database::addHistory(string transactionType, int money, Account* account, Account* recieverAcc) {
@@ -39,13 +39,13 @@ void Database::addHistory(string transactionType, int money, Account* account, A
 	int before = account->getBalance();
 	int after;
 	string receiverName = "-";
-	if (transactionType == "ÀÔ±İ") {
+	if (transactionType == "ì…ê¸ˆ") {
 		after = before + money;
 	}
-	else if (transactionType == "Ãâ±İ") {
+	else if (transactionType == "ì¶œê¸ˆ") {
 		after = before - money;
 	}
-	else if (transactionType == "¼Û±İ") {
+	else if (transactionType == "ì†¡ê¸ˆ") {
 		receiverName = recieverAcc->getOwner()->getUserName();
 		after = before - money;
 	}
@@ -63,13 +63,13 @@ void Database::addHistory(string transactionType, int money, Account* account, A
 
 void Database::printHistory() {
 	vector<string> column;
-	column.push_back("¼ø¼­");
-	column.push_back("°èÁÂÁÖ");
-	column.push_back("°èÁÂ¹øÈ£");
-	column.push_back("°Å·¡ Å¸ÀÔ");
-	column.push_back("°Å·¡ Àü ÀÜ¾×");
-	column.push_back("°Å·¡ ÈÄ ÀÜ¾×");
-	column.push_back("¼Û±İ½Ã ¼ö½ÅÀÎ");
+	column.push_back("ìˆœì„œ");
+	column.push_back("ê³„ì¢Œì£¼");
+	column.push_back("ê³„ì¢Œë²ˆí˜¸");
+	column.push_back("ê±°ë˜ íƒ€ì…");
+	column.push_back("ê±°ë˜ ì „ ì”ì•¡");
+	column.push_back("ê±°ë˜ í›„ ì”ì•¡");
+	column.push_back("ì†¡ê¸ˆì‹œ ìˆ˜ì‹ ì¸");
 	for (int i = 0; i < column.size(); i++) {
 		cout << column[i] << " ";
 	}
@@ -111,7 +111,7 @@ Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	this->password = pw;
 	this->balance = balance;
 	this->ID = numID;
-	increaseID(); // id¸¦ ºÎ¿©ÇÑ µÚ¿¡´Â static id¸¦ 1 Ãß°¡ÇÔ
+	increaseID(); // idë¥¼ ë¶€ì—¬í•œ ë’¤ì—ëŠ” static idë¥¼ 1 ì¶”ê°€í•¨
 }
 
 bool Account::checkPassword(int uswerAnswer) {
@@ -119,28 +119,28 @@ bool Account::checkPassword(int uswerAnswer) {
 	else { return false; }
 }
 
-void Account::deposit(int type, int money) { // ÀÔ±İ, ÀÔ±İ¾× Å¸ÀÔ(Ä³½Ã, ¼öÇ¥) ÀÔ±İ¾× ÀÎÇ²,
+void Account::deposit(int type, int money) { // ì…ê¸ˆ, ì…ê¸ˆì•¡ íƒ€ì…(ìºì‹œ, ìˆ˜í‘œ) ì…ê¸ˆì•¡ ì¸í’‹,
 	this->balance += money;
-} // ÇöÀç´Â typeÀÌ ÇÏ´Â ÀÏÀÌ ¾ø´Ù
+} // í˜„ì¬ëŠ” typeì´ í•˜ëŠ” ì¼ì´ ì—†ë‹¤
 
-void Account::withdrawal(int money) { // Ãâ±İ
+void Account::withdrawal(int money) { // ì¶œê¸ˆ
 	this->balance -= money;
 }
 
-/*	°ÇÀÇ(À±¼ºÀÌ¿¡°Ô ÇöÁÖ°¡)	*/
+/*	ê±´ì˜(ìœ¤ì„±ì´ì—ê²Œ í˜„ì£¼ê°€)	*/
 
 void Account::changeBalance(int money) {
 	this->balance += money;
 }
 
 /*
-·Î ÇØ¼­ °èÁÂ±İ¾× ¹Ù²Ù´Â ÇÔ¼ö ÇÏ³ª µÎ°í(money°¡ ¾ç¼öÀÌ¸é ´õÇÏ±â, À½¼öÀÌ¸é »©±â)
-ÀÔÃâ¼Û±İ¿¡ ¸ğµÎ °øÅëÀ¸·Î »ç¿ëÇÏ¸é ¾î¶³Áö?
+ë¡œ í•´ì„œ ê³„ì¢Œê¸ˆì•¡ ë°”ê¾¸ëŠ” í•¨ìˆ˜ í•˜ë‚˜ ë‘ê³ (moneyê°€ ì–‘ìˆ˜ì´ë©´ ë”í•˜ê¸°, ìŒìˆ˜ì´ë©´ ë¹¼ê¸°)
+ì…ì¶œì†¡ê¸ˆì— ëª¨ë‘ ê³µí†µìœ¼ë¡œ ì‚¬ìš©í•˜ë©´ ì–´ë–¨ì§€?
 */
 
 bool Account::isPrimary(ATM* A) {
 	if (this->ownerBank->getBankName() == A->getBank()->getBankName()) { return true; }
-	// BankID·Î °°ÀºÁö ¾Æ´ÑÁö È®ÀÎÇÒ ¼öµµ ÀÖÁö¸¸ ÇöÀç ID ±¸ÇöÀÌ ´ú µÅ ÀÖ´Â »óÅÂÀÎµí
+	// BankIDë¡œ ê°™ì€ì§€ ì•„ë‹Œì§€ í™•ì¸í•  ìˆ˜ë„ ìˆì§€ë§Œ í˜„ì¬ ID êµ¬í˜„ì´ ëœ ë¼ ìˆëŠ” ìƒíƒœì¸ë“¯
 	return false;
 }
 
@@ -156,54 +156,54 @@ ATM::ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engS
 }
 
 
-bool ATM::deposit(int type, int money, int paperNum, Account* acc) { // ÀÔ±İÇÔ¼ö, ÀÔ±İ¾× (type1 : Çö±İ type2 : ¼öÇ¥)
+bool ATM::deposit(int type, int money, int paperNum, Account* acc) { // ì…ê¸ˆí•¨ìˆ˜, ì…ê¸ˆì•¡ (type1 : í˜„ê¸ˆ type2 : ìˆ˜í‘œ)
 	int fee = 0;
 	if (this->getBank() != acc->getBank()) { fee = 500; }
 	if (type == 1 && paperNum > 50) {
-		cout << "ÃÖ´ë ÀÔ±İ °¡´É Àå ¼ö¸¦ ÃÊ°úÇÏ¿´½À´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ½Ê½Ã¿À." << endl; // ÀÔ±İ °¡´É ÃÖ´ë Àå ¼ö¸¦ Á¦ÇÑÇØ¾ßÇÏ´Âµ¥ ¾î¶»°Ô ±¸ÇöÇØ¾ßÇÒ±î?
+		cout << "ìµœëŒ€ ì…ê¸ˆ ê°€ëŠ¥ ì¥ ìˆ˜ë¥¼ ì´ˆê³¼í•˜ì˜€ìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ì£¼ì‹­ì‹œì˜¤." << endl; // ì…ê¸ˆ ê°€ëŠ¥ ìµœëŒ€ ì¥ ìˆ˜ë¥¼ ì œí•œí•´ì•¼í•˜ëŠ”ë° ì–´ë–»ê²Œ êµ¬í˜„í•´ì•¼í• ê¹Œ?
 		return false;
 	}
 	if (type == 2 && paperNum > 30) {
-		cout << "ÃÖ´ë ÀÔ±İ °¡´É Àå ¼ö¸¦ ÃÊ°úÇÏ¿´½À´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ½Ê½Ã¿À." << endl; // ÀÔ±İ °¡´É ÃÖ´ë Àå ¼ö¸¦ Á¦ÇÑÇØ¾ßÇÏ´Âµ¥ ¾î¶»°Ô ±¸ÇöÇØ¾ßÇÒ±î?
+		cout << "ìµœëŒ€ ì…ê¸ˆ ê°€ëŠ¥ ì¥ ìˆ˜ë¥¼ ì´ˆê³¼í•˜ì˜€ìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ì£¼ì‹­ì‹œì˜¤." << endl; // ì…ê¸ˆ ê°€ëŠ¥ ìµœëŒ€ ì¥ ìˆ˜ë¥¼ ì œí•œí•´ì•¼í•˜ëŠ”ë° ì–´ë–»ê²Œ êµ¬í˜„í•´ì•¼í• ê¹Œ?
 		return false;
 	}
 	acc->deposit(type, money - fee);
 	if (type == 1) { this->remainCash += money; }
 	else { this->remainCheck += money; this->remainCheckNum += paperNum; }
-	cout << money - fee << "¿øÀÌ ÀÔ±İµÇ¾ú½À´Ï´Ù." << endl;
-	cout << "¼ö¼ö·á : " << fee << " ¿ø" << endl;
-	cout << "ÀÜ¾× : " << acc->getBalance() << " ¿ø" << endl;
+	cout << money - fee << "ì›ì´ ì…ê¸ˆë˜ì—ˆìŠµë‹ˆë‹¤." << endl;
+	cout << "ìˆ˜ìˆ˜ë£Œ : " << fee << " ì›" << endl;
+	cout << "ì”ì•¡ : " << acc->getBalance() << " ì›" << endl;
 	return true;
 }
 
-bool ATM::withdrawal(int money, Account* acc) { // Ãâ±İÇÔ¼ö, Ãâ±İ¾×
+bool ATM::withdrawal(int money, Account* acc) { // ì¶œê¸ˆí•¨ìˆ˜, ì¶œê¸ˆì•¡
 	int fee = 500;
 	if (this->getBank() != acc->getBank()) { fee = 1000; }
 	if ((money + fee) > acc->getBalance()) {
-		cout << "°èÁÂ¿¡ ÀÜ¾×ÀÌ ºÎÁ·ÇÕ´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ½Ê½Ã¿À." << endl;
+		cout << "ê³„ì¢Œì— ì”ì•¡ì´ ë¶€ì¡±í•©ë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ì£¼ì‹­ì‹œì˜¤." << endl;
 		return false;
 	}
 	if (money > this->remainCash) {
-		cout << "ATM ±â±â¿¡ Çö±İÀÌ ºÎÁ·ÇÕ´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ½Ê½Ã¿À." << endl;
+		cout << "ATM ê¸°ê¸°ì— í˜„ê¸ˆì´ ë¶€ì¡±í•©ë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ì£¼ì‹­ì‹œì˜¤." << endl;
 		return false;
 	}
 	if (money > this->maxWithdrawal) {
-		cout << "1È¸ ÃÖ´ë Ãâ±İ ±İ¾×(30¸¸¿ø)À» ÃÊ°úÇÏ¿´½À´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ½Ê½Ã¿À." << endl;
+		cout << "1íšŒ ìµœëŒ€ ì¶œê¸ˆ ê¸ˆì•¡(30ë§Œì›)ì„ ì´ˆê³¼í•˜ì˜€ìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ì£¼ì‹­ì‹œì˜¤." << endl;
 		return false;
 	}
 	acc->withdrawal(money + fee);
 	this->remainCash -= money;
-	cout << money << "¿øÀÌ Ãâ±İµÇ¾ú½À´Ï´Ù. ÅõÀÔ±¸¸¦ È®ÀÎÇØÁÖ½Ê½Ã¿À." << endl;
-	cout << "¼ö¼ö·á : " << fee << " ¿ø" << endl;
-	cout << "ÀÜ¾× : " << acc->getBalance() << " ¿ø" << endl;
+	cout << money << "ì›ì´ ì¶œê¸ˆë˜ì—ˆìŠµë‹ˆë‹¤. íˆ¬ì…êµ¬ë¥¼ í™•ì¸í•´ì£¼ì‹­ì‹œì˜¤." << endl;
+	cout << "ìˆ˜ìˆ˜ë£Œ : " << fee << " ì›" << endl;
+	cout << "ì”ì•¡ : " << acc->getBalance() << " ì›" << endl;
 	return true;
 }
 
 bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 	cout << "Debug: ATM::transfer called" << endl;
-	cout << "Debug: (¼Û±İ Àü)\nfrom account [" << fromAcc->getID() << "]\t ÇöÀç ÀÜ¾×: [";
-	cout << fromAcc->getBalance() << "]¿ø\nto account [" << toAcc->getID() << "]\t ÇöÀç ÀÜ¾×: [";
-	cout << toAcc->getBalance() << "]¿ø" << endl;
+	cout << "Debug: (ì†¡ê¸ˆ ì „)\nfrom account [" << fromAcc->getID() << "]\t í˜„ì¬ ì”ì•¡: [";
+	cout << fromAcc->getBalance() << "]ì›\nto account [" << toAcc->getID() << "]\t í˜„ì¬ ì”ì•¡: [";
+	cout << toAcc->getBalance() << "]ì›" << endl;
 
 	int fee = this->fee(7, fromAcc, toAcc);
 
@@ -212,36 +212,36 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 			fromAcc->changeBalance(-fee);
 			toAcc->changeBalance(money);
 
-			cout << "\t" << money << "¿øÀÌ [" << toAcc->getOwner()->getUserName();
-			cout << "] ´Ô¿¡°Ô ¼Û±İ ¿Ï·áµÇ¾ú½À´Ï´Ù." << endl;
+			cout << "\t" << money << "ì›ì´ [" << toAcc->getOwner()->getUserName();
+			cout << "] ë‹˜ì—ê²Œ ì†¡ê¸ˆ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤." << endl;
 
-			cout << "Debug: (¼Û±İ ÈÄ)\nfrom account [" << fromAcc->getID() << "]\t ÇöÀç ÀÜ¾×: [";
-			cout << fromAcc->getBalance() << "]¿ø\nto account [" << toAcc->getID() << "]\t ÇöÀç ÀÜ¾×: [";
-			cout << toAcc->getBalance() << "]¿ø" << endl;
+			cout << "Debug: (ì†¡ê¸ˆ í›„)\nfrom account [" << fromAcc->getID() << "]\t í˜„ì¬ ì”ì•¡: [";
+			cout << fromAcc->getBalance() << "]ì›\nto account [" << toAcc->getID() << "]\t í˜„ì¬ ì”ì•¡: [";
+			cout << toAcc->getBalance() << "]ì›" << endl;
 		}
-		else { cout << "Debug: ÀÜ¾× ºÎÁ·" << endl; return false; }
+		else { cout << "Debug: ì”ì•¡ ë¶€ì¡±" << endl; return false; }
 	}
 	else if (type == 2) {
 		if (fromAcc->getBalance() >= (money + fee)) {
 			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
 
-			cout << "\t" << money << "¿øÀÌ [" << toAcc->getOwner()->getUserName();
-			cout << "] ´Ô¿¡°Ô ¼Û±İ ¿Ï·áµÇ¾ú½À´Ï´Ù." << endl;
+			cout << "\t" << money << "ì›ì´ [" << toAcc->getOwner()->getUserName();
+			cout << "] ë‹˜ì—ê²Œ ì†¡ê¸ˆ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤." << endl;
 
-			cout << "Debug: (¼Û±İ ÈÄ)\nfrom account [" << fromAcc->getID() << "]\t ÇöÀç ÀÜ¾×: [";
-			cout << fromAcc->getBalance() << "]¿ø\nto account [" << toAcc->getID() << "]\t ÇöÀç ÀÜ¾×: [";
-			cout << toAcc->getBalance() << "]¿ø" << endl;
+			cout << "Debug: (ì†¡ê¸ˆ í›„)\nfrom account [" << fromAcc->getID() << "]\t í˜„ì¬ ì”ì•¡: [";
+			cout << fromAcc->getBalance() << "]ì›\nto account [" << toAcc->getID() << "]\t í˜„ì¬ ì”ì•¡: [";
+			cout << toAcc->getBalance() << "]ì›" << endl;
 		}
-		else { cout << "Debug: ÀÜ¾× ºÎÁ·" << endl; return false; }
+		else { cout << "Debug: ì”ì•¡ ë¶€ì¡±" << endl; return false; }
 	}
 
 
-	// transaction history ÀúÀå
+	// transaction history ì €ì¥
 	return true;
 }
 
-int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // ¼Û±İÀÏ ¶§¸¸ a2 ÇÊ¿ä
+int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // ì†¡ê¸ˆì¼ ë•Œë§Œ a2 í•„ìš”
 	if (transactionType == 5) { // deposit
 		if (a1->isPrimary(this)) { return 0; }
 		else { return 500; }

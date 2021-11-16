@@ -42,10 +42,10 @@ private:
 	int accID = -1;
 	Account* acc = nullptr;
 	int toAccID = -1;
-	Account* toAcc = nullptr; // ¼Û±İ½Ã¿¡¸¸ »ç¿ë
+	Account* toAcc = nullptr; // ì†¡ê¸ˆì‹œì—ë§Œ ì‚¬ìš©
 	int fee = 0;
 	int transferAmount = 0;
-	Database* database = nullptr; // database »ç¿ë (¹Ù²ã¾ß ÇÒ ¼öµµ)
+	Database* database = nullptr; // database ì‚¬ìš© (ë°”ê¿”ì•¼ í•  ìˆ˜ë„)
 	ATM* atm = nullptr; // the ATM we are using
 
 public:
