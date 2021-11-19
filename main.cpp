@@ -1,5 +1,4 @@
-#include "Classes.h"
-#include "UI.cpp"
+#include "UI.h"
 #include <iostream>
 #include <string>
 /*
@@ -16,7 +15,7 @@
 using namespace std;
 
 int main() {
-	
+
 	UI ui;
 	ui.run();
 
@@ -79,7 +78,7 @@ int main() {
 			database->addHistory("출금", 5000, AC1, AC1);
 			// 3. 전체 history 보여줌
 			database->printHistory();
-			// 4. user history 
+			// 4. user history
 			cout << "---------------- 실험 2 ----------- " << endl;
 			database->clearSessionHistory();
 			database->printHistory();
@@ -293,7 +292,7 @@ int main() {
 				cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
 
 				// cash transfer일 경우 remainCash 늘리기; Cash 넣을 때 액수초과 오류 함수로 따로 만들면 편할듯)
-				// 일단 전부 현금이고 한계 없다고 가정했음; 
+				// 일단 전부 현금이고 한계 없다고 가정했음;
 				// 장당 액수, 장수, 그리고 수표까지 고려할 경우 입금함수랑 같이 쓸 수 있는 함수 만드는 게 좋을듯
 				// 얼마나 송금할지 묻기
 				int transferMoney;
@@ -365,13 +364,13 @@ int main() {
 				if (success) {
 					// 송금 확인되어 반환의 여지 없을 때 remainCash transferMoney만큼 늘리기
 					//A1->insertCash(transferMoney); // ATM A1이라고 가정 우선 실행을 위해 주석처리 하였음! 수정 필요
-					cout << "Debug: Remaining cash of the ATM : " << /*수정필요*/ A1->getATMremainCash() << endl;
-					UserStatus = 4;
+					cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
+UserStatus = 4;
 				}
 				else {
-					cout << "Not enough balance error. 잔액이 부족합니다.(code 707)" << endl;
-					if (transferType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
-					UserStatus = 4;
+				cout << "Not enough balance error. 잔액이 부족합니다.(code 707)" << endl;
+				if (transferType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
+				UserStatus = 4;
 				}
 				break;
 			}

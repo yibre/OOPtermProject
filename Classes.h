@@ -159,7 +159,7 @@ public:
 	int getNumID() { return numID; }
 	int getATMremainCash() { return remainBill->getSum(); }
 	int getATMremainCheckNum() { return remainCheckNum; }
-	void insertCash(Bill cash) { *this->remainBill += cash;}
+	void insertCash(Bill cash) { *this->remainBill += cash; }
 	int fee(int, Account*, Account*);
 	void printATMremainCashNum() { this->remainBill->printBill(); };
 	bool compareBill(Bill subject) { return (*(this->remainBill) > subject); }

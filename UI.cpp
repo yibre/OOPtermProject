@@ -3,21 +3,23 @@
 using namespace std;
 
 int UI::run() {
-	
+
 	Database* DB = Database::getInstance();
-	
+
 	Bank* uriBank = new Bank();
 	Bank* kakaoBank = new Bank("kakao");
-	
-	ATM* A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true);
-	ATM* A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false);
-	
+
+	Bill* A1_bill = new Bill(100, 1, 500, 1000);
+	Bill* A2_bill = new Bill(100, 100, 100, 100);
+	ATM* A1 = new ATM(uriBank, "admin", 1357, A1_bill, 100, true); // 0
+	ATM* A2 = new ATM(kakaoBank, "master", 2345, A2_bill, 0, false); // 1
+
 	User* U1 = new User("U1", "최가난");
 	User* U2 = new User("U2", "권부자");
 	User* U3 = new User("U3", "서모녀");
 	User* U4 = new User("U4", "김백규");
 	User* U5 = new User("U5", "버터");
-	
+
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 1
 	DB->addAccountList(AC1);
 	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // 계좌번호 2
@@ -29,7 +31,7 @@ int UI::run() {
 
 	atm = A1;
 	this->database = DB;
-	
+
 	acc = AC1;
 
 	while (state != State::End) {
@@ -88,7 +90,7 @@ int UI::run() {
 		case State::End:
 			end();
 			// delete session (memory deallocation)
-			
+
 			delete AC4;
 			delete AC3;
 			delete AC2;
@@ -105,7 +107,7 @@ int UI::run() {
 
 			delete kakaoBank;
 			delete uriBank;
-			
+
 			return 0;
 		}
 	}
@@ -218,7 +220,7 @@ UI::State UI::chooseTransaction() {
 		// 취소시 카드 반환해 주고 카드 받는 단계로 돌아감
 		cout << "Your card has returned." << endl;
 		return State::GetAccountNum;
-		}
+	}
 	if (input == 1) { return State::Deposit; }
 	else if (input == 2) { return State::Withdrawal; }
 	else if (input == 3) { return State::Transfer; }
@@ -251,20 +253,20 @@ UI::State UI::transfer() {
 	// 혹시 모르니 초기화
 	fee = 0;
 	toAccID = 0;
-	toAcc = nullptr; 
+	toAcc = nullptr;
 	return State::T_AskTransferType;
 }
 
 UI::State UI::t_askTransferType() {
 	// from: transfer
 	int input;
-	
+
 	string prompt = "Which transfer option would you like? 원하시는 송금 옵션을 선택해 주십시오.\n";
 	prompt += "\t1. cash transfer 현금 송금\t 2. account transfer 계좌 송금\n\tcancel 취소: -1\n";
 	input = getInput(prompt, 2);
-	if (input == -1) { 
-	cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl;
-	return State::ChooseTransaction;
+	if (input == -1) {
+		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl;
+		return State::ChooseTransaction;
 	}
 
 	transferType = input; // Exception handling 필요
@@ -289,9 +291,9 @@ UI::State UI::t_askToAcc() {
 
 UI::State UI::t_confirmToAcc() { // 금융실명제
 	// from: t_askToAcc
-	
+
 	fee = atm->fee(7, acc, toAcc); // fee 함수 수정되면 따라 바꿔야
-	
+
 	int input;
 	string prompt = "[" + toAcc->getOwner()->getUserName();
 	prompt += ("] 님의 계좌 [" + std::to_string(toAccID));
@@ -303,17 +305,17 @@ UI::State UI::t_confirmToAcc() { // 금융실명제
 		if (transferType == 1) { return State::T_AskAmount_C; }
 		else { return State::T_AskAmount_A; }
 	}
-	if (input == 1) { return State::T_AskToAcc;}
-	
+	if (input == 1) { return State::T_AskToAcc; }
+
 	cout << "Debug: Unexpected behavior in UI::t_confirmToAcc" << endl;
 	return State::End;
 }
 
 UI::State UI::t_askAmount_c() {
 	// from: t_askToAcc (when transferType == 1)
-	
+
 	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
-	
+
 	int input;
 	transferAmount = 0; // = insertedBill.sum();
 	string prompt = "Please insert cash you would like to transfer.";
@@ -322,21 +324,21 @@ UI::State UI::t_askAmount_c() {
 	// transferAmount = insertedBill.sum();
 	cout << "Debug: cash transfer; transfer amount: ";
 	cin >> transferAmount; // temporary; to be done
-	
+
 	// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3
 	prompt = "투입하신 금액을 확인해 주십시오.\n\t[" + std::to_string(transferAmount);
 	prompt += "]원\n\t0. confirm 확인\n\tcancel 취소: -1\n";
 	input = getInput(prompt, 0);
 	// 이부분 따로 함수로 빼기
-	
+
 	if (input == 0) { return State::T_Confirm; }
-	if (input == -1) { 
+	if (input == -1) {
 		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
 		cout << "Your cash has returned. 투입하신 현금이 반환되었습니다.";
 		cout << " Please make sure to take your cash. 투입구를 확인해주세요." << endl;
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
-	
+
 	cout << "Debug: Unexpected behavior in UI::t_askAmount_c" << endl;
 	return State::End;
 }
@@ -344,9 +346,9 @@ UI::State UI::t_askAmount_c() {
 
 UI::State UI::t_askAmount_a() {
 	// from: t_askToAcc (when transferType == 2)
-	
+
 	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
-	
+
 	transferAmount = 0;
 	string prompt = "Please enter the amount of money you would like to transfer.";
 	prompt += " 송금할 금액을 입력해 주십시오. (Your current balance 계좌 잔액: ";
@@ -360,7 +362,7 @@ UI::State UI::t_askAmount_a() {
 	*/
 	cout << "Debug: account transfer; transfer amount: ";
 	cin >> transferAmount; // temporary; to be done
-	
+
 	int input;
 	input = getInput(prompt, 0);
 	if (input == 0) { return State::T_Confirm; }
@@ -368,7 +370,7 @@ UI::State UI::t_askAmount_a() {
 		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
-	
+
 	cout << "Debug: Unexpected behavior in UI::t_askAmount_a" << endl;
 	return State::End;
 }
@@ -376,25 +378,25 @@ UI::State UI::t_askAmount_a() {
 UI::State UI::t_confirm() {
 	// from: t_askAmount_a
 	// from: t_askAmount_c
-	
+
 	string prompt = "[" + toAcc->getOwner()->getUserName() + "] 님에게 [";
 	prompt += (std::to_string(transferAmount) + "]원 송금하시겠습니까?\n수수료는 [");
 	prompt += (std::to_string(fee) + "]원입니다. 수수료는 현재 계좌 잔액 [");
 	prompt += std::to_string(acc->getBalance());
 	prompt += "]원에서 자동 차감됩니다.\n\t0. confirm 확인\n\tcancel 취소: -1\n";
-	
+
 	int input;
 	input = getInput(prompt, 0);
 	if (input == 0) { return State::T_Transfer; }
-	if (input == -1) { 
+	if (input == -1) {
 		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl;
 		if (transferType == 1) {
 			cout << "Your cash has returned. 투입하신 현금이 반환되었습니다.";
 			cout << " Please make sure to take your cash. 투입구를 확인해주세요." << endl;
 		}
-		return State::ChooseTransaction; 
+		return State::ChooseTransaction;
 	}
-	
+
 	cout << "Debug: Unexpected behavior in UI::t_confirm" << endl;
 	return State::End;
 }
@@ -405,7 +407,7 @@ UI::State UI::t_transfer() {
 	if (success) {
 		// 송금 확인되어 반환의 여지 없을 때 remainCash transferAmount만큼 늘리기
 		if (transferType == 1) {
-			atm->insertCash(transferAmount); // Bill class 구현에 따라 다를 수 있음
+			// atm->insertCash(transferAmount); // Bill class 구현에 따라 다를 수 있음
 			cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl; // 수정 필요
 		}
 		// 명세표 출력?
@@ -413,7 +415,7 @@ UI::State UI::t_transfer() {
 	}
 	else {
 		cout << "Not enough balance. 잔액이 부족합니다." << endl;
-		if (transferType == 1) { 
+		if (transferType == 1) {
 			cout << "Your cash has returned. 투입하신 현금이 반환되었습니다.";
 			cout << "Please make sure to take your cash. 투입구를 확인해주세요." << endl;  // 이걸 아예 다른 단계로 만들까?
 		}
@@ -433,5 +435,5 @@ UI::State UI::session3Confirm() {
 }
 
 void UI::end() {
-	
+
 }

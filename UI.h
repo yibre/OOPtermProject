@@ -1,5 +1,5 @@
 #pragma once
-#include "Classes.cpp"
+#include "Classes.h"
 #include <iostream>
 #include <string>
 
@@ -48,7 +48,6 @@ private:
 	int transferAmount = 0;
 	Database* database = nullptr; // database 사용 (바꿔야 할 수도)
 	ATM* atm = nullptr; // the ATM we are using
-	Database* database;
 
 public:
 	int run();
