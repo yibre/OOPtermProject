@@ -39,8 +39,10 @@ int main() {
 	User* U4 = new User("U4", "김백규");
 	User* U5 = new User("U5", "버터");
 
-	ATM* A1 = new ATM(uriBank, "admin", 1357, 100000000, 100, true); // 0; 현금잔액 100000000으로 시작
-	ATM* A2 = new ATM(kakaoBank, "master", 2345, 2000000, 0, false); // 1
+	Bill* A1_bill = new Bill(100, 1, 500, 1000);
+	Bill* A2_bill = new Bill(100, 100, 100, 100);
+	ATM* A1 = new ATM(uriBank, "admin", 1357, A1_bill, 100, true); // 0
+	ATM* A2 = new ATM(kakaoBank, "master", 2345, A2_bill, 0, false); // 1
 
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
 	database->addAccountList(AC1);
@@ -134,8 +136,7 @@ int main() {
 			else { cout << "error" << endl; } // TODO: 적절하지 않은 data input에 대한 에러 처리 필요
 		}
 		if (UserStatus == 5) {
-			cout << "입금" << endl;
-			// 입금 함수 실행
+			//session 1 현금 or 수표 선택
 			int type;
 			while (true) {
 				cout << "Which would be your input? 현금으로 입금하시겠습니까?\n\t1. cash 현금\t2. check 수표" << endl;
@@ -143,29 +144,93 @@ int main() {
 				if (type == 1 || type == 2) { break; }
 				else { cout << "잘못된 입력입니다. 다시 시도해 주십시오." << endl; }
 			}
-			cout << "입금하실 금액의 장당 액수를 입력해주십시오." << endl;
-			int moneytype;
-			cin >> moneytype;
-			cout << "입금하실 금액의 장 수를 입력해주십시오." << endl;
-			int paperNum;
-			cin >> paperNum;
-			bool success = A1->deposit(type, moneytype * paperNum, paperNum, database->getAccountByNum(userIndex)); // 일단 ATM A1이라고 가정
+			//session 2 현금 or 수표 투입
+			int c50, c10, c5, c1;
+			Bill cashInput{0, 0, 0, 0};
+			int checkInput[30];
+			int checkInputNum = 0;
+			int checkSum = 0;
+
+			int confirm;
+			if (type == 1) {
+				while (true) {
+					cout << "투입구에 현금을 넣어주십시오. (5만원권, 1만원권, 5천원권, 1천원권 순으로 입력해주세요.)" << endl;
+					cin >> c50 >> c10 >> c5 >> c1; // 여러개 input 받기
+					cashInput = Bill{ c50, c10, c5, c1 };
+
+					//투입 장 수 확인
+					if (cashInput.getTotalNum() > 50) { cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; continue; }
+
+					//session 3 현금 투입 금액 확인
+					cout << "투입하신 금액이 맞는지 확인해 주십시오.\n 확인 : 1 \t 취소 : -1" << endl;
+					cashInput.printBill();
+					cin >> confirm;
+					if (confirm == 1) { break; }
+					else if (confirm == -1) { cout << "현금 입금을 취소하셨습니다. 투입구를 확인해주세요." << endl; break; }
+					else { cout << "잘못된 입력입니다. 다시 시도해주세요." << endl; continue; }
+				}
+			}
+			if (type == 2) {
+				while (true) {
+					checkInputNum = 0; // 값 초기화
+					checkSum = 0;
+					cout << "투입하실 수표의 장 수를 입력해주세요." << endl;
+					cin >> checkInputNum;
+
+					//투입 장 수 확인
+					if(checkInputNum > 30){ cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; continue; }
+
+					cout << "각 수표의 액수를 입력해주세요." << endl;
+					for (int i = 0; i < checkInputNum; i++) { cin >> checkInput[i]; } // 여러개 input 받기
+
+					//session 3 수표 투입 금액 확인
+					cout << "투입하신 금액이 맞는지 확인해 주십시오.\n 확인 : 1 \t 취소 : -1" << endl;
+					cout << "금액 : ";
+					for (int i = 0; i < checkInputNum; i++) { cout << checkInput[i] << "원 "; checkSum += checkInput[i]; }
+					cout << endl;
+					cout << "총 액수 : " << checkSum << "원" << endl;
+					cin >> confirm;
+					if (confirm == 1) { break; }
+					else if (confirm == -1) { cout << "수표 입금을 취소하셨습니다. 투입구를 확인해주세요." << endl; break; }
+					else { cout << "잘못된 입력입니다. 다시 시도해주세요." << endl; continue; }
+				}
+			}
+			//취소 과정
+			if (confirm == -1) { UserStatus = 4; continue; }
+
+			//session 4 입금 process
+			bool success = A1->deposit(type, cashInput, checkInput, checkInputNum, checkSum, database->getAccountByNum(userIndex)); // 일단 ATM A1이라고 가정
 			if (success) { UserStatus = 4; }
-			else { UserStatus = 5; }
+
 			cout << "Remaining cash of the ATM / ATM기 현금 잔액 : " << A1->getATMremainCash() << endl;
 			cout << "Remaining checkNum of the ATM / ATM기 수표 장 수 : " << A1->getATMremainCheckNum() << endl;
 		}
 		if (UserStatus == 6) {
-			cout << "출금하실 금액을 입력해 주십시오." << endl;
-			int money;
-			cin >> money;
-			// 출금 함수 실행
+			//session 1 출금 금액 입력
+			cout << "출금하실 금액을 입력해 주십시오. (단위 : 만원)" << endl;
+			int cashnum;
+			cin >> cashnum;
+			Bill money{ 0, cashnum, 0, 0 };
+
+			//session 2 ATM 잔액 확인
+			if (!A1->compareBill(money)) {
+				cout << "ATM 기 내부에 현금이 부족합니다." << endl;
+				UserStatus = 4;
+				continue;
+			}
+
+			//session 3 출금 액수 에러 확인
+			if (money.getSum() > 300000) {
+				cout << "1회 최대 출금 금액(30만원)을 초과하였습니다. 다시 시도해주십시오." << endl;
+				continue;
+			}
+			//session 4 출금 process 진행
 			bool success = A1->withdrawal(money, database->getAccountByNum(userIndex)); // 일단 ATM A1이라고 가정
 			if (success) { UserStatus = 4; }
 			else { UserStatus = 6; }
-			cout << "ATM기 잔액 : " << A1->getATMremainCash() << endl;
-		}
 
+			//A1->printATMremainCashNum();
+		}
 		if (UserStatus == 7) {
 			cout << "You have chosen [transfer]. 송금을 선택하셨습니다." << endl;
 			Account* fromAcc = database->getAccountByNum(userIndex);
@@ -299,8 +364,8 @@ int main() {
 				bool success = A1->transfer(transferType, transferMoney, fromAcc, toAcc);
 				if (success) {
 					// 송금 확인되어 반환의 여지 없을 때 remainCash transferMoney만큼 늘리기
-					A1->insertCash(transferMoney); // ATM A1이라고 가정
-					cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl; // 수정 필요
+					//A1->insertCash(transferMoney); // ATM A1이라고 가정 우선 실행을 위해 주석처리 하였음! 수정 필요
+					cout << "Debug: Remaining cash of the ATM : " << /*수정필요*/ A1->getATMremainCash() << endl;
 					UserStatus = 4;
 				}
 				else {
