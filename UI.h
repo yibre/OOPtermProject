@@ -1,5 +1,5 @@
 #pragma once
-#include "Classes.h"
+#include "Classes.cpp"
 #include <iostream>
 #include <string>
 
@@ -37,6 +37,7 @@ private:
 	int SecondDigit = 0;
 	Account* acc = nullptr;
 	ATM* atm = nullptr; // the ATM we are using
+	Database* database;
 
 public:
 	int run();

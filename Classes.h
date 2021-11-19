@@ -137,7 +137,7 @@ public:
 	int getNumID() { return numID; }
 	int getATMremainCash() { return remainCash; }
 	int getATMremainCheckNum() { return remainCheckNum; }
-	int insertCash(int cash) { remainCash += cash; return remainCash; } // 이걸로 통일할까? 아니면 void로 분화?
+	void insertCash(Bill cash) { *this->remainBill += cash;}
 	int fee(int, Account*, Account*);
 	Bank* getBank() { return ownerBank; }
 };
