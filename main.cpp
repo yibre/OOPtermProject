@@ -299,7 +299,7 @@ int main() {
 				if (success) {
 					// 송금 확인되어 반환의 여지 없을 때 remainCash transferMoney만큼 늘리기
 					//A1->insertCash(transferMoney); // ATM A1이라고 가정 우선 실행을 위해 주석처리 하였음! 수정 필요
-					cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
+					cout << "Debug: Remaining cash of the ATM : " << /A1->getATMremainCash() << endl;
 					UserStatus = 4;
 				}
 				else {

@@ -29,7 +29,7 @@ int UI::run() {
 
 	atm = A1;
 	this->database = DB;
-
+	
 	acc = AC1;
 
 	while (state != State::End) {
