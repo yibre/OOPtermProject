@@ -117,8 +117,8 @@ public:
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
 	int getID() { return ID; }
-	bool checkPassward(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void deposit(int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
+	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void remittance(int, int); // 송금 계좌번호, 액수 <- transfer로 이름 바꾸는거 건의(현주)
 	void withdrawal(int money); // 출금
 	void changeBalance(int money);
@@ -151,9 +151,9 @@ public:
 	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport);
 	~ATM() {}
 	bool checkID(char);
-	bool checkpw(int);
 	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(Bill money, Account* acc); // 출금함수, 출금액
+	bool checkPW(int);
 	bool transfer(int type, int money, Account* fromAcc, Account* toAcc); // int fee 없애는거 고려
 	void IncreaseID() { numID++; }
 	int getNumID() { return numID; }

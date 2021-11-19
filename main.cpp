@@ -1,4 +1,5 @@
 #include "Classes.h"
+#include "UI.cpp"
 #include <iostream>
 #include <string>
 /*
@@ -14,6 +15,15 @@
 
 using namespace std;
 
+int main() {
+	
+	UI ui;
+	ui.run();
+
+	return 0;
+}
+
+/*
 int main() {
 
 	int UserStatus = 1; // 세션 시작
@@ -98,7 +108,7 @@ int main() {
 				cout << "Please input your password. 비밀번호를 입력해 주십시오." << endl;
 				int userPWAnswer;
 				cin >> userPWAnswer;
-				if (database->getAccountByNum(userIndex)->checkPassward(userPWAnswer)) {
+				if (database->getAccountByNum(userIndex)->checkPassword(userPWAnswer)) {
 					UserStatus = 4;
 					break;
 				}
@@ -299,7 +309,8 @@ int main() {
 						// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3
 						confirm = 0;
 						for (;;) {
-							cout << "투입하신 금액이 맞는지 확인해 주십시오.\n\t[" << /*합계*/ transferMoney << "]원\n\t1. confirm 확인\n\tcancel 취소: -1" << endl;
+							// transferMoney : 합계
+							cout << "투입하신 금액이 맞는지 확인해 주십시오.\n\t[" << transferMoney << "]원\n\t1. confirm 확인\n\tcancel 취소: -1" << endl;
 							cin >> confirm; // Exception handling 필요
 							if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 							if (confirm == 1) { break; }
@@ -388,3 +399,5 @@ int main() {
 
 	return 0;
 }
+
+*/
