@@ -84,7 +84,7 @@ void Database::printHistory() {
 
 void Database::clearSessionHistory() {
 	cout << sessionhis.size() << endl;
-	for (int i = 0; i < sessionhis.size()+1; i++) {
+	for (int i = 0; i < sessionhis.size() + 1; i++) {
 		cout << i << endl;
 		sessionhis.pop_back();
 	}
@@ -118,14 +118,14 @@ bool Account::checkPassword(int uswerAnswer) {
 	if (this->password == uswerAnswer) { return true; }
 	else { return false; }
 }
-
-void Account::deposit(int type, int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
+/*
+void Account::deposit(int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
 	this->balance += money;
-} // 현재는 type이 하는 일이 없다
+}
 
 void Account::withdrawal(int money) { // 출금
 	this->balance -= money;
-}
+}*/
 
 /*	건의(윤성이에게 현주가)	*/
 
@@ -146,54 +146,44 @@ bool Account::isPrimary(ATM* A) {
 
 /***********************	  ATM   	***********************/
 
-ATM::ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engSupport) {
+ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport) {
 	this->engSupport = engSupport;
 	this->ownerBank = bank;
 	this->adminID = adminID;
 	this->adminpw = adminPW;
-	this->remainCash = cash;
+	this->remainBill = bill;
 	this->remainCheck = check;
 }
 
 
-bool ATM::deposit(int type, int money, int paperNum, Account* acc) { // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
-	int fee = 0;
-	if (this->getBank() != acc->getBank()) { fee = 500; }
-	if (type == 1 && paperNum > 50) {
-		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; // 입금 가능 최대 장 수를 제한해야하는데 어떻게 구현해야할까?
-		return false;
+bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc) { // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
+	int fee = this->fee(5, acc, nullptr);
+
+	if (type == 1) {
+		acc->changeBalance(money.getSum());
+		*this->remainBill += money;
+		cout << money.getSum() - fee << "원이 입금되었습니다." << endl;
 	}
-	if (type == 2 && paperNum > 30) {
-		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl; // 입금 가능 최대 장 수를 제한해야하는데 어떻게 구현해야할까?
-		return false;
+	else if (type == 2) {
+		acc->changeBalance(checkSum);
+		this->remainCheck += checkSum;
+		this->remainCheckNum += checkNum;
+		cout << checkSum - fee << "원이 입금되었습니다." << endl;
 	}
-	acc->deposit(type, money - fee);
-	if (type == 1) { this->remainCash += money; }
-	else { this->remainCheck += money; this->remainCheckNum += paperNum; }
-	cout << money - fee << "원이 입금되었습니다." << endl;
 	cout << "수수료 : " << fee << " 원" << endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
 	return true;
 }
 
-bool ATM::withdrawal(int money, Account* acc) { // 출금함수, 출금액
-	int fee = 500;
-	if (this->getBank() != acc->getBank()) { fee = 1000; }
-	if ((money + fee) > acc->getBalance()) {
+bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
+	int fee = this->fee(6, acc, nullptr);
+	if ((money.getSum() + fee) > acc->getBalance()) {
 		cout << "계좌에 잔액이 부족합니다. 다시 시도해주십시오." << endl;
 		return false;
 	}
-	if (money > this->remainCash) {
-		cout << "ATM 기기에 현금이 부족합니다. 다시 시도해주십시오." << endl;
-		return false;
-	}
-	if (money > this->maxWithdrawal) {
-		cout << "1회 최대 출금 금액(30만원)을 초과하였습니다. 다시 시도해주십시오." << endl;
-		return false;
-	}
-	acc->withdrawal(money + fee);
-	this->remainCash -= money;
-	cout << money << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
+	acc->changeBalance(-(money.getSum() + fee));
+	*this->remainBill -= money;
+	cout << money.getSum() << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
 	cout << "수수료 : " << fee << " 원" << endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
 	return true;
@@ -265,7 +255,105 @@ int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송�
 
 /***********************	  Bill  	***********************/
 
-Bill::Bill(int n1k, int n5k, int n10k, int n50k) : b1k(n1k), b5k(n5k), b10k(n10k), b50k(n50k) {}
+int Bill::value[4] = { 50000,10000,5000,1000 };
 
-int Bill::sum() { return b1k + b5k + b10k + b50k; }
+Bill::Bill(int c50k = 0, int c10k = 0, int c5k = 0, int c1k = 0) : paperCash{ c50k, c10k, c5k, c1k } {}
 
+int Bill::getSum() {
+	int sum = 0;
+	for (int i = 0; i < 4; i++) {
+		sum += value[i] * paperCash[i];
+	}
+	return sum;
+}
+
+int Bill::getTotalNum() {
+	int sum = 0;
+	for (int i : paperCash) {
+		sum += i;
+	}
+	return sum;
+}
+
+Bill& Bill::operator+(const Bill& bill) {
+	int num1 = paperCash[0] + bill.paperCash[0];
+	int num2 = paperCash[1] + bill.paperCash[1];
+	int num3 = paperCash[2] + bill.paperCash[2];
+	int num4 = paperCash[3] + bill.paperCash[3];
+	Bill result = Bill{ num1, num2, num3, num4 };
+	return result;
+}
+
+Bill& Bill::operator+=(const Bill& rhs) {
+	this->paperCash[0] += rhs.paperCash[0];
+	this->paperCash[1] += rhs.paperCash[1];
+	this->paperCash[2] += rhs.paperCash[2];
+	this->paperCash[3] += rhs.paperCash[3];
+	return *this;
+}
+
+Bill& Bill::operator-(const Bill& bill) {
+	int num1 = paperCash[0] - bill.paperCash[0];
+	int num2 = paperCash[1] - bill.paperCash[1];
+	int num3 = paperCash[2] - bill.paperCash[2];
+	int num4 = paperCash[3] - bill.paperCash[3];
+	Bill result = Bill{ num1, num2, num3, num4 };
+	return result;
+}
+
+Bill& Bill::operator-=(const Bill& rhs) {
+	this->paperCash[0] -= rhs.paperCash[0];
+	this->paperCash[1] -= rhs.paperCash[1];
+	this->paperCash[2] -= rhs.paperCash[2];
+	this->paperCash[3] -= rhs.paperCash[3];
+	return *this;
+}
+
+Bill& Bill::operator*(const int mul) {
+	int num1 = paperCash[0] * mul;
+	int num2 = paperCash[1] * mul;
+	int num3 = paperCash[2] * mul;
+	int num4 = paperCash[3] * mul;
+	Bill result = Bill{ num1, num2, num3, num4 };
+	return result;
+}
+
+bool Bill::operator<=(const Bill& bill) {
+	bool case1 = paperCash[0] <= bill.paperCash[0];
+	bool case2 = paperCash[1] <= bill.paperCash[1];
+	bool case3 = paperCash[2] <= bill.paperCash[2];
+	bool case4 = paperCash[3] <= bill.paperCash[3];
+	return (case1 & case2 & case3 & case4);
+}
+
+bool Bill::operator>=(const Bill& bill) {
+	bool case1 = paperCash[0] >= bill.paperCash[0];
+	bool case2 = paperCash[1] >= bill.paperCash[1];
+	bool case3 = paperCash[2] >= bill.paperCash[2];
+	bool case4 = paperCash[3] >= bill.paperCash[3];
+	return (case1 & case2 & case3 & case4);
+}
+bool Bill::operator<(const Bill& bill) {
+	bool case1 = paperCash[0] < bill.paperCash[0];
+	bool case2 = paperCash[1] < bill.paperCash[1];
+	bool case3 = paperCash[2] < bill.paperCash[2];
+	bool case4 = paperCash[3] < bill.paperCash[3];
+	return (case1 & case2 & case3 & case4);
+}
+
+bool Bill::operator>(const Bill& bill) {
+	bool case1 = paperCash[0] > bill.paperCash[0];
+	bool case2 = paperCash[1] > bill.paperCash[1];
+	bool case3 = paperCash[2] > bill.paperCash[2];
+	bool case4 = paperCash[3] > bill.paperCash[3];
+	return (case1 & case2 & case3 & case4);
+}
+
+void Bill::printBill() {
+	cout << "금액 : ";
+	for (int i = 0; i < 4; i++) {
+		cout << this->value[i] << "원 : " << this->paperCash[i] << "장 ";
+	}
+	cout << endl;
+	cout << "총 액수 : " << this->getSum() << "원" << endl;
+}

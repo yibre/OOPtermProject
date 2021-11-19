@@ -13,6 +13,7 @@ class Bank;
 class Bill;
 
 
+
 /***********************	Database	***********************/
 
 // 쓸 수 있으면 map 쓰는게 제일 좋을듯
@@ -61,6 +62,28 @@ public:
 	string getUserName() { return name; }
 };
 
+/***********************	  Bill  	***********************/
+
+class Bill {
+private:
+	int paperCash[4];
+	static int value[4];
+public:
+	Bill(int c50k, int c10k, int c5k, int c1k);
+	int getTotalNum();
+	int getSum();
+	void printBill();
+	Bill& operator+(const Bill& bill);
+	Bill& operator+=(const Bill& rhs);
+	Bill& operator-(const Bill& bill);
+	Bill& operator-=(const Bill& rhs);
+	Bill& operator*(int mul);
+	bool operator<=(const Bill& bill);
+	bool operator>=(const Bill& bill);
+	bool operator<(const Bill& bill);
+	bool operator>(const Bill& bill);
+};
+
 /***********************	  Bank  	***********************/
 
 class Bank {
@@ -94,8 +117,8 @@ public:
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
 	int getID() { return ID; }
+	void deposit(int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
 	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
-	void deposit(int type, int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
 	void remittance(int, int); // 송금 계좌번호, 액수 <- transfer로 이름 바꾸는거 건의(현주)
 	void withdrawal(int money); // 출금
 	void changeBalance(int money);
@@ -116,7 +139,6 @@ private:
 	Bank* ownerBank;
 	string adminID;
 	int adminpw;
-	int remainCash; // atm 내부 현금 총액; Bill.sum()으로 대체해보기
 	int remainCheck = 0; // atm 내부 수표 총액
 	int remainCheckNum = 0; // atm 내부 수표 갯수
 	int maxWithdrawal = 300000;
@@ -126,41 +148,22 @@ private:
 
 public:
 	ATM() { numID = 0; }
-	ATM(Bank* bank, string adminID, int adminPW, int cash, int check, bool engSupport);
+	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport);
 	~ATM() {}
 	bool checkID(char);
+	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
+	bool withdrawal(Bill money, Account* acc); // 출금함수, 출금액
 	bool checkPW(int);
-	bool deposit(int type, int money, int paperNum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
-	bool withdrawal(int money, Account* acc); // 출금함수, 출금액
 	bool transfer(int type, int money, Account* fromAcc, Account* toAcc); // int fee 없애는거 고려
 	void IncreaseID() { numID++; }
 	int getNumID() { return numID; }
-	int getATMremainCash() { return remainCash; }
+	int getATMremainCash() { return remainBill->getSum(); }
 	int getATMremainCheckNum() { return remainCheckNum; }
-	void insertCash(Bill cash) { *this->remainBill += cash;}
+	void insertCash(Bill cash) { *this->remainBill += cash; }
 	int fee(int, Account*, Account*);
+	void printATMremainCashNum() { this->remainBill->printBill(); };
+	bool compareBill(Bill subject) { return (*(this->remainBill) > subject); }
 	Bank* getBank() { return ownerBank; }
-};
-
-/***********************	  Bill  	***********************/
-
-class Bill {
-private:
-	int b1k = 0; // 천원권
-	int b5k = 0; // 오천원권
-	int b10k = 0; // 만원권
-	int b50k = 0; // 오만원권
-	// check도 액수 안다면 넣을 수 있다(현금들 기본 0으로 하고 check수만 넣는 C'tor)
-
-public:
-	Bill() {}
-	Bill(int n1k, int n5k, int n10k, int n50k);
-	// Bill(const Bill& rhs); // copy C'tor (필요한가?)
-	int sum();
-	void acceptCash() {/*구현필요*/ } // 현금 투입시
-	// 멤버변수 하나라도 0 안 되게 하기
-	void withdraw(/*구현필요*/) {/*구현필요*/ } // 출금시
-
 };
 
 /*******************	Other Functions 	*******************/
