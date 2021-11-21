@@ -124,6 +124,9 @@ int UI::run() {
 		case State::T_Transfer:
 			state = t_transfer();
 			break;
+		case State::SessionOver: // 세션 종료 단계 추가, 여기서 session history를 출력함
+			state = sessionOver();
+			break;
 		case State::End:
 			end();
 			// delete session (memory deallocation)
@@ -232,8 +235,6 @@ UI::State UI::verifyAdmin() {
 
 UI::State UI::showAdmin() {
 	// TODO: show history 
-	cout << "enter admin class" << endl;
-	database->addHistory("입금", 15000, acc, acc);
 	database->printHistory();
 	return State::GetAccountNum;
 }
@@ -278,6 +279,9 @@ UI::State UI::chooseTransaction() {
 	// from: verifyAccount
 	// from: t_askTransferType (if canceled)
 	string prompt = "\tWhat would you like to do?\n\t1. deposit\t 2. withdrawal\t 3. transfer\n\tCancel : -1\n";
+	
+	database->clearSessionHistory();
+	
 	int input = getInput(prompt, 3);
 	if (input == -1) {
 		// 취소시 카드 반환해 주고 카드 받는 단계로 돌아감
@@ -719,6 +723,12 @@ UI::State UI::t_transfer() {
 		}
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
+}
+
+UI::State UI::sessionOver() {
+	// database->printSessionHistory(SessionStartNum);
+	database->clearSessionHistory();
+	return State::GetAccountNum;
 }
 
 void UI::end() {

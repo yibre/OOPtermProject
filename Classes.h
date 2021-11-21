@@ -26,6 +26,7 @@ private:
 	static vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
 	static bool sessionProceeding; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
+	static int totalSessionNum; // 한 세션이 시작된 후 몇 번의 거래가 이루어졌는가, clearSessionHistory에서 사용
 public:
 	Database() {};
 	virtual ~Database() {};
@@ -38,14 +39,14 @@ public:
 	// void addATMHistory(string transactionType, int money, Account* account, Account* recieverAcc);
 	vector<vector<string> > getATMHistory() { return atmhis; }
 	vector<vector<string> > getSessionHistory() { return sessionhis; }
-	void addHistory(string, int, Account*, Account*);
+	void addHistory(string, int, int, Account*, Account*);
 	void printHistory();
 	// void printATMHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
 	int getIndexFromID(int);
 	void addSessionHistory(string, int, Account*);
-	void printSessionHistory(int, int);
+	void printSessionHistory(int);
 	void clearSessionHistory();
 };
 
