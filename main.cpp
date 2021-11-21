@@ -237,18 +237,18 @@ int main() {
 			for (;;) {
 
 				// cash transfer인지 account transfer인지 묻기
-				int transferType; // for loop 안에서의 local variable; 재정의 issue 없음
+				int transactionType; // for loop 안에서의 local variable; 재정의 issue 없음
 				for (;;) {
 					cout << "Please select transfer options. 원하시는 송금 옵션을 선택해 주십시오.\n\t1. cash transfer 현금 송금\t2. account transfer 계좌 송금\n\tcancel 취소: -1" << endl;
-					cin >> transferType; // Exception handling 필요
+					cin >> transactionType; // Exception handling 필요
 
 					if (cin.fail()) { cout << "Wrong input error. 잘못된 입력입니다.(code 701)" << endl; cin.clear(); cin.ignore(256, '\n'); }
-					else if (transferType == 1) { cout << "You have chosen [cash transfer]. 현금 송금을 선택하셨습니다." << endl; break; }
-					else if (transferType == 2) { cout << "You have chosen [account transfer]. 계좌 송금을 선택하셨습니다." << endl; break; }
-					else if (transferType == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
+					else if (transactionType == 1) { cout << "You have chosen [cash transfer]. 현금 송금을 선택하셨습니다." << endl; break; }
+					else if (transactionType == 2) { cout << "You have chosen [account transfer]. 계좌 송금을 선택하셨습니다." << endl; break; }
+					else if (transactionType == -1) { cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; break; }
 					else { cout << "Wrong input error. 잘못된 입력입니다.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 				}
-				if (transferType == -1) { UserStatus = 4; break; }
+				if (transactionType == -1) { UserStatus = 4; break; }
 
 				// 송금할 계좌 묻기
 				int toAccID;
@@ -297,7 +297,7 @@ int main() {
 				// 얼마나 송금할지 묻기
 				int transferMoney;
 				for (;;) {
-					if (transferType == 1) {
+					if (transactionType == 1) {
 						cout << "Please insert cash you would like to transfer. 송금할 현금을 투입해 주십시오.\n\tcancel 취소: -1" << endl; // 여기도 뒤로가기 기능 구현하고 싶은데 어떻게??
 						// 투입 valid한지 check하기(장수, 금액, 송금한도 등; 입금이랑 같이 사용할 수 있는 함수 만들기)
 						cin >> transferMoney; // Exception handling 필요
@@ -321,7 +321,7 @@ int main() {
 						cout << "Debug: Remaining cash of the ATM : " << A1->getATMremainCash() << endl;
 						break;
 					}
-					else if (transferType == 2) {
+					else if (transactionType == 2) {
 						cout << "Please input the amount of money you would like to transfer. 송금할 금액을 입력해 주십시오. (Your current balance 계좌 잔액: ";
 						cout << database->getAccountByNum(userIndex)->getBalance() << ")\n\tcancel 취소: -1" << endl;
 						// 액수 valid한지 check하기(계좌 잔액, 송금한도 등;)
@@ -354,13 +354,13 @@ int main() {
 					else { cout << "Wrong input error. 잘못된 입력입니다.(code 702)" << endl; cin.clear(); cin.ignore(256, '\n'); }
 				}
 				if (confirm == -1) {
-					if (transferType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
+					if (transactionType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
 					UserStatus = 4;
 					break;
 				}
 
 				// 송금함수 호출
-				bool success = A1->transfer(transferType, transferMoney, fromAcc, toAcc);
+				bool success = A1->transfer(transactionType, transferMoney, fromAcc, toAcc);
 				if (success) {
 					// 송금 확인되어 반환의 여지 없을 때 remainCash transferMoney만큼 늘리기
 					//A1->insertCash(transferMoney); // ATM A1이라고 가정 우선 실행을 위해 주석처리 하였음! 수정 필요
@@ -369,7 +369,7 @@ UserStatus = 4;
 				}
 				else {
 				cout << "Not enough balance error. 잔액이 부족합니다.(code 707)" << endl;
-				if (transferType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
+				if (transactionType == 1) { cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. Please make sure to take your cash. 투입구를 확인해주세요." << endl; }
 				UserStatus = 4;
 				}
 				break;
