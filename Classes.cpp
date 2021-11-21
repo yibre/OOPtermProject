@@ -8,6 +8,7 @@ bool Database::sessionProceeding = false;
 int Database::transactionOrder = 1;
 vector<vector<string > > Database::atmhis;
 vector<vector<string > > Database::sessionhis;
+int Database::totalSessionNum = 0;
 
 void Database::addAccountList(Account* newAccount) {
 	accountList[this->listsize] = newAccount;
@@ -32,22 +33,14 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
-void Database::addHistory(string transactionType, int money, Account* account, Account* recieverAcc) {
+void Database::addHistory(string transactionType, int before, int after, Account* account, Account* recieverAcc) {
 	int order = transactionOrder;
 	transactionOrder++;
+	totalSessionNum++;
 	string username = account->getOwner()->getUserName();
-	int before = account->getBalance();
-	int after;
 	string receiverName = "-";
-	if (transactionType == "입금") {
-		after = before + money;
-	}
-	else if (transactionType == "출금") {
-		after = before - money;
-	}
-	else if (transactionType == "송금") {
+	if (transactionType == "송금") {
 		receiverName = recieverAcc->getOwner()->getUserName();
-		after = before - money;
 	}
 	vector<string> temp;
 	temp.push_back(to_string(order));
@@ -89,7 +82,8 @@ void Database::addSessionHistory(string, int, Account* myAcc) {
 	
 }
 
-void Database::printSessionHistory(int start, int end) {
+void Database::printSessionHistory(int start) {
+	int end = start + totalSessionNum;
 	vector<string> column;
 	column.push_back("순서");
 	column.push_back("계좌주");
@@ -110,11 +104,14 @@ void Database::printSessionHistory(int start, int end) {
 }
 
 void Database::clearSessionHistory() {
+	totalSessionNum = 0;
+	/*
 	cout << sessionhis.size() << endl;
 	for (int i = 0; i < sessionhis.size() + 1; i++) {
 		cout << i << endl;
 		sessionhis.pop_back();
 	}
+	*/
 }
 /***********************	  User  	***********************/
 

@@ -37,6 +37,7 @@ private:
 		W_CheckATMBalance,
 		W_Confirm,
 		W_Withdrawal,
+		SessionOver,
 		End
 	}
 	state = State::GetAccountNum;
@@ -58,7 +59,8 @@ private:
 	Bill transactionBill = Bill{ 0,0,0,0 };
 	Database* database = nullptr; // database 사용 (바꿔야 할 수도)
 	ATM* atm = nullptr; // the ATM we are using
-
+	// int SessionStartNum = 0; // 한 거래가 진행될때마다 1로 증가
+	
 public:
 	int run();
 private:
@@ -96,5 +98,6 @@ private:
 	State t_askAmount_a();
 	State t_confirm();
 	State t_transfer();
+	State sessionOver();
 	void end();
 };
