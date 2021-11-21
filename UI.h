@@ -24,14 +24,6 @@ private:
 		T_Confirm,
 		T_Transfer,
 		Withdrawal,
-		Session1Prompt,
-		Session1Digit,
-		Session1Confirm,
-		Session2Prompt,
-		Session2Digit,
-		Session2Confirm,
-		Session3Prompt,
-		Session3Confirm,
 		End
 	}
 	state = State::GetAccountNum;
@@ -72,13 +64,5 @@ private:
 	State t_askAmount_a();
 	State t_confirm();
 	State t_transfer();
-	State Session1Prompt();
-	State session1Digit();
-	State session1Confirm();
-	State session2Prompt();
-	State session2Digit();
-	State session2Confirm();
-	State session3Prompt();
-	State session3Confirm();
 	void end();
 };

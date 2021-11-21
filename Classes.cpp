@@ -4,7 +4,7 @@
 
 Database* Database::instance;
 int Database::listsize = 0;
-bool Database::sessionEnd;
+bool Database::sessionProceeding = false;
 int Database::transactionOrder = 1;
 vector<vector<string > > Database::atmhis;
 vector<vector<string > > Database::sessionhis;
@@ -58,7 +58,7 @@ void Database::addHistory(string transactionType, int money, Account* account, A
 	temp.push_back(to_string(after));
 	temp.push_back(receiverName);
 	// vector<string> temp{ to_string(order), username, to_string(account->getID()), transactionType, to_string(before), to_string(after), receiverName };
-	sessionhis.push_back(temp);
+	atmhis.push_back(temp);
 }
 
 void Database::printHistory() {
@@ -74,9 +74,36 @@ void Database::printHistory() {
 		cout << column[i] << " ";
 	}
 	cout << endl;
-	for (int i = 0; i < sessionhis.size(); i++) {
+	for (int i = 0; i < atmhis.size(); i++) {
 		for (int j = 0; j < column.size(); j++) {
-			cout << sessionhis[i][j] << " ";
+			cout << atmhis[i][j] << " ";
+		}
+		cout << "\n" << endl;
+	}
+}
+
+void Database::addSessionHistory(string, int, Account* myAcc) {
+	// 거래 순서, 나간 금액, 들어온 금액, 계좌잔액
+	cout << "거래계좌: " << myAcc->getOwner()->getUserName() << endl;
+	vector<string> column;
+	
+}
+
+void Database::printSessionHistory(int start, int end) {
+	vector<string> column;
+	column.push_back("순서");
+	column.push_back("계좌주");
+	column.push_back("계좌번호");
+	column.push_back("거래 타입");
+	column.push_back("거래 전 잔액");
+	column.push_back("거래 후 잔액");
+	column.push_back("송금시 수신인");
+	for (int i = 0; i < column.size(); i++) {
+		cout << column[i] << " ";
+	}
+	for (int i = start; i < end; i++) {
+		for (int j = 0; j < column.size(); j++) {
+			cout << atmhis[i][j] << " ";
 		}
 		cout << "\n" << endl;
 	}

@@ -24,7 +24,7 @@ private:
 	static Database* instance; // 한 번만 생성되는 instance
 	static vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
 	static vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
-	static bool sessionEnd; // 세션이 진행 중일땐 false임
+	static bool sessionProceeding; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 public:
 	Database() {};
@@ -44,7 +44,8 @@ public:
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
 	int getIndexFromID(int);
-	// void printSessionHistory();
+	void addSessionHistory(string, int, Account*);
+	void printSessionHistory(int, int);
 	void clearSessionHistory();
 };
 

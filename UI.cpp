@@ -423,17 +423,6 @@ UI::State UI::t_transfer() {
 	}
 }
 
-UI::State UI::session3Confirm() {
-	string Number = to_string(FirstDigit) + to_string(SecondDigit);
-	int input = getInput("\tYour number: " + Number + "\n\tIs this final result correct?\t\t(1 to confirm; 0 to cancel)\n", 1);
-	if (input) {
-		cout << "\tYOUR NUMBER: " << Number << endl;
-		return State::End;
-	}
-	cout << "Canceled; Goto session 2" << endl;
-	return State::Session2Prompt;
-}
-
 void UI::end() {
 
 }
