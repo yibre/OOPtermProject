@@ -204,10 +204,7 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 
 bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 	int fee = this->fee(6, acc, nullptr);
-	if ((money.getSum() + fee) > acc->getBalance()) {
-		cout << "계좌에 잔액이 부족합니다. 다시 시도해주십시오." << endl;
-		return false;
-	}
+
 	acc->changeBalance(-(money.getSum() + fee));
 	*this->remainBill -= money;
 	cout << money.getSum() << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
