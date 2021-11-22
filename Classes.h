@@ -91,8 +91,8 @@ public:
 class Bank {
 private:
 	string ID; // bank는 B1, B2, B3 이렇게 시작
-	static int addID; // 0부터 시작해서 1씩 증가
-	string name;
+	static int addID; // 0부터 시작해서 1씩 증가; 어디에 쓰이는고? -(현주)
+	string name; // 현재 ID랑 name이랑 따로 있는 이유 있나? ID는 get할 수도 없는데... -(현주)
 	Account* accountlist[100];
 
 public:
@@ -146,11 +146,12 @@ private:
 	int maxWithdrawal = 300000;
 	int maxCashNumber = 100;
 	bool engSupport;
+	bool multiBank;
 	Bill* remainBill;
 
 public:
 	ATM() { numID = 0; }
-	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport);
+	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport, bool multiBank);
 	~ATM() {}
 	bool checkID(char);
 	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
@@ -166,6 +167,7 @@ public:
 	void printATMremainCashNum() { this->remainBill->printBill(); };
 	bool compareBill(Bill subject) { return (*(this->remainBill) > subject); }
 	Bank* getBank() { return ownerBank; }
+	bool isMultiBank() { return multiBank; }
 };
 
 /*******************	Other Functions 	*******************/

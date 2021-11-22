@@ -1,5 +1,5 @@
 #pragma once
-#include "Classes.h"
+#include "Classes.cpp" // 현주는 여기 .cpp로 바꿔쓰기
 #include <iostream>
 #include <string>
 
@@ -46,11 +46,11 @@ private:
 	int transactionType = 0;
 	int FirstDigit = 0; // needed to be deleted
 	int SecondDigit = 0; // needed to be deleted
-	int accID = -1;
-	int userIndex = -1;
-	Account* acc = nullptr;
-	int toAccID = -1;
-	Account* toAcc = nullptr; // 송금시에만 사용
+	int accID = -1; // 현재 계좌 index
+	// int userIndex = -1; // 현재 계좌번호(겹침)
+	Account* acc = nullptr; // 현재 계좌
+	int toAccID = -1; // 송금 상대 계좌 index; 송금시에만 사용
+	Account* toAcc = nullptr; // 송금 상대 계좌; 송금시에만 사용
 	int* depositCheckInput = new int[30];// 입금시에만 사용
 	int depositCheckNum = 0;// 입금시에만 사용
 	int depositCheckSum = 0;// 입금시에만 사용

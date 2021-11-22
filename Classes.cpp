@@ -170,8 +170,9 @@ bool Account::isPrimary(ATM* A) {
 
 /***********************	  ATM   	***********************/
 
-ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport) {
+ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport=1, bool multiBank=1) {
 	this->engSupport = engSupport;
+	this->multiBank = multiBank;
 	this->ownerBank = bank;
 	this->adminID = adminID;
 	this->adminpw = adminPW;
@@ -303,6 +304,9 @@ Bill& Bill::operator+(const Bill& bill) {
 	int num4 = paperCash[3] + bill.paperCash[3];
 	Bill result = Bill{ num1, num2, num3, num4 };
 	return result;
+	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
+	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
+	
 }
 
 Bill& Bill::operator+=(const Bill& rhs) {
@@ -311,6 +315,7 @@ Bill& Bill::operator+=(const Bill& rhs) {
 	this->paperCash[2] += rhs.paperCash[2];
 	this->paperCash[3] += rhs.paperCash[3];
 	return *this;
+	// 작동 확인 완료되었는지?
 }
 
 Bill& Bill::operator-(const Bill& bill) {
@@ -320,6 +325,8 @@ Bill& Bill::operator-(const Bill& bill) {
 	int num4 = paperCash[3] - bill.paperCash[3];
 	Bill result = Bill{ num1, num2, num3, num4 };
 	return result;
+	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
+	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
 }
 
 Bill& Bill::operator-=(const Bill& rhs) {
@@ -328,6 +335,7 @@ Bill& Bill::operator-=(const Bill& rhs) {
 	this->paperCash[2] -= rhs.paperCash[2];
 	this->paperCash[3] -= rhs.paperCash[3];
 	return *this;
+	// 작동 확인 완료되었는지?
 }
 
 Bill& Bill::operator*(const int mul) {
@@ -337,6 +345,8 @@ Bill& Bill::operator*(const int mul) {
 	int num4 = paperCash[3] * mul;
 	Bill result = Bill{ num1, num2, num3, num4 };
 	return result;
+	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
+	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
 }
 
 bool Bill::operator<=(const Bill& bill) {
@@ -345,6 +355,7 @@ bool Bill::operator<=(const Bill& bill) {
 	bool case3 = paperCash[2] <= bill.paperCash[2];
 	bool case4 = paperCash[3] <= bill.paperCash[3];
 	return (case1 & case2 & case3 & case4);
+	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
 }
 
 bool Bill::operator>=(const Bill& bill) {
@@ -353,6 +364,7 @@ bool Bill::operator>=(const Bill& bill) {
 	bool case3 = paperCash[2] >= bill.paperCash[2];
 	bool case4 = paperCash[3] >= bill.paperCash[3];
 	return (case1 & case2 & case3 & case4);
+	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
 }
 bool Bill::operator<(const Bill& bill) {
 	bool case1 = paperCash[0] < bill.paperCash[0];
@@ -360,6 +372,7 @@ bool Bill::operator<(const Bill& bill) {
 	bool case3 = paperCash[2] < bill.paperCash[2];
 	bool case4 = paperCash[3] < bill.paperCash[3];
 	return (case1 & case2 & case3 & case4);
+	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
 }
 
 bool Bill::operator>(const Bill& bill) {
@@ -368,6 +381,7 @@ bool Bill::operator>(const Bill& bill) {
 	bool case3 = paperCash[2] > bill.paperCash[2];
 	bool case4 = paperCash[3] > bill.paperCash[3];
 	return (case1 & case2 & case3 & case4);
+	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
 }
 
 void Bill::printBill() {

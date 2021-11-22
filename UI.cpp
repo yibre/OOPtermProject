@@ -11,8 +11,8 @@ int UI::run() {
 
 	Bill* A1_bill = new Bill(100, 200, 500, 1000);
 	Bill* A2_bill = new Bill(100, 100, 100, 100);
-	ATM* A1 = new ATM(uriBank, "admin", 1357, A1_bill, 100, true); // 0
-	ATM* A2 = new ATM(kakaoBank, "master", 2345, A2_bill, 0, false); // 1
+	ATM* A1 = new ATM(uriBank, "admin", 1357, A1_bill, 100, true, true); // 0; engSupport, multiBank
+	ATM* A2 = new ATM(kakaoBank, "master", 2345, A2_bill, 0, false, false); // 1; engUnsupport, singleBank
 
 	User* U1 = new User("U1", "최가난");
 	User* U2 = new User("U2", "권부자");
@@ -20,16 +20,17 @@ int UI::run() {
 	User* U4 = new User("U4", "김백규");
 	User* U5 = new User("U5", "버터");
 
-	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 1
+	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
 	DB->addAccountList(AC1);
-	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // 계좌번호 2
+	Account* AC2 = new Account(uriBank, U2, 3344, 3000000); // 계좌번호 1
 	DB->addAccountList(AC2);
-	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 계좌번호 3
+	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 계좌번호 2
 	DB->addAccountList(AC3);
-	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 4
+	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 3
 	DB->addAccountList(AC4);
 
-	atm = A1;
+	atm = A1; // atm 선택받기 구현하면 이거 없애줘야
+	// atm = A2; // (singleBank debugging용)
 	this->database = DB;
 
 	while (state != State::End) {
@@ -154,6 +155,8 @@ int UI::run() {
 	return 0;
 }
 
+/***********************	  cin functions  	***********************/
+
 int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enableCancel = true) { // maximum 미만, minimum 이상;
 	int input;
 	for (;;) {
@@ -178,6 +181,7 @@ int* UI::getInputArray(const string& prompt, int length, int maximum, int minimu
 			cin >> temp;
 			if (cin.fail()) { cout << "Wrong type error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 			if (enableCancel && temp == -1) { cin.clear(); cin.ignore(256, '\n'); break; } // -1은 취소 (range check 이전에 확인)
+				// enableCancel 제대로 작동하는지 debugging 완료
 			if (temp < minimum || temp > maximum) { cout << "Wrong range error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 			cin.ignore(256, '\n'); break;
 		}
@@ -190,45 +194,59 @@ int* UI::getInputArray(const string& prompt, int length, int maximum, int minimu
 	return input;
 }
 
+/***********************	 state functions  	***********************/
+
 UI::State UI::getATM() {
 	// 필요시 구현
 	return State::End;
 }
 
 UI::State UI::getAccountNum() {
+	accID, toAccID = -1; acc, toAcc = nullptr; // 혹시 모르니 초기화
 	cout << "\t[*** Welcome ***]" << endl;
 	cout << "Please insert your debit card(Enter the account number.)" << endl;
-	cout << "Account Num" << endl; // Debug
+	cout << "Debug: Account Num" << endl; // Debug
 	return State::AccessAccount;
 }
 
-UI::State UI::accessAccount() {
+UI::State UI::accessAccount() { // insert Card
 	// from: getAccountNum()
 	// 유저로부터 계좌번호 입력받는다
-	accountNum = getInput("your account: ", 100000);
+	accountNum = getInput("Your account: ", 100000); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
 
-	if (accountNum == 99999) {
+	if (accountNum == 99999) { // admin 계정일 때
 		return State::VerifyAdmin;
 	}
-	else if(accountNum == -1){
+	else if(accountNum == -1) { // cancel 선택되었을 때 (cancel 묻는 prompt 추가 필요)
 		cout << "Canceled; Goto session 0" << endl;
 		return State::End;
 	}
-	userIndex = database->getIndexFromID(accountNum);
-	if (userIndex == -1) {
+	accID = database->getIndexFromID(accountNum); // 계좌번호에 해당하는 ID(index)를 받음 (계좌번호 아직 한자리라서 index와 계좌번호가 구분이 안 됨)
+	if (accID == -1) { // 존재하지 않는 계좌일 경우; Debugging 필요
 		cout << "Canceled; Goto session 0" << endl;
 		return State::End;
 	}
-	acc = database->getAccountByNum(userIndex);
+	acc = database->getAccountByNum(accID); // Account*로
+	// if ATM이 singlebank이면
+	if (!atm->isMultiBank()) {
+		// ATM의 bank와 acc의 bank 같은지 체크
+		if (atm->getBank()->getBankName() != acc->getBank()->getBankName()) { // bank 다른 경우
+			cout << "본 ATM에서 지원하지 않는 은행의 계좌입니다. Unsupported card." << endl;
+			cout << "Your card has returned. 카드가 반환되었습니다. 투입구를 확인해 주십시오." << endl;
+			return State::GetAccountNum;
+		}
+	}
 	return State::CheckAccount;
+	// 여기서 하는 존재하지 않는 계좌/지원하지 않는 계좌 체크는 checkAccount 끝나고 나서 하는 게 맞지 않나?
 }
 
 UI::State UI::verifyAdmin() {
-	cout << "you inserted admin card." << endl;
+	// from: accessAccount (admin 계정일 때)
+	cout << "You have inserted admin card." << endl;
 	int input = getInput("Enter the password to access admin panel: ", 10000);
 	if (atm->checkPW(input)) { return State::ShowAdmin; }
 	else {
-		cout << "You entered wrong password." << endl;
+		cout << "You have entered wrong password." << endl;
 		return State::GetAccountNum;
 	}
 }
@@ -242,7 +260,7 @@ UI::State UI::showAdmin() {
 UI::State UI::checkAccount() {
 	// from: accessAccount
 	// 입력받은 계좌번호가 맞는지 물어본다 (생략가능한 단계)
-	string prompt = "\t your account number is: ";
+	string prompt = "\t Your account number is: ";
 	prompt += to_string(accountNum);
 	prompt += "\n\tIs this correct?\t\t(0 to confirm; -1 to cancel)\n";
 	int input = getInput(prompt, 0);
@@ -252,6 +270,11 @@ UI::State UI::checkAccount() {
 	else if (input == 0) {
 		return State::VerifyAccount;
 	}
+	else {
+		cout << "Debug: Unexpected behavior in UI::t_confirm" << endl;
+		return State::End;
+	}
+	// 이 함수에서 카드(계좌) valid한지, supported인지 체크하는 게 맞지 않나?
 }
 
 UI::State UI::verifyAccount() {
@@ -284,9 +307,9 @@ UI::State UI::chooseTransaction() {
 	
 	int input = getInput(prompt, 3);
 	if (input == -1) {
-		// 취소시 카드 반환해 주고 카드 받는 단계로 돌아감
-		cout << "Your card has returned." << endl;
-		return State::GetAccountNum;
+		// 취소시 카드 반환해 주고 sessionOver state로
+		cout << "Your card has returned. 카드가 반환되었습니다. 투입구를 확인해 주십시오." << endl;
+		return State::SessionOver;
 	}
 	if (input == 1) { return State::Deposit; }
 	else if (input == 2) { return State::Withdrawal; }
@@ -482,7 +505,7 @@ UI::State UI::w_askAmount() {
 	string prompt = "출금하실 금액을 입력해 주십시오. (단위 : 만원)\t";
 	prompt += "취소: -1\n";
 	
-	transactionAmount = getInput(prompt, 2000); //얼마로 해두는게 좋을까?
+	transactionAmount = getInput(prompt, 2000); // 얼마로 해두는게 좋을까?
 
 	if (transactionAmount == -1) {
 		cout << "출금을 취소하셨습니다." << endl;
@@ -726,7 +749,7 @@ UI::State UI::t_transfer() {
 }
 
 UI::State UI::sessionOver() {
-	// database->printSessionHistory(SessionStartNum);
+	// database->printSessionHistory(SessionStartNum); // session history를 출력
 	database->clearSessionHistory();
 	return State::GetAccountNum;
 }
