@@ -7,6 +7,7 @@
         "__split_buffer": "cpp",
         "memory": "cpp",
         "string": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "xstring": "cpp"
     }
 }
