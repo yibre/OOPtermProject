@@ -217,7 +217,7 @@ UI::State UI::accessAccount() { // insert Card
 	if (accountNum == 99999) { // admin 계정일 때
 		return State::VerifyAdmin;
 	}
-	else if(accountNum == -1) { // cancel 선택되었을 때 (cancel 묻는 prompt 추가 필요)
+	else if (accountNum == -1) { // cancel 선택되었을 때 (cancel 묻는 prompt 추가 필요)
 		cout << "Canceled; Goto session 0" << endl;
 		return State::End;
 	}
@@ -302,9 +302,7 @@ UI::State UI::chooseTransaction() {
 	// from: verifyAccount
 	// from: t_askTransferType (if canceled)
 	string prompt = "\tWhat would you like to do?\n\t1. deposit\t 2. withdrawal\t 3. transfer\n\tCancel : -1\n";
-	
-	database->clearSessionHistory();
-	
+
 	int input = getInput(prompt, 3);
 	if (input == -1) {
 		// 취소시 카드 반환해 주고 sessionOver state로
@@ -480,7 +478,7 @@ UI::State UI::d_confirmTotal() {
 UI::State UI::d_deposit() {
 	bool success = atm->deposit(transactionType, transactionBill, depositCheckInput, depositCheckNum, depositCheckSum, acc);
 	if (success) {
-		cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl; 
+		cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl;
 		return State::ChooseTransaction;
 	}
 	else {
@@ -504,7 +502,7 @@ UI::State UI::w_askAmount() {
 
 	string prompt = "출금하실 금액을 입력해 주십시오. (단위 : 만원)\t";
 	prompt += "취소: -1\n";
-	
+
 	transactionAmount = getInput(prompt, 2000); // 얼마로 해두는게 좋을까?
 
 	if (transactionAmount == -1) {
@@ -749,7 +747,7 @@ UI::State UI::t_transfer() {
 }
 
 UI::State UI::sessionOver() {
-	// database->printSessionHistory(SessionStartNum); // session history를 출력
+	database->printSessionHistory(); // session history를 출력
 	database->clearSessionHistory();
 	return State::GetAccountNum;
 }

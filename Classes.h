@@ -39,14 +39,14 @@ public:
 	// void addATMHistory(string transactionType, int money, Account* account, Account* recieverAcc);
 	vector<vector<string> > getATMHistory() { return atmhis; }
 	vector<vector<string> > getSessionHistory() { return sessionhis; }
-	void addHistory(string, int, int, Account*, Account*);
+	void addHistory(string type, int before, int after, Account* acc, Account* reciever);
 	void printHistory();
 	// void printATMHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
 	int getIndexFromID(int);
 	void addSessionHistory(string, int, Account*);
-	void printSessionHistory(int);
+	void printSessionHistory();
 	void clearSessionHistory();
 };
 
@@ -119,10 +119,7 @@ public:
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
 	int getID() { return ID; }
-	void deposit(int money); // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,};
 	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
-	void remittance(int, int); // 송금 계좌번호, 액수 <- transfer로 이름 바꾸는거 건의(현주)
-	void withdrawal(int money); // 출금
 	void changeBalance(int money);
 	void increaseID() { numID++; }
 	int getNumID() { return numID; }
@@ -136,6 +133,7 @@ public:
 
 class ATM { // Bank를 상속해도 될듯
 private:
+	Database* database;
 	string ID; // atm은 A1 A2 A3 이렇게 시작
 	static int numID; // id 부여용 넘버, 0부터 시작해서 1씩 증가
 	Bank* ownerBank;
