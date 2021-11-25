@@ -6,9 +6,10 @@ Database* Database::instance;
 int Database::listsize = 0;
 bool Database::sessionProceeding = false;
 int Database::transactionOrder = 1;
+int Database::totalSessionNum = 0;
 vector<vector<string > > Database::atmhis;
 vector<vector<string > > Database::sessionhis;
-int Database::totalSessionNum = 0;
+
 
 void Database::addAccountList(Account* newAccount) {
 	accountList[this->listsize] = newAccount;
@@ -35,11 +36,14 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 
 void Database::addHistory(string transactionType, int before, int after, Account* account, Account* recieverAcc) {
 	int order = transactionOrder;
+
+	cout << "total session number is " << totalSessionNum << endl;
+	cout << "transaction order is : " << transactionOrder << endl;
 	transactionOrder++;
 	totalSessionNum++;
 	string username = account->getOwner()->getUserName();
 	string receiverName = "-";
-	if (transactionType == "송금") {
+	if (transactionType == "transfer" || transactionType == "송금") {
 		receiverName = recieverAcc->getOwner()->getUserName();
 	}
 	vector<string> temp;
@@ -79,13 +83,12 @@ void Database::addSessionHistory(string, int, Account* myAcc) {
 	// 거래 순서, 나간 금액, 들어온 금액, 계좌잔액
 	cout << "거래계좌: " << myAcc->getOwner()->getUserName() << endl;
 	vector<string> column;
-	
+
 }
 
-void Database::printSessionHistory(int start) {
-	int end = start + totalSessionNum;
+void Database::printSessionHistory() {
+	int start = atmhis.size() - totalSessionNum;
 	vector<string> column;
-	column.push_back("순서");
 	column.push_back("계좌주");
 	column.push_back("계좌번호");
 	column.push_back("거래 타입");
@@ -95,8 +98,9 @@ void Database::printSessionHistory(int start) {
 	for (int i = 0; i < column.size(); i++) {
 		cout << column[i] << " ";
 	}
-	for (int i = start; i < end; i++) {
-		for (int j = 0; j < column.size(); j++) {
+	cout << endl;
+	for (int i = start; i < atmhis.size(); i++) {
+		for (int j = 1; j < column.size(); j++) {
 			cout << atmhis[i][j] << " ";
 		}
 		cout << "\n" << endl;
@@ -105,13 +109,12 @@ void Database::printSessionHistory(int start) {
 
 void Database::clearSessionHistory() {
 	totalSessionNum = 0;
-	/*
-	cout << sessionhis.size() << endl;
-	for (int i = 0; i < sessionhis.size() + 1; i++) {
-		cout << i << endl;
-		sessionhis.pop_back();
-	}
-	*/
+	
+	// cout << sessionhis.size() << endl;
+	// for (int i = 0; i < sessionhis.size() + 1; i++) {
+		// cout << i << endl;
+		// sessionhis.pop_back();
+	// }
 }
 /***********************	  User  	***********************/
 
@@ -142,14 +145,6 @@ bool Account::checkPassword(int uswerAnswer) {
 	if (this->password == uswerAnswer) { return true; }
 	else { return false; }
 }
-/*
-void Account::deposit(int money) { // 입금, 입금액 타입(캐시, 수표) 입금액 인풋,
-	this->balance += money;
-}
-
-void Account::withdrawal(int money) { // 출금
-	this->balance -= money;
-}*/
 
 /*	건의(윤성이에게 현주가)	*/
 
@@ -170,7 +165,9 @@ bool Account::isPrimary(ATM* A) {
 
 /***********************	  ATM   	***********************/
 
-ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport=1, bool multiBank=1) {
+ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport = 1, bool multiBank = 1) {
+	database = Database::getInstance();
+	
 	this->engSupport = engSupport;
 	this->multiBank = multiBank;
 	this->ownerBank = bank;
@@ -195,6 +192,8 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 		this->remainCheckNum += checkNum;
 		cout << checkSum - fee << "원이 입금되었습니다." << endl;
 	}
+	database->addHistory("입금", acc->getBalance(), money.getSum() - fee, acc, acc);
+
 	cout << "수수료 : " << fee << " 원" << endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
 	return true;
@@ -202,12 +201,15 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 
 bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 	int fee = this->fee(6, acc, nullptr);
-
+	int before = acc->getBalance();
 	acc->changeBalance(-(money.getSum() + fee));
 	*this->remainBill -= money;
 	cout << money.getSum() << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
 	cout << "수수료 : " << fee << " 원" << endl;
 	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
+
+	database->addHistory("출금", before, acc->getBalance(), acc, acc);
+
 	return true;
 }
 
@@ -218,6 +220,7 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 	cout << toAcc->getBalance() << "]원" << endl;
 
 	int fee = this->fee(7, fromAcc, toAcc);
+	int before = fromAcc->getBalance();
 
 	if (type == 1) {
 		if (fromAcc->getBalance() >= fee) {
@@ -230,6 +233,9 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 			cout << toAcc->getBalance() << "]원" << endl;
+
+			int after = fromAcc->getBalance();
+			database->addHistory("송금", before, after, fromAcc, toAcc);
 		}
 		else { cout << "Debug: 잔액 부족" << endl; return false; }
 	}
@@ -244,12 +250,14 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
 			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
 			cout << toAcc->getBalance() << "]원" << endl;
+
+			int after = fromAcc->getBalance();
+			database->addHistory("송금", before, after, fromAcc, toAcc);
+
 		}
 		else { cout << "Debug: 잔액 부족" << endl; return false; }
 	}
 
-
-	// transaction history 저장
 	return true;
 }
 
@@ -306,7 +314,7 @@ Bill& Bill::operator+(const Bill& bill) {
 	return result;
 	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
 	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
-	
+
 }
 
 Bill& Bill::operator+=(const Bill& rhs) {

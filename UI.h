@@ -1,5 +1,5 @@
 #pragma once
-#include "Classes.cpp" // 현주는 여기 .cpp로 바꿔쓰기
+#include "Classes.h" // 현주는 여기 .cpp로 바꿔쓰기
 #include <iostream>
 #include <string>
 
@@ -60,7 +60,7 @@ private:
 	Database* database = nullptr; // database 사용 (바꿔야 할 수도)
 	ATM* atm = nullptr; // the ATM we are using
 	// int SessionStartNum = 0; // 한 거래가 진행될때마다 1로 증가
-	
+
 public:
 	int run();
 private:
