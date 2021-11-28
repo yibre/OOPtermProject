@@ -9,6 +9,7 @@ int Database::transactionOrder = 1;
 int Database::totalSessionNum = 0;
 vector<vector<string > > Database::atmhis;
 vector<vector<string > > Database::sessionhis;
+Translation* Database::languagePack = new Translation();
 
 
 void Database::addAccountList(Account* newAccount) {
@@ -37,8 +38,8 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 void Database::addHistory(string transactionType, int before, int after, Account* account, Account* recieverAcc) {
 	int order = transactionOrder;
 
-	cout << "total session number is " << totalSessionNum << endl;
-	cout << "transaction order is : " << transactionOrder << endl;
+	cout << languagePack->getSentence("Database_addHistory0") << totalSessionNum << endl;
+	cout << languagePack->getSentence("Database_addHistory1") << transactionOrder << endl;
 	transactionOrder++;
 	totalSessionNum++;
 	string username = account->getOwner()->getUserName();
@@ -60,13 +61,13 @@ void Database::addHistory(string transactionType, int before, int after, Account
 
 void Database::printHistory() {
 	vector<string> column;
-	column.push_back("순서");
-	column.push_back("계좌주");
-	column.push_back("계좌번호");
-	column.push_back("거래 타입");
-	column.push_back("거래 전 잔액");
-	column.push_back("거래 후 잔액");
-	column.push_back("송금시 수신인");
+	column.push_back(languagePack->getSentence("Database_printHistory0.1"));
+	column.push_back(languagePack->getSentence("Database_printHistory0.2"));
+	column.push_back(languagePack->getSentence("Database_printHistory0.3"));
+	column.push_back(languagePack->getSentence("Database_printHistory0.4"));
+	column.push_back(languagePack->getSentence("Database_printHistory0.5"));
+	column.push_back(languagePack->getSentence("Database_printHistory0.6"));
+	column.push_back(languagePack->getSentence("Database_printHistory0.7"));
 	for (int i = 0; i < column.size(); i++) {
 		cout << column[i] << " ";
 	}
@@ -81,7 +82,7 @@ void Database::printHistory() {
 
 void Database::addSessionHistory(string, int, Account* myAcc) {
 	// 거래 순서, 나간 금액, 들어온 금액, 계좌잔액
-	cout << "거래계좌: " << myAcc->getOwner()->getUserName() << endl;
+	cout << languagePack->getSentence("Database_addSessionHistory0") << myAcc->getOwner()->getUserName() << endl;
 	vector<string> column;
 
 }
@@ -89,12 +90,12 @@ void Database::addSessionHistory(string, int, Account* myAcc) {
 void Database::printSessionHistory() {
 	int start = atmhis.size() - totalSessionNum;
 	vector<string> column;
-	column.push_back("계좌주");
-	column.push_back("계좌번호");
-	column.push_back("거래 타입");
-	column.push_back("거래 전 잔액");
-	column.push_back("거래 후 잔액");
-	column.push_back("송금시 수신인");
+	column.push_back(languagePack->getSentence("Database_printSessionHistory0.1"));
+	column.push_back(languagePack->getSentence("Database_printSessionHistory0.2"));
+	column.push_back(languagePack->getSentence("Database_printSessionHistory0.3"));
+	column.push_back(languagePack->getSentence("Database_printSessionHistory0.4"));
+	column.push_back(languagePack->getSentence("Database_printSessionHistory0.5"));
+	column.push_back(languagePack->getSentence("Database_printSessionHistory0.6"));
 	for (int i = 0; i < column.size(); i++) {
 		cout << column[i] << " ";
 	}
@@ -109,7 +110,7 @@ void Database::printSessionHistory() {
 
 void Database::clearSessionHistory() {
 	totalSessionNum = 0;
-	
+
 	// cout << sessionhis.size() << endl;
 	// for (int i = 0; i < sessionhis.size() + 1; i++) {
 		// cout << i << endl;
@@ -167,7 +168,7 @@ bool Account::isPrimary(ATM* A) {
 
 ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport = 1, bool multiBank = 1) {
 	database = Database::getInstance();
-	
+
 	this->engSupport = engSupport;
 	this->multiBank = multiBank;
 	this->ownerBank = bank;
@@ -175,27 +176,30 @@ ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool en
 	this->adminpw = adminPW;
 	this->remainBill = bill;
 	this->remainCheck = check;
+	this->languagePack = new Translation();
 }
 
 
 bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc) { // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	int fee = this->fee(5, acc, nullptr);
-
+	int before = acc->getBalance();
 	if (type == 1) {
-		acc->changeBalance(money.getSum());
+		acc->changeBalance(money.getSum() - fee);
 		*this->remainBill += money;
-		cout << money.getSum() - fee << "원이 입금되었습니다." << endl;
+		cout << money.getSum() - fee << languagePack->getSentence("ATM_deposit0");
+		database->addHistory("입금", before, acc->getBalance(), acc, acc);
 	}
 	else if (type == 2) {
-		acc->changeBalance(checkSum);
+		acc->changeBalance(checkSum - fee);
 		this->remainCheck += checkSum;
 		this->remainCheckNum += checkNum;
-		cout << checkSum - fee << "원이 입금되었습니다." << endl;
+		cout << checkSum - fee << languagePack->getSentence("ATM_deposit1");
+		database->addHistory("입금", before, acc->getBalance(), acc, acc);
 	}
-	database->addHistory("입금", acc->getBalance(), money.getSum() - fee, acc, acc);
+	
 
-	cout << "수수료 : " << fee << " 원" << endl;
-	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
+	cout << languagePack->getSentence("ATM_deposit2.1") << fee << languagePack->getSentence("ATM_deposit2.2");
+	cout << languagePack->getSentence("ATM_deposit3.1") << acc->getBalance() << languagePack->getSentence("ATM_deposit3.2");
 	return true;
 }
 
@@ -204,9 +208,9 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 	int before = acc->getBalance();
 	acc->changeBalance(-(money.getSum() + fee));
 	*this->remainBill -= money;
-	cout << money.getSum() << "원이 출금되었습니다. 투입구를 확인해주십시오." << endl;
-	cout << "수수료 : " << fee << " 원" << endl;
-	cout << "잔액 : " << acc->getBalance() << " 원" << endl;
+	cout << money.getSum() << languagePack->getSentence("ATM_withdrawal0");
+	cout << languagePack->getSentence("ATM_withdrawal1.1") << fee << languagePack->getSentence("ATM_withdrawal1.2");
+	cout << languagePack->getSentence("ATM_withdrawal2.1") << acc->getBalance() << languagePack->getSentence("ATM_withdrawal2.2");
 
 	database->addHistory("출금", before, acc->getBalance(), acc, acc);
 
@@ -214,10 +218,10 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 }
 
 bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
-	cout << "Debug: ATM::transfer called" << endl;
-	cout << "Debug: (송금 전)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
-	cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
-	cout << toAcc->getBalance() << "]원" << endl;
+	cout << languagePack->getSentence("ATM_transfer0.1");
+	cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
+	cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
+	cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer0.5");
 
 	int fee = this->fee(7, fromAcc, toAcc);
 	int before = fromAcc->getBalance();
@@ -227,35 +231,35 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 			fromAcc->changeBalance(-fee);
 			toAcc->changeBalance(money);
 
-			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
-			cout << "] 님에게 송금 완료되었습니다." << endl;
+			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			cout << languagePack->getSentence("ATM_transfer1.3");
 
-			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
-			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
-			cout << toAcc->getBalance() << "]원" << endl;
+			cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
+			cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
+			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
 			database->addHistory("송금", before, after, fromAcc, toAcc);
 		}
-		else { cout << "Debug: 잔액 부족" << endl; return false; }
+		else { cout << languagePack->getSentence("ATM_transfer3"); return false; }
 	}
 	else if (type == 2) {
 		if (fromAcc->getBalance() >= (money + fee)) {
 			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
 
-			cout << "\t" << money << "원이 [" << toAcc->getOwner()->getUserName();
-			cout << "] 님에게 송금 완료되었습니다." << endl;
+			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			cout << languagePack->getSentence("ATM_transfer1.3");
 
-			cout << "Debug: (송금 후)\nfrom account [" << fromAcc->getID() << "]\t 현재 잔액: [";
-			cout << fromAcc->getBalance() << "]원\nto account [" << toAcc->getID() << "]\t 현재 잔액: [";
-			cout << toAcc->getBalance() << "]원" << endl;
+			cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
+			cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
+			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
 			database->addHistory("송금", before, after, fromAcc, toAcc);
 
 		}
-		else { cout << "Debug: 잔액 부족" << endl; return false; }
+		else { cout << languagePack->getSentence("ATM_transfer6"); return false; }
 	}
 
 	return true;
@@ -280,7 +284,7 @@ int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송�
 		else if (a1->isPrimary(this) || a2->isPrimary(this)) { return 2000; } // prim-nonp
 		else { return 2500; } // nonp-nonp
 	}
-	else { cout << "Debug: Wrong transactionType in int ATM::fee(int, Bank*, Bank*)" << endl; exit(0); }
+	else { cout << languagePack->getSentence("ATM_fee0");; exit(0); }
 }
 
 /***********************	  Bill  	***********************/
@@ -392,11 +396,13 @@ bool Bill::operator>(const Bill& bill) {
 	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
 }
 
-void Bill::printBill() {
-	cout << "금액 : ";
+void Bill::printBill(bool isKor) {
+	if (isKor) { languagePack->changeLanguage("KOR"); }
+	else { languagePack->changeLanguage("EN"); }
+	cout << languagePack->getSentence("Bill_printBill0.1");
 	for (int i = 0; i < 4; i++) {
-		cout << this->value[i] << "원 : " << this->paperCash[i] << "장 ";
+		cout << this->value[i] << languagePack->getSentence("Bill_printBill0.2") << this->paperCash[i] << languagePack->getSentence("Bill_printBill0.3");
 	}
 	cout << endl;
-	cout << "총 액수 : " << this->getSum() << "원" << endl;
+	cout << languagePack->getSentence("Bill_printBill0.4") << this->getSum() << languagePack->getSentence("Bill_printBill0.5");
 }
