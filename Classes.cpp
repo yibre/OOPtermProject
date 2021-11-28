@@ -35,7 +35,7 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
-void Database::addHistory(string transactionType, int before, int after, Account* account, Account* recieverAcc) {
+void Database::addHistory(string transactionType, int before, int after, Account* account, Account* receiverAcc) { // classes.h에서와 변수이름 다르다
 	int order = transactionOrder;
 
 	cout << languagePack->getSentence("Database_addHistory0") << totalSessionNum << endl;
@@ -45,7 +45,7 @@ void Database::addHistory(string transactionType, int before, int after, Account
 	string username = account->getOwner()->getUserName();
 	string receiverName = "-";
 	if (transactionType == "transfer" || transactionType == "송금") {
-		receiverName = recieverAcc->getOwner()->getUserName();
+		receiverName = receiverAcc->getOwner()->getUserName();
 	}
 	vector<string> temp;
 	temp.push_back(to_string(order));
@@ -217,7 +217,7 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 	return true;
 }
 
-bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
+bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill) {
 	cout << languagePack->getSentence("ATM_transfer0.1");
 	cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
 	cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
@@ -226,10 +226,14 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 	int fee = this->fee(7, fromAcc, toAcc);
 	int before = fromAcc->getBalance();
 
-	if (type == 1) {
+	if (type == 1) { // cash transfer
 		if (fromAcc->getBalance() >= fee) {
 			fromAcc->changeBalance(-fee);
 			toAcc->changeBalance(money);
+			
+			// 송금 확인되어 반환의 여지 없을 때 remainCash transactionBill만큼 늘리기
+			*(this->remainBill) += bill;
+			bill = Bill{0,0,0,0};
 
 			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
 			cout << languagePack->getSentence("ATM_transfer1.3");
@@ -243,7 +247,7 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc) {
 		}
 		else { cout << languagePack->getSentence("ATM_transfer3"); return false; }
 	}
-	else if (type == 2) {
+	else if (type == 2) { // account transfer
 		if (fromAcc->getBalance() >= (money + fee)) {
 			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);

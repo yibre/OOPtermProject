@@ -38,10 +38,10 @@ public:
 	}
 	void addAccountList(Account*);
 	Account* getAccountByNum(int index);
-	// void addATMHistory(string transactionType, int money, Account* account, Account* recieverAcc);
-	vector<vector<string> > getATMHistory() { return atmhis; }
-	vector<vector<string> > getSessionHistory() { return sessionhis; }
-	void addHistory(string type, int before, int after, Account* acc, Account* reciever);
+	// void addATMHistory(string transactionType, int money, Account* account, Account* receiverAcc);
+	vector<vector<string> > getATMHistory() { return atmhis; } // atmHis면 더 좋겠다 (-현주)
+	vector<vector<string> > getSessionHistory() { return sessionhis; } // sessionHis면 더 좋겠다 (-현주)
+	void addHistory(string type, int before, int after, Account* acc, Account* receiver); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
 	void printHistory();
 	// void printATMHistory();
 	void sizeincrease() { listsize++; };
@@ -160,7 +160,7 @@ public:
 	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(Bill money, Account* acc); // 출금함수, 출금액
 	bool checkPW(int);
-	bool transfer(int type, int money, Account* fromAcc, Account* toAcc); // int fee 없애는거 고려
+	bool transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill); // int fee 없애는거 고려
 	void IncreaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getATMremainCash() { return remainBill->getSum(); }
@@ -173,6 +173,7 @@ public:
 	bool isMultiBank() { return multiBank; }
 	bool isEnglishSupport() { return engSupport; }
 	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
+  Bill insertedBill = Bill{0,0,0,0}; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
 };
 
 /*******************	Other Functions 	*******************/
