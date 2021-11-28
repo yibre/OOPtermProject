@@ -301,8 +301,11 @@ UI::State UI::enterAdmin() {
 UI::State UI::chooseTransaction() {
 	// from: verifyAccount
 	// from: t_askTransferType (if canceled)
+	atm->insertedBill = Bill{0,0,0,0}; // 혹시 모르니 초기화 (송금)
+	transactionAmount = 0; // 혹시 모르니 초기화 (송금)
+	
 	string prompt = "\tWhat would you like to do?\n\t1. deposit\t 2. withdrawal\t 3. transfer\n\tCancel : -1\n";
-
+	
 	int input = getInput(prompt, 3);
 	if (input == -1) {
 		// 취소시 카드 반환해 주고 sessionOver state로
@@ -359,11 +362,11 @@ UI::State UI::d_askAmount_Cash() {
 	prompt += "취소 : -1\n";
 	int* input;
 	input = getInputArray(prompt, 4, 500);
-	if (input[0] == -1) {
+	if (input[0] == -1) { // input[1] == -1이면 어떻게 되나?
 		cout << "입금을 취소하셨습니다." << endl;
 		return State::ChooseTransaction;
 	}
-	transactionBill = Bill{ input[0], input[1], input[2], input[3] };
+	transactionBill = Bill{ input[0], input[1], input[2], input[3] }; // 얘랑
 	if (transactionBill.getTotalNum() > 50) {
 		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl;
 		return State::D_AskAmount_Cash;
@@ -372,7 +375,7 @@ UI::State UI::d_askAmount_Cash() {
 		cout << "투입구에 현금이 들어있지 않습니다. 다시 시도해주십시오." << endl;
 		return State::D_AskAmount_Cash;
 	}
-	transactionBill = Bill{ input[0], input[1], input[2], input[3] };
+	transactionBill = Bill{ input[0], input[1], input[2], input[3] }; // 얘는 왜 중복?
 	return State::D_Confirm_Cash;
 }
 
@@ -639,26 +642,43 @@ UI::State UI::t_askAmount_c() {
 
 	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
 
-	int input;
 	transactionAmount = 0; // = insertedBill.sum();
 	string prompt = "Please insert cash you would like to transfer.";
-	prompt += " 송금할 현금을 투입해 주십시오.\n\tcancel 취소: -1\n";
+	prompt += " 송금할 현금을 투입해 주십시오. (5만원권, 1만원권, 5천원권, 1천원권 개수 순으로 입력)";
+	prompt += "\n\tcancel 취소: -1\n";
 	// 투입 valid한지 check; Bill 사용하게 바꾸기 (입금쪽에서 구현된 함수 사용)
-	// transactionAmount = insertedBill.sum();
-	cout << "Debug: cash transfer; transfer amount: ";
-	cin >> transactionAmount; // temporary; to be done
 
-	// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3
+	int* inputArr;
+	inputArr = getInputArray(prompt, 4, 500);
+	if (inputArr[0] == -1) {
+		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
+		cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. ";
+		cout << "Please make sure to take your cash. 투입구를 확인해주세요." << endl;
+		return State::ChooseTransaction;
+	}
+	atm->insertedBill = Bill{ inputArr[0], inputArr[1], inputArr[2], inputArr[3] }; //얘랑
+	if (atm->insertedBill.getTotalNum() > 50) {
+		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl;
+		return State::T_AskAmount_C;
+	}
+	if (atm->insertedBill.getTotalNum() == 0) {
+		cout << "투입구에 현금이 들어있지 않습니다. 다시 시도해주십시오." << endl;
+		return State::T_AskAmount_C;
+	}
+	atm->insertedBill = Bill{ inputArr[0], inputArr[1], inputArr[2], inputArr[3] }; // 얘는 왜 중복?
+	transactionAmount = atm->insertedBill.getSum();
+
+	// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3 (함수로 따로 빼기)
+	int input;
 	prompt = "투입하신 금액을 확인해 주십시오.\n\t[" + std::to_string(transactionAmount);
 	prompt += "]원\n\t0. confirm 확인\n\tcancel 취소: -1\n";
 	input = getInput(prompt, 0);
-	// 이부분 따로 함수로 빼기
 
 	if (input == 0) { return State::T_Confirm; }
 	if (input == -1) {
 		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
-		cout << "Your cash has returned. 투입하신 현금이 반환되었습니다.";
-		cout << " Please make sure to take your cash. 투입구를 확인해주세요." << endl;
+		cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. ";
+		cout << "Please make sure to take your cash. 투입구를 확인해주세요." << endl;
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
 
@@ -671,23 +691,34 @@ UI::State UI::t_askAmount_a() {
 	// from: t_askToAcc (when transactionType == 2)
 
 	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
-
+	
+	atm->insertedBill = Bill{0,0,0,0};
 	transactionAmount = 0;
 	string prompt = "Please enter the amount of money you would like to transfer.";
 	prompt += " 송금할 금액을 입력해 주십시오. (Your current balance 계좌 잔액: ";
 	prompt += std::to_string(acc->getBalance());
 	prompt += ")\n\tcancel 취소: -1\n";
+	
 	// 액수 valid한지 check하기(계좌 잔액, 송금한도 등;) - to be done
+	int input;
+	input = getInput(prompt, 2000001); // 송금한도액? (일단 200만원으로)
+	if (input == -1) {
+		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
+		return State::ChooseTransaction; // 어디로 가게 할 것?
+	}
 	/*
 	if (transferMoney > fromAcc->getBalance()) {
 		cout << "Not enough balance error. 잔액이 부족합니다.(code 706)" << endl; // 잔액 부족 말하기는 최종 송금 확인 후에만 할까? (수수료 고려 위해)
 	}
 	*/
-	cout << "Debug: account transfer; transfer amount: ";
-	cin >> transactionAmount; // temporary; to be done
-
-	int input;
+	
+	transactionAmount = input;
+	
+	// 액수 묻기 (cancel을 다시 입력으로 보고 함수로 따로 빼기)
+	prompt = std::to_string(transactionAmount);
+	prompt += " 원이 맞습니까?\n\t0. confirm 확인\n\tcancel 취소: -1\n";
 	input = getInput(prompt, 0);
+	
 	if (input == 0) { return State::T_Confirm; }
 	if (input == -1) {
 		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
@@ -726,14 +757,13 @@ UI::State UI::t_confirm() {
 
 UI::State UI::t_transfer() {
 	// from: t_confirm
-	bool success = atm->transfer(transactionType, transactionAmount, acc, toAcc);
+	bool success = atm->transfer(transactionType, transactionAmount, acc, toAcc, transactionBill);
 	if (success) {
-		// 송금 확인되어 반환의 여지 없을 때 remainCash transferAmount만큼 늘리기
 		if (transactionType == 1) {
-			// atm->insertCash(transactionAmount); // Bill class 구현에 따라 다를 수 있음
 			cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl; // 수정 필요
 		}
 		// 명세표 출력?
+		// database->addHistory("송금", before, after, acc, toAcc); // 도연이가 함수안에 만들어놓은듯?
 		return State::ChooseTransaction;
 	}
 	else {
