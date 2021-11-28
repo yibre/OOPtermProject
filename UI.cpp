@@ -35,6 +35,9 @@ int UI::run() {
 
 	while (state != State::End) {
 		switch (state) {
+		case State::ChangeLanguage:
+			state = changeLanguage();
+			break;
 		case State::GetAccountNum: // 계좌번호 입력, 한 영 선택
 			state = getAccountNum();
 			break;
@@ -157,7 +160,7 @@ int UI::run() {
 
 /***********************	  cin functions  	***********************/
 
-int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enableCancel = true) { // maximum 미만, minimum 이상;
+int UI::getInput(const string& prompt, int maximum, int minimum = 0,  bool languageCheck = false, bool enableCancel = true) { // maximum 미만, minimum 이상;
 	int input;
 	for (;;) {
 		cout << prompt;
@@ -165,6 +168,7 @@ int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enable
 		cin >> input;
 		if (cin.fail()) { cout << "Wrong type error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 		if (enableCancel && input == -1) { cin.clear(); cin.ignore(256, '\n'); break; } // -1은 취소 (range check 이전에 확인)
+		if (languageCheck && input == -2) { cin.ignore(256, '\n'); break; }
 		if (input < minimum || input > maximum) { cout << "Wrong range error" << endl; cin.clear(); cin.ignore(256, '\n'); continue; }
 		cin.ignore(256, '\n'); break;
 	}
@@ -172,7 +176,7 @@ int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enable
 }
 
 int* UI::getInputArray(const string& prompt, int length, int maximum, int minimum = 0, bool enableCancel = true) { // maximum 미만, minimum 이상;
-	int *input = new int[30];
+	int* input = new int[30];
 	cout << prompt;
 	cout.flush(); // Similar to endl, without new line.
 	for (int i = 0; i < length; i++) {
@@ -195,6 +199,30 @@ int* UI::getInputArray(const string& prompt, int length, int maximum, int minimu
 }
 
 /***********************	 state functions  	***********************/
+UI::State UI::changeLanguage() {
+	string prompt = "\t한국어 : 0\n\tEnglish : 1\n\t취소(Cancel) : -1\n";
+	int input = getInput(prompt, 1);
+	if (input == 0) {
+		database->changeLanguage("KOR");
+		atm->changeLanguage("KOR");
+		languagePack->changeLanguage("KOR");
+		cout << languagePack->getSentence("UI_changeLanguage0");
+	}
+	else if (input == 1) {
+		database->changeLanguage("EN");
+		atm->changeLanguage("EN");
+		languagePack->changeLanguage("EN");
+		cout << languagePack->getSentence("UI_changeLanguage0");
+	}
+	else if (input == -1) {
+		cout << languagePack->getSentence("UI_changeLanguage1");
+	}
+	else {
+		cout << languagePack->getSentence("UI_changeLanguage2");
+	}
+	return State::GetAccountNum;
+}
+
 
 UI::State UI::getATM() {
 	// 필요시 구현
@@ -203,27 +231,31 @@ UI::State UI::getATM() {
 
 UI::State UI::getAccountNum() {
 	accID, toAccID = -1; acc, toAcc = nullptr; // 혹시 모르니 초기화
-	cout << "\t[*** Welcome ***]" << endl;
-	cout << "Please insert your debit card(Enter the account number.)" << endl;
-	cout << "Debug: Account Num" << endl; // Debug
+	cout << languagePack->getSentence("UI_getAccountNum0"); // Debug
+	if (atm->isEnglishSupport()) {
+		cout << "언어 선택(Choose Language) : -2" << endl;
+	}
 	return State::AccessAccount;
 }
 
 UI::State UI::accessAccount() { // insert Card
 	// from: getAccountNum()
 	// 유저로부터 계좌번호 입력받는다
-	accountNum = getInput("Your account: ", 100000); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
+	accountNum = getInput(languagePack->getSentence("UI_accessAccount0"), 100000, 0, true, true); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
 
 	if (accountNum == 99999) { // admin 계정일 때
 		return State::VerifyAdmin;
 	}
 	else if (accountNum == -1) { // cancel 선택되었을 때 (cancel 묻는 prompt 추가 필요)
-		cout << "Canceled; Goto session 0" << endl;
+		cout << languagePack->getSentence("UI_accessAccount1");
 		return State::End;
+	}
+	else if (accountNum == -2) {
+		return State::ChangeLanguage;
 	}
 	accID = database->getIndexFromID(accountNum); // 계좌번호에 해당하는 ID(index)를 받음 (계좌번호 아직 한자리라서 index와 계좌번호가 구분이 안 됨)
 	if (accID == -1) { // 존재하지 않는 계좌일 경우; Debugging 필요
-		cout << "Canceled; Goto session 0" << endl;
+		cout << languagePack->getSentence("UI_accessAccount1");
 		return State::End;
 	}
 	acc = database->getAccountByNum(accID); // Account*로
@@ -231,8 +263,7 @@ UI::State UI::accessAccount() { // insert Card
 	if (!atm->isMultiBank()) {
 		// ATM의 bank와 acc의 bank 같은지 체크
 		if (atm->getBank()->getBankName() != acc->getBank()->getBankName()) { // bank 다른 경우
-			cout << "본 ATM에서 지원하지 않는 은행의 계좌입니다. Unsupported card." << endl;
-			cout << "Your card has returned. 카드가 반환되었습니다. 투입구를 확인해 주십시오." << endl;
+			cout << languagePack->getSentence("UI_accessAccount2");
 			return State::GetAccountNum;
 		}
 	}
@@ -242,11 +273,11 @@ UI::State UI::accessAccount() { // insert Card
 
 UI::State UI::verifyAdmin() {
 	// from: accessAccount (admin 계정일 때)
-	cout << "You have inserted admin card." << endl;
-	int input = getInput("Enter the password to access admin panel: ", 10000);
+	cout << languagePack->getSentence("UI_verifyAdmin0");
+	int input = getInput(languagePack->getSentence("UI_verifyAdmin1"), 10000);
 	if (atm->checkPW(input)) { return State::ShowAdmin; }
 	else {
-		cout << "You have entered wrong password." << endl;
+		cout << languagePack->getSentence("UI_verifyAdmin2");
 		return State::GetAccountNum;
 	}
 }
@@ -260,9 +291,9 @@ UI::State UI::showAdmin() {
 UI::State UI::checkAccount() {
 	// from: accessAccount
 	// 입력받은 계좌번호가 맞는지 물어본다 (생략가능한 단계)
-	string prompt = "\t Your account number is: ";
+	string prompt = languagePack->getSentence("UI_checkAccount0.1");
 	prompt += to_string(accountNum);
-	prompt += "\n\tIs this correct?\t\t(0 to confirm; -1 to cancel)\n";
+	prompt += languagePack->getSentence("UI_checkAccount0.2");
 	int input = getInput(prompt, 0);
 	if (input == -1) {
 		return State::GetAccountNum;
@@ -271,7 +302,7 @@ UI::State UI::checkAccount() {
 		return State::VerifyAccount;
 	}
 	else {
-		cout << "Debug: Unexpected behavior in UI::t_confirm" << endl;
+		cout << languagePack->getSentence("UI_checkAccount1");
 		return State::End;
 	}
 	// 이 함수에서 카드(계좌) valid한지, supported인지 체크하는 게 맞지 않나?
@@ -280,7 +311,7 @@ UI::State UI::checkAccount() {
 UI::State UI::verifyAccount() {
 	// from: checkAccount
 	// 비밀번호 물어본다
-	string prompt = "\t enter the password: ";
+	string prompt = languagePack->getSentence("UI_verifyAccount0");
 	int input = getInput(prompt, 9999, 0, false); // 4자리 수이지만 이 경우에는 0000~9999
 	if (input == -1) { return State::CheckAccount; } // 현재 쓰이지 않는다(enableCancel = false)
 	else {
@@ -288,34 +319,35 @@ UI::State UI::verifyAccount() {
 			// TODO: pw 3번 틀리면 뒤로 돌아가는 기능 추가 -by DY
 			return State::ChooseTransaction;
 		}
-		cout << "Wrong password" << endl;
+		cout << languagePack->getSentence("UI_verifyAccount1");
 		return State::GetAccountNum;
 	}
 }
 
 UI::State UI::enterAdmin() {
-	cout << "enter admin class" << endl;
+	cout << languagePack->getSentence("UI_enterAdmin0");
 	return State::GetAccountNum;
 }
 
 UI::State UI::chooseTransaction() {
 	// from: verifyAccount
 	// from: t_askTransferType (if canceled)
+  
 	atm->insertedBill = Bill{0,0,0,0}; // 혹시 모르니 초기화 (송금)
 	transactionAmount = 0; // 혹시 모르니 초기화 (송금)
 	
-	string prompt = "\tWhat would you like to do?\n\t1. deposit\t 2. withdrawal\t 3. transfer\n\tCancel : -1\n";
-	
+	string prompt = languagePack->getSentence("UI_chooseTransaction0");
+
 	int input = getInput(prompt, 3);
 	if (input == -1) {
 		// 취소시 카드 반환해 주고 sessionOver state로
-		cout << "Your card has returned. 카드가 반환되었습니다. 투입구를 확인해 주십시오." << endl;
+		cout << languagePack->getSentence("UI_chooseTransaction1");
 		return State::SessionOver;
 	}
 	if (input == 1) { return State::Deposit; }
 	else if (input == 2) { return State::Withdrawal; }
 	else if (input == 3) { return State::Transfer; }
-	else cout << "wrong input, choose it again" << endl;
+	else cout << languagePack->getSentence("UI_chooseTransaction2");
 	return State::ChooseTransaction;
 }
 
@@ -332,47 +364,46 @@ UI::State UI::deposit() {
 }
 
 UI::State UI::d_askDepositType() {
-	string prompt = "현금, 수표 중 입금하실 방법을 선택해주십시오.\n\t";
-	prompt += "1. cash 현금\t2. check 수표\t취소: -1\n";
+	string prompt = languagePack->getSentence("UI_d_askDepositType0");
 
 	transactionType = getInput(prompt, 2);
 	if (transactionType == -1) {
-		cout << "입금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_d_askDepositType1");
 		return State::ChooseTransaction;
 	}
 
 	if (transactionType == 1) {
-		cout << "현금 입금을 선택하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_d_askDepositType2");
 		return State::D_AskAmount_Cash;
 	}
 	else if (transactionType == 2) {
-		cout << "수표 입금을 선택하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_d_askDepositType3");
 		return State::D_AskAmount_Check;
 	}
 	else {
-		cout << "Canceled; Goto session 0" << endl;
+		cout << languagePack->getSentence("UI_d_askDepositType4");
 		return State::End;
 	}
 }
 
 UI::State UI::d_askAmount_Cash() {
-	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
+	cout << languagePack->getSentence("UI_d_askAmount_Cash0.1") << fee << languagePack->getSentence("UI_d_askAmount_Cash0.2");
 
-	string prompt = "투입구에 현금을 넣어주십시오. (5만원권, 1만원권, 5천원권, 1천원권 순으로 입력해주세요.)\n\t";
-	prompt += "취소 : -1\n";
+	string prompt = languagePack->getSentence("UI_d_askAmount_Cash1");
 	int* input;
 	input = getInputArray(prompt, 4, 500);
+
 	if (input[0] == -1) { // input[1] == -1이면 어떻게 되나?
-		cout << "입금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_d_askAmount_Cash2");
 		return State::ChooseTransaction;
 	}
 	transactionBill = Bill{ input[0], input[1], input[2], input[3] }; // 얘랑
 	if (transactionBill.getTotalNum() > 50) {
-		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl;
+		cout << languagePack->getSentence("UI_d_askAmount_Cash3");
 		return State::D_AskAmount_Cash;
 	}
 	if (transactionBill.getTotalNum() == 0) {
-		cout << "투입구에 현금이 들어있지 않습니다. 다시 시도해주십시오." << endl;
+		cout << languagePack->getSentence("UI_d_askAmount_Cash4");
 		return State::D_AskAmount_Cash;
 	}
 	transactionBill = Bill{ input[0], input[1], input[2], input[3] }; // 얘는 왜 중복?
@@ -380,28 +411,27 @@ UI::State UI::d_askAmount_Cash() {
 }
 
 UI::State UI::d_askAmount_Check() {
-	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
+	cout << languagePack->getSentence("UI_d_askAmount_Check0.1") << fee << languagePack->getSentence("UI_d_askAmount_Check0.2");
 
-	string prompt = "투입하실 수표의 장 수를 입력해주세요.\n\t";
-	prompt += "취소 : -1\n";
+	string prompt = languagePack->getSentence("UI_d_askAmount_Check1");
 	depositCheckNum = getInput(prompt, 500);
 	if (depositCheckNum == -1) {
-		cout << "입금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_d_askAmount_Check2");
 		return State::ChooseTransaction;
 	}
 	else if (depositCheckNum == 0) {
-		cout << "투입구에 수표가 들어있지 않습니다. 다시 시도해주십시오." << endl;
+		cout << languagePack->getSentence("UI_d_askAmount_Check3");
 		return State::D_AskAmount_Check;
 	}
 	else if (depositCheckNum > 30) {
-		cout << "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해주십시오." << endl;
+		cout << languagePack->getSentence("UI_d_askAmount_Check4");
 		return State::D_AskAmount_Check;
 	}
-	string prompt2 = "각 수표의 액수를 입력해주세요.\n";
+	string prompt2 = languagePack->getSentence("UI_d_askAmount_Check5");
 	int* input;
 	input = getInputArray(prompt2, depositCheckNum, 100000000);
 	if (input[0] == -1) {
-		cout << "입금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_d_askAmount_Check6");
 		return State::ChooseTransaction;
 	}
 	depositCheckInput = input;
@@ -409,44 +439,40 @@ UI::State UI::d_askAmount_Check() {
 }
 
 UI::State UI::d_confirm_Cash() {
-	cout << "투입하신 금액이 맞는지 확인해 주십시오.\n 확인 : 0 \t 취소 : -1" << endl;
-	transactionBill.printBill();
+	cout << languagePack->getSentence("UI_d_confirm_Cash0");
+	transactionBill.printBill(languagePack->isKor());
 	int input = getInput("", 0);
 	if (input == -1) {
-		cout << "현금 입금을 취소하셨습니다." << endl;
-		cout << "투입하신 현금이 반환되었습니다." << endl;
-		cout << "투입구를 확인해주세요." << endl;
+		cout << languagePack->getSentence("UI_d_confirm_Cash1");
 		return State::ChooseTransaction;
 	}
 	else if (input == 0) {
 		return State::D_ConfirmTotal;
 	}
 	else {
-		cout << "Error" << endl;
+		cout << languagePack->getSentence("UI_d_confirm_Cash2");
 		return State::End;
 	}
 }
 
 UI::State UI::d_confirm_Check() {
-	cout << "투입하신 금액이 맞는지 확인해 주십시오.\n 확인 : 0 \t 취소 : -1" << endl;
-	cout << "금액 : ";
+	cout << languagePack->getSentence("UI_d_confirm_Check0.1");
 	for (int i = 0; i < depositCheckNum; i++) {
-		cout << depositCheckInput[i] << "원 ";
+		cout << depositCheckInput[i] << languagePack->getSentence("UI_d_confirm_Check0.2");
 		depositCheckSum += depositCheckInput[i];
 	}
 	cout << endl;
+	cout << languagePack->getSentence("UI_d_confirm_Check0.3") << depositCheckSum << languagePack->getSentence("UI_d_confirm_Check0.4");;
 	int input = getInput("", 0);
 	if (input == -1) {
-		cout << "수표 입금을 취소하셨습니다." << endl;
-		cout << "투입하신 수표가 반환되었습니다." << endl;
-		cout << "투입구를 확인해주세요." << endl;
+		cout << languagePack->getSentence("UI_d_confirm_Check1");
 		return State::ChooseTransaction;
 	}
 	else if (input == 0) {
 		return State::D_ConfirmTotal;
 	}
 	else {
-		cout << "Error" << endl;
+		cout << languagePack->getSentence("UI_d_confirm_Check2");
 		return State::End;
 	}
 }
@@ -459,29 +485,29 @@ UI::State UI::d_confirmTotal() {
 	else if (transactionType == 2) {
 		depositAmount = depositCheckSum;
 	}
-	else { cout << "Error" << endl; return State::End; }
-	string prompt = "계좌로 [";
-	prompt += (to_string(depositAmount) + "]원 입금하시겠습니까?\n수수료는 [");
-	prompt += (to_string(fee) + "]원입니다. 수수료는 현재 입금하실 금액 [");
+	else { cout << languagePack->getSentence("UI_d_confirmTotal0"); return State::End; }
+	string prompt = languagePack->getSentence("UI_d_confirmTotal1.1");
+	prompt += (to_string(depositAmount) + languagePack->getSentence("UI_d_confirmTotal1.2"));
+	prompt += (to_string(fee) + languagePack->getSentence("UI_d_confirmTotal1.3"));
 	prompt += to_string(depositAmount);
-	prompt += "]원에서 자동 차감됩니다.\n\t확인 : 0\n\t취소: -1\n";
+	prompt += languagePack->getSentence("UI_d_confirmTotal1.4");
 
 	int input;
 	input = getInput(prompt, 0);
 	if (input == 0) { return State::D_Deposit; }
 	if (input == -1) {
-		cout << "입금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_d_confirmTotal2");
 		return State::ChooseTransaction;
 	}
 
-	cout << "Debug: Unexpected behavior in UI::t_confirm" << endl;
+	cout << languagePack->getSentence("UI_d_confirmTotal3");
 	return State::End;
 }
 
 UI::State UI::d_deposit() {
 	bool success = atm->deposit(transactionType, transactionBill, depositCheckInput, depositCheckNum, depositCheckSum, acc);
 	if (success) {
-		cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl;
+		cout << languagePack->getSentence("UI_d_deposit0") << atm->getATMremainCash() << endl;
 		return State::ChooseTransaction;
 	}
 	else {
@@ -501,15 +527,14 @@ UI::State UI::withdrawal() {
 UI::State UI::w_askAmount() {
 	transactionAmount = 0;
 
-	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
+	cout << languagePack->getSentence("UI_w_askAmount0.1") << fee << languagePack->getSentence("UI_w_askAmount0.2");
 
-	string prompt = "출금하실 금액을 입력해 주십시오. (단위 : 만원)\t";
-	prompt += "취소: -1\n";
+	string prompt = languagePack->getSentence("UI_w_askAmount1");
 
 	transactionAmount = getInput(prompt, 2000); // 얼마로 해두는게 좋을까?
 
 	if (transactionAmount == -1) {
-		cout << "출금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_w_askAmount2");
 		return State::ChooseTransaction;
 	}
 	transactionBill = Bill{ 0, transactionAmount, 0, 0 };
@@ -518,7 +543,7 @@ UI::State UI::w_askAmount() {
 
 UI::State UI::w_checkAccountBalance() {
 	if ((transactionBill.getSum() + fee) > acc->getBalance()) {
-		cout << "계좌에 잔액이 부족합니다. 다시 시도해주십시오." << endl;
+		cout << languagePack->getSentence("UI_w_checkAccountBalance0");
 		return State::Withdrawal;
 	}
 	else { return State::W_CheckATMBalance; }
@@ -526,7 +551,7 @@ UI::State UI::w_checkAccountBalance() {
 
 UI::State UI::w_checkMaxAmount() {
 	if (transactionBill.getSum() > 300000) {
-		cout << "1회 최대 출금 금액(30만원)을 초과하였습니다. 다시 시도해주십시오." << endl;
+		cout << languagePack->getSentence("UI_w_checkMaxAmount0");
 		return State::W_AskAmount;
 	}
 	else { return State::W_CheckAccountBalance; }
@@ -534,35 +559,35 @@ UI::State UI::w_checkMaxAmount() {
 
 UI::State UI::w_checkATMBalance() {
 	if (!atm->compareBill(transactionBill)) {
-		cout << "ATM 기 내부에 현금이 부족합니다." << endl;
+		cout << languagePack->getSentence("UI_w_checkATMBalance0");
 		return State::ChooseTransaction;
 	}
 	else { return State::W_Confirm; }
 }
 
 UI::State UI::w_confirm() {
-	string prompt = "계좌에서 ";
-	prompt += (to_string(transactionBill.getSum()) + "]원 출금하시겠습니까?\n수수료는 [");
-	prompt += (to_string(fee) + "]원입니다. 수수료는 현재 계좌 잔액 [");
+	string prompt = languagePack->getSentence("UI_w_confirm0.1");
+	prompt += (to_string(transactionBill.getSum()) + languagePack->getSentence("UI_w_confirm0.2"));
+	prompt += (to_string(fee) + languagePack->getSentence("UI_w_confirm0.3"));
 	prompt += to_string(acc->getBalance());
-	prompt += "]원에서 자동 차감됩니다.\n\t확인 : 0\n\t취소: -1\n";
+	prompt += languagePack->getSentence("UI_w_confirm0.4");
 
 	int input;
 	input = getInput(prompt, 0);
 	if (input == 0) { return State::W_Withdrawal; }
 	if (input == -1) {
-		cout << "출금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_w_confirm1");
 		return State::ChooseTransaction;
 	}
 
-	cout << "Debug: Unexpected behavior in UI::t_confirm" << endl;
+	cout << languagePack->getSentence("UI_w_confirm2");
 	return State::End;
 }
 
 UI::State UI::w_withdrawal() {
 	bool success = atm->withdrawal(transactionBill, acc);
 	if (success) {
-		cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl;
+		cout << languagePack->getSentence("UI_w_withdrawal0") << atm->getATMremainCash() << endl;
 		return State::ChooseTransaction;
 	}
 	else {
@@ -587,17 +612,16 @@ UI::State UI::t_askTransferType() {
 	// from: transfer
 	int input;
 
-	string prompt = "Which transfer option would you like? 원하시는 송금 옵션을 선택해 주십시오.\n";
-	prompt += "\t1. cash transfer 현금 송금\t 2. account transfer 계좌 송금\n\tcancel 취소: -1\n";
+	string prompt = languagePack->getSentence("UI_t_askTransferType0");
 	input = getInput(prompt, 2);
 	if (input == -1) {
-		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_t_askTransferType1");
 		return State::ChooseTransaction;
 	}
 
 	transactionType = input; // Exception handling 필요
-	if (transactionType == 1) { cout << "You have chosen [cash transfer]. 현금 송금을 선택하셨습니다." << endl; }
-	if (transactionType == 2) { cout << "You have chosen [account transfer]. 계좌 송금을 선택하셨습니다." << endl; }
+	if (transactionType == 1) { cout << languagePack->getSentence("UI_t_askTransferType2"); }
+	if (transactionType == 2) { cout << languagePack->getSentence("UI_t_askTransferType3"); }
 	return State::T_AskToAcc;
 }
 
@@ -605,8 +629,7 @@ UI::State UI::t_askTransferType() {
 UI::State UI::t_askToAcc() {
 	// from: 
 	int input;
-	string prompt = "Please enter the account you would like to transfer your money to.";
-	prompt += " 송금하실 계좌의 계좌번호를 입력해 주십시오.\n\tcancel 취소: -1\n";
+	string prompt = languagePack->getSentence("UI_t_askToAcc0");
 	// input = getInput(prompt, 99999, 10000); // 계좌번호 받아야 하니까
 	input = getInput(prompt, 5); // 임시
 	if (input == -1) { return State::Transfer; }
@@ -622,8 +645,8 @@ UI::State UI::t_confirmToAcc() { // 금융실명제
 
 	int input;
 	string prompt = "[" + toAcc->getOwner()->getUserName();
-	prompt += ("] 님의 계좌 [" + std::to_string(toAccID));
-	prompt += "]가 맞습니까?\n\t0. yes 예\t1. try different account 다시 입력\n\tcancel 취소: -1\n";
+	prompt += (languagePack->getSentence("UI_t_confirmToAcc0.2") + std::to_string(toAccID));
+	prompt += languagePack->getSentence("UI_t_confirmToAcc0.3");
 	input = getInput(prompt, 1);
 	// 같은 계좌인지 확인하기 - to be done
 	if (input == -1) { return State::ChooseTransaction; }
@@ -633,14 +656,14 @@ UI::State UI::t_confirmToAcc() { // 금융실명제
 	}
 	if (input == 1) { return State::T_AskToAcc; }
 
-	cout << "Debug: Unexpected behavior in UI::t_confirmToAcc" << endl;
+	cout << languagePack->getSentence("UI_t_confirmToAcc1");
 	return State::End;
 }
 
 UI::State UI::t_askAmount_c() {
 	// from: t_askToAcc (when transactionType == 1)
 
-	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
+	cout << languagePack->getSentence("UI_t_askAmount_c0.1") << fee << languagePack->getSentence("UI_t_askAmount_c0.2");
 
 	transactionAmount = 0; // = insertedBill.sum();
 	string prompt = "Please insert cash you would like to transfer.";
@@ -668,10 +691,9 @@ UI::State UI::t_askAmount_c() {
 	atm->insertedBill = Bill{ inputArr[0], inputArr[1], inputArr[2], inputArr[3] }; // 얘는 왜 중복?
 	transactionAmount = atm->insertedBill.getSum();
 
-	// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3 (함수로 따로 빼기)
-	int input;
-	prompt = "투입하신 금액을 확인해 주십시오.\n\t[" + std::to_string(transactionAmount);
-	prompt += "]원\n\t0. confirm 확인\n\tcancel 취소: -1\n";
+	// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3
+	prompt = languagePack->getSentence("UI_t_askAmount_c3.1") + std::to_string(transactionAmount);
+	prompt += languagePack->getSentence("UI_t_askAmount_c3.2");
 	input = getInput(prompt, 0);
 
 	if (input == 0) { return State::T_Confirm; }
@@ -679,26 +701,26 @@ UI::State UI::t_askAmount_c() {
 		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
 		cout << "Your cash has returned. 투입하신 현금이 반환되었습니다. ";
 		cout << "Please make sure to take your cash. 투입구를 확인해주세요." << endl;
+		// cout << languagePack->getSentence("UI_t_askAmount_c4");
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
 
-	cout << "Debug: Unexpected behavior in UI::t_askAmount_c" << endl;
+	cout << languagePack->getSentence("UI_t_askAmount_c5");
 	return State::End;
 }
 
 
 UI::State UI::t_askAmount_a() {
 	// from: t_askToAcc (when transactionType == 2)
-
-	cout << "Debug: 수수료는 [" << fee << "]원입니다." << endl;
-	
 	atm->insertedBill = Bill{0,0,0,0};
+  
+	cout << languagePack->getSentence("UI_t_askAmount_a0.1") << fee << languagePack->getSentence("UI_t_askAmount_a0.2");
+
 	transactionAmount = 0;
-	string prompt = "Please enter the amount of money you would like to transfer.";
-	prompt += " 송금할 금액을 입력해 주십시오. (Your current balance 계좌 잔액: ";
+	string prompt = languagePack->getSentence("UI_t_askAmount_a1.1");
 	prompt += std::to_string(acc->getBalance());
-	prompt += ")\n\tcancel 취소: -1\n";
-	
+	prompt += languagePack->getSentence("UI_t_askAmount_a1.2");
+
 	// 액수 valid한지 check하기(계좌 잔액, 송금한도 등;) - to be done
 	int input;
 	input = getInput(prompt, 2000001); // 송금한도액? (일단 200만원으로)
@@ -718,14 +740,14 @@ UI::State UI::t_askAmount_a() {
 	prompt = std::to_string(transactionAmount);
 	prompt += " 원이 맞습니까?\n\t0. confirm 확인\n\tcancel 취소: -1\n";
 	input = getInput(prompt, 0);
-	
+  
 	if (input == 0) { return State::T_Confirm; }
 	if (input == -1) {
-		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
+		cout << languagePack->getSentence("UI_t_askAmount_a3"); // 어디로 가게 할 것?
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
 
-	cout << "Debug: Unexpected behavior in UI::t_askAmount_a" << endl;
+	cout << languagePack->getSentence("UI_t_askAmount_a4");
 	return State::End;
 }
 
@@ -733,25 +755,35 @@ UI::State UI::t_confirm() {
 	// from: t_askAmount_a
 	// from: t_askAmount_c
 
-	string prompt = "[" + toAcc->getOwner()->getUserName() + "] 님에게 [";
-	prompt += (std::to_string(transactionAmount) + "]원 송금하시겠습니까?\n수수료는 [");
-	prompt += (std::to_string(fee) + "]원입니다. 수수료는 현재 계좌 잔액 [");
-	prompt += std::to_string(acc->getBalance());
-	prompt += "]원에서 자동 차감됩니다.\n\t0. confirm 확인\n\tcancel 취소: -1\n";
+	string prompt = "";
+	// 한글/영어에 따라 어순이 달라서 조건문을 사용해야 함.
+	if (languagePack->isKor()) {
+		prompt += "[" + toAcc->getOwner()->getUserName() + languagePack->getSentence("UI_t_confirm0.2");
+		prompt += (std::to_string(transactionAmount) + languagePack->getSentence("UI_t_confirm0.3"));
+		prompt += (std::to_string(fee) + languagePack->getSentence("UI_t_confirm0.4"));
+		prompt += std::to_string(acc->getBalance());
+		prompt += languagePack->getSentence("UI_t_confirm0.5");
+	}
+	else {
+		prompt += (languagePack->getSentence("UI_t_confirm0.1") + std::to_string(transactionAmount) + languagePack->getSentence("UI_t_confirm0.2"));
+		prompt += (toAcc->getOwner()->getUserName() + languagePack->getSentence("UI_t_confirm0.3"));
+		prompt += (std::to_string(fee) + languagePack->getSentence("UI_t_confirm0.4"));
+		prompt += std::to_string(acc->getBalance());
+		prompt += languagePack->getSentence("UI_t_confirm0.5");
+	}
 
 	int input;
 	input = getInput(prompt, 0);
 	if (input == 0) { return State::T_Transfer; }
 	if (input == -1) {
-		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl;
+		cout << languagePack->getSentence("UI_t_confirm1");
 		if (transactionType == 1) {
-			cout << "Your cash has returned. 투입하신 현금이 반환되었습니다.";
-			cout << " Please make sure to take your cash. 투입구를 확인해주세요." << endl;
+			cout << languagePack->getSentence("UI_t_confirm2");
 		}
 		return State::ChooseTransaction;
 	}
 
-	cout << "Debug: Unexpected behavior in UI::t_confirm" << endl;
+	cout << languagePack->getSentence("UI_t_confirm3");
 	return State::End;
 }
 
@@ -760,17 +792,16 @@ UI::State UI::t_transfer() {
 	bool success = atm->transfer(transactionType, transactionAmount, acc, toAcc, transactionBill);
 	if (success) {
 		if (transactionType == 1) {
-			cout << "Debug: Remaining cash of the ATM : " << atm->getATMremainCash() << endl; // 수정 필요
+			cout << languagePack->getSentence("UI_t_transfer0") << atm->getATMremainCash() << endl; // 수정 필요
 		}
 		// 명세표 출력?
 		// database->addHistory("송금", before, after, acc, toAcc); // 도연이가 함수안에 만들어놓은듯?
 		return State::ChooseTransaction;
 	}
 	else {
-		cout << "Not enough balance. 잔액이 부족합니다." << endl;
+		cout << languagePack->getSentence("UI_t_transfer1");
 		if (transactionType == 1) {
-			cout << "Your cash has returned. 투입하신 현금이 반환되었습니다.";
-			cout << "Please make sure to take your cash. 투입구를 확인해주세요." << endl;  // 이걸 아예 다른 단계로 만들까?
+			cout << languagePack->getSentence("UI_t_transfer2");  // 이걸 아예 다른 단계로 만들까?
 		}
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}

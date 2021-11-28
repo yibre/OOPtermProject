@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
+#include "Language.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ class Bill;
 class Database {
 private:
 	Account* accountList[100]; // 계좌 리스트
+	static Translation* languagePack;
 	static int listsize;
 	static Database* instance; // 한 번만 생성되는 instance
 	static vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
@@ -48,6 +50,7 @@ public:
 	void addSessionHistory(string, int, Account*);
 	void printSessionHistory();
 	void clearSessionHistory();
+	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
 };
 
 /***********************	  User  	***********************/
@@ -70,11 +73,12 @@ class Bill {
 private:
 	int paperCash[4];
 	static int value[4];
+	Translation* languagePack = new Translation();
 public:
 	Bill(int c50k, int c10k, int c5k, int c1k);
 	int getTotalNum();
 	int getSum();
-	void printBill();
+	void printBill(bool isKor);
 	Bill& operator+(const Bill& bill);
 	Bill& operator+=(const Bill& rhs);
 	Bill& operator-(const Bill& bill);
@@ -146,11 +150,12 @@ private:
 	bool engSupport;
 	bool multiBank;
 	Bill* remainBill;
+	Translation* languagePack;
 
 public:
 	ATM() { numID = 0; }
 	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport, bool multiBank);
-	~ATM() {}
+	~ATM() { delete languagePack; }
 	bool checkID(char);
 	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(Bill money, Account* acc); // 출금함수, 출금액
@@ -162,11 +167,13 @@ public:
 	int getATMremainCheckNum() { return remainCheckNum; }
 	void insertCash(Bill cash) { *this->remainBill += cash; }
 	int fee(int, Account*, Account*);
-	void printATMremainCashNum() { this->remainBill->printBill(); };
+	void printATMremainCashNum() { this->remainBill->printBill(this->languagePack->isKor()); };
 	bool compareBill(Bill subject) { return (*(this->remainBill) > subject); }
 	Bank* getBank() { return ownerBank; }
 	bool isMultiBank() { return multiBank; }
-	Bill insertedBill = Bill{0,0,0,0}; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
+	bool isEnglishSupport() { return engSupport; }
+	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
+  Bill insertedBill = Bill{0,0,0,0}; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
 };
 
 /*******************	Other Functions 	*******************/

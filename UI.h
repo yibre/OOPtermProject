@@ -6,6 +6,7 @@
 class UI {
 private:
 	enum class State {
+		ChangeLanguage,
 		GetATM,
 		GetAccountNum,
 		AccessAccount,
@@ -59,13 +60,15 @@ private:
 	Bill transactionBill = Bill{ 0,0,0,0 };
 	Database* database = nullptr; // database 사용 (바꿔야 할 수도)
 	ATM* atm = nullptr; // the ATM we are using
+	Translation* languagePack = new Translation();
 	// int SessionStartNum = 0; // 한 거래가 진행될때마다 1로 증가
 
 public:
 	int run();
 private:
-	static int getInput(const std::string& prompt, int minimum, int maximum, bool);
+	static int getInput(const std::string& prompt, int minimum, int maximum, bool languageCheck, bool);
 	static int* getInputArray(const std::string& prompt, int length, int minimum, int maximum, bool);
+	State changeLanguage();
 	State getATM();
 	State getAccountNum();
 	State accessAccount();
