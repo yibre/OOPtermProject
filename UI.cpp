@@ -28,6 +28,8 @@ int UI::run() {
 	DB->addAccountList(AC3);
 	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 3
 	DB->addAccountList(AC4);
+	Account* AC5 = new Account(uriBank, U2, 3344, 300000000); // 계좌번호 4 (3억)
+	DB->addAccountList(AC5);
 
 	atm = A1; // atm 선택받기 구현하면 이거 없애줘야
 	// atm = A2; // (singleBank debugging용)
@@ -810,10 +812,18 @@ UI::State UI::t_confirm() {
 
 UI::State UI::t_transfer() {
 	// from: t_confirm
-	bool success = atm->transfer(transactionType, transactionAmount, acc, toAcc, transactionBill);
+	
+	// cout << "Debug: Remaining Bills in the ATM : " << atm->getATMremainCash() << endl;
+	// cout << "Debug: Remaining Bills in the ATM : "; atm->printATMremainCashNum();
+	// cout << endl;
+	
+	bool success = atm->transfer(transactionType, transactionAmount, acc, toAcc, atm->insertedBill);
 	if (success) {
 		if (transactionType == 1) {
-			cout << languagePack->getSentence("UI_t_transfer0") << atm->getATMremainCash() << endl; // 수정 필요
+			// cout << "Debug: Remaining Bills in the ATM : " << atm->getATMremainCash() << endl;
+			// cout << "Debug: Remaining Bills in the ATM : "; atm->printATMremainCashNum();
+			// cout << "Debug: Bills in the cash slot: " << atm->insertedBill.getSum() << endl;
+			// cout << endl;
 		}
 		// 명세표 출력?
 		// database->addHistory("송금", before, after, acc, toAcc); // 도연이가 함수안에 만들어놓은듯?
@@ -822,7 +832,7 @@ UI::State UI::t_transfer() {
 	else {
 		cout << languagePack->getSentence("UI_t_transfer1");
 		if (transactionType == 1) {
-			cout << languagePack->getSentence("UI_t_transfer2");  // 이걸 아예 다른 단계로 만들까?
+			cout << languagePack->getSentence("UI_t_transfer2"); // 이걸 아예 다른 단계로 만들까?
 		}
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
