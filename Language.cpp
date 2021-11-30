@@ -1,4 +1,4 @@
-#include "Language.h" // 현주는 여기 주석처리
+#include "Language.h"
 
 Translation::Translation() {
 	/********************	 UI	 ********************/

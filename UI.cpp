@@ -316,15 +316,16 @@ UI::State UI::verifyAccount() {
 		int input = getInput(prompt, 9999, 0, false, false); // 4자리 수이지만 이 경우에는 0000~9999
 		if (input == -1) { return State::CheckAccount; } // 현재 쓰이지 않는다(enableCancel = false)
 		else {
-			if (acc->checkPassword(input)) {
-				// TODO: pw 3번 틀리면 뒤로 돌아가는 기능 추가 -by DY
+			if (acc->checkPassword(input)) { // 비밀번호 맞으면
+				// 새로운 session 시작
+				this->WithdrawalPerSession = 0; // chooseTransaction 들어가기 전에 초기화해줘야 하기 때문에
 				return State::ChooseTransaction;
 			}
 			if (i < 2) {
 				cout << languagePack->getSentence("UI_verifyAccount1.0");
 				cout << (2 - i) << languagePack->getSentence("UI_verifyAccount1.1");
 			}
-			else { cout << "비밀번호를 3회 틀리셨습니다.\n"; }
+			else { cout << "비밀번호를 3회 틀리셨습니다.\n"; } // 번역필요
 		}
 	}
 	return State::GetAccountNum; // EN/KR 단계 구현되면 바꾸기
@@ -525,7 +526,11 @@ UI::State UI::d_deposit() {
 
 UI::State UI::withdrawal() {
 	// from: chooseTransaction
-	cout << "\t[withdrawal]" << endl;
+	if (this->WithdrawalPerSession >= 3) {
+		cout << "해당 세션의 출금 횟수 한도(3회)를 초과하였습니다.\n"; // 번역필요
+		return State::ChooseTransaction;
+	}
+	cout << "\t[withdrawal]" << endl; // 번역필요
 	fee = atm->fee(6, acc, nullptr);
 	return State::W_AskAmount;
 }
@@ -592,7 +597,8 @@ UI::State UI::w_confirm() {
 
 UI::State UI::w_withdrawal() {
 	bool success = atm->withdrawal(transactionBill, acc);
-	if (success) {
+	if (success) { // 출금 완료시
+		this->WithdrawalPerSession++; // 이 세션 중 출금한 횟수 1회 늘리기
 		cout << languagePack->getSentence("UI_w_withdrawal0") << atm->getATMremainCash() << endl;
 		return State::ChooseTransaction;
 	}

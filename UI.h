@@ -62,6 +62,7 @@ private:
 	ATM* atm = nullptr; // the ATM we are using
 	Translation* languagePack = new Translation();
 	// int SessionStartNum = 0; // 한 거래가 진행될때마다 1로 증가
+	int WithdrawalPerSession = 0;
 
 public:
 	int run();
