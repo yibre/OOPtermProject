@@ -313,6 +313,7 @@ int Bill::getTotalNum() {
 	return sum;
 }
 
+/*
 Bill& Bill::operator+(const Bill& bill) {
 	int num1 = paperCash[0] + bill.paperCash[0];
 	int num2 = paperCash[1] + bill.paperCash[1];
@@ -324,6 +325,7 @@ Bill& Bill::operator+(const Bill& bill) {
 	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
 
 }
+*/
 
 Bill& Bill::operator+=(const Bill& rhs) {
 	this->paperCash[0] += rhs.paperCash[0];
@@ -334,6 +336,7 @@ Bill& Bill::operator+=(const Bill& rhs) {
 	// 작동 확인 완료되었는지?
 }
 
+/*
 Bill& Bill::operator-(const Bill& bill) {
 	int num1 = paperCash[0] - bill.paperCash[0];
 	int num2 = paperCash[1] - bill.paperCash[1];
@@ -344,6 +347,7 @@ Bill& Bill::operator-(const Bill& bill) {
 	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
 	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
 }
+*/
 
 Bill& Bill::operator-=(const Bill& rhs) {
 	this->paperCash[0] -= rhs.paperCash[0];
@@ -354,6 +358,7 @@ Bill& Bill::operator-=(const Bill& rhs) {
 	// 작동 확인 완료되었는지?
 }
 
+/*
 Bill& Bill::operator*(const int mul) {
 	int num1 = paperCash[0] * mul;
 	int num2 = paperCash[1] * mul;
@@ -364,6 +369,7 @@ Bill& Bill::operator*(const int mul) {
 	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
 	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
 }
+*/
 
 bool Bill::operator<=(const Bill& bill) {
 	bool case1 = paperCash[0] <= bill.paperCash[0];
