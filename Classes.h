@@ -138,8 +138,9 @@ public:
 class ATM { // Bank를 상속해도 될듯
 private:
 	Database* database;
-	string ID; // atm은 A1 A2 A3 이렇게 시작
-	static int numID; // id 부여용 넘버, 0부터 시작해서 1씩 증가
+	// string ID; // atm은 A1 A2 A3 이렇게 시작 // 쓰이는 곳 있나?
+	int ID;
+	static int numID; // id 부여용 넘버, 0부터 시작해서 1씩 증가 // ???
 	Bank* ownerBank;
 	string adminID;
 	int adminpw;
@@ -153,16 +154,17 @@ private:
 	Translation* languagePack;
 
 public:
-	ATM() { numID = 0; }
+	ATM() { numID = 0; } // ???
 	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport, bool multiBank);
 	~ATM() { delete languagePack; }
-	bool checkID(char);
+	bool checkID(char); // 쓰이는 곳 현재 없음
 	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(Bill money, Account* acc); // 출금함수, 출금액
 	bool checkPW(int);
 	bool transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill); // int fee 없애는거 고려
 	void IncreaseID() { numID++; }
-	int getNumID() { return numID; }
+	int getNumID() { return numID; } // ???
+	int getID() { return ID; } // 이 ATM의 ID를 return; 현재 Debug용 코드 외 쓰이는 곳 없음
 	int getATMremainCash() { return remainBill->getSum(); }
 	int getATMremainCheckNum() { return remainCheckNum; }
 	void insertCash(Bill cash) { *this->remainBill += cash; }
@@ -173,7 +175,7 @@ public:
 	bool isMultiBank() { return multiBank; }
 	bool isEnglishSupport() { return engSupport; }
 	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
-  Bill insertedBill = Bill{0,0,0,0}; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
+	Bill insertedBill = Bill{0,0,0,0}; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
 };
 
 /*******************	Other Functions 	*******************/

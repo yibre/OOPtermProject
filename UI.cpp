@@ -31,6 +31,14 @@ int UI::run() {
 
 	atm = A1; // atm 선택받기 구현하면 이거 없애줘야
 	// atm = A2; // (singleBank debugging용)
+	
+	cout << "Debug: current ATM ID : " << atm->getID() << endl;
+	cout << "Debug: current ATM bank : " << atm->getBank()->getBankName() << endl;
+	cout << "Debug: current ATM is ";
+		cout << (atm->isMultiBank()? "multibank ATM":"singlebank ATM") << endl;
+	cout << "Debug: current ATM is " << (atm->isEnglishSupport()? "":"not ");
+		cout << "supporting ENG" << endl;
+	
 	this->database = DB;
 
 	while (state != State::End) {

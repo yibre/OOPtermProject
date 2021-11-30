@@ -166,9 +166,14 @@ bool Account::isPrimary(ATM* A) {
 
 /***********************	  ATM   	***********************/
 
+int ATM::numID = 100; // static int numID 초기화 (3자리 고유번호 주기 위해; 변동가능)
+
 ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport = 1, bool multiBank = 1) {
 	database = Database::getInstance();
-
+	
+	this->ID = this->numID; // static int를 ID로 배정
+	this->numID++;
+	
 	this->engSupport = engSupport;
 	this->multiBank = multiBank;
 	this->ownerBank = bank;
