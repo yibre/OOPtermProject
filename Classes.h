@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.h"
+#include "Language.cpp" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -79,11 +79,11 @@ public:
 	int getTotalNum();
 	int getSum();
 	void printBill(bool isKor);
-	Bill& operator+(const Bill& bill);
+	// Bill& operator+(const Bill& bill);
 	Bill& operator+=(const Bill& rhs);
-	Bill& operator-(const Bill& bill);
+	// Bill& operator-(const Bill& bill);
 	Bill& operator-=(const Bill& rhs);
-	Bill& operator*(int mul);
+	// Bill& operator*(int mul);
 	bool operator<=(const Bill& bill);
 	bool operator>=(const Bill& bill);
 	bool operator<(const Bill& bill);

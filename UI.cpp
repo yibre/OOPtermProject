@@ -302,7 +302,7 @@ UI::State UI::checkAccount() {
 		return State::VerifyAccount;
 	}
 	else {
-		cout << languagePack->getSentence("UI_checkAccount1");
+		cout << languagePack->getSentence("UI_checkAccount1"); 
 		return State::End;
 	}
 	// 이 함수에서 카드(계좌) valid한지, supported인지 체크하는 게 맞지 않나?
@@ -312,16 +312,22 @@ UI::State UI::verifyAccount() {
 	// from: checkAccount
 	// 비밀번호 물어본다
 	string prompt = languagePack->getSentence("UI_verifyAccount0");
-	int input = getInput(prompt, 9999, 0, false); // 4자리 수이지만 이 경우에는 0000~9999
-	if (input == -1) { return State::CheckAccount; } // 현재 쓰이지 않는다(enableCancel = false)
-	else {
-		if (acc->checkPassword(input)) {
-			// TODO: pw 3번 틀리면 뒤로 돌아가는 기능 추가 -by DY
-			return State::ChooseTransaction;
+	for (int i=0; i < 3; i++) {
+		int input = getInput(prompt, 9999, 0, false, false); // 4자리 수이지만 이 경우에는 0000~9999
+		if (input == -1) { return State::CheckAccount; } // 현재 쓰이지 않는다(enableCancel = false)
+		else {
+			if (acc->checkPassword(input)) {
+				// TODO: pw 3번 틀리면 뒤로 돌아가는 기능 추가 -by DY
+				return State::ChooseTransaction;
+			}
+			if (i < 2) {
+				cout << languagePack->getSentence("UI_verifyAccount1.0");
+				cout << (2 - i) << languagePack->getSentence("UI_verifyAccount1.1");
+			}
+			else { cout << "비밀번호를 3회 틀리셨습니다.\n"; }
 		}
-		cout << languagePack->getSentence("UI_verifyAccount1");
-		return State::GetAccountNum;
 	}
+	return State::GetAccountNum; // EN/KR 단계 구현되면 바꾸기
 }
 
 UI::State UI::enterAdmin() {
@@ -692,6 +698,7 @@ UI::State UI::t_askAmount_c() {
 	transactionAmount = atm->insertedBill.getSum();
 
 	// 현금송금에 한해 투입한 액수 기계가 센 후 액수 맞는지 확인 필요 REQ6.3
+	int input;
 	prompt = languagePack->getSentence("UI_t_askAmount_c3.1") + std::to_string(transactionAmount);
 	prompt += languagePack->getSentence("UI_t_askAmount_c3.2");
 	input = getInput(prompt, 0);
@@ -810,7 +817,7 @@ UI::State UI::t_transfer() {
 UI::State UI::sessionOver() {
 	database->printSessionHistory(); // session history를 출력
 	database->clearSessionHistory();
-	return State::GetAccountNum;
+	return State::GetAccountNum; // EN/KR 구현되면 그곳으로
 }
 
 void UI::end() {

@@ -1,4 +1,4 @@
-#include "Language.h"
+#include "Language.h" // 현주는 여기 주석처리
 
 Translation::Translation() {
 	/********************	 UI	 ********************/
@@ -50,9 +50,12 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "0", "\t Enter the password : "));
 	translation_kr.insert(pair<string, string>(function + "0", "\t 비밀번호를 입력해 주십시오 : "));
 
-	translation_en.insert(pair<string, string>(function + "1", "Wrong password\n"));
-	translation_kr.insert(pair<string, string>(function + "1", "비밀번호가 틀렸습니다.\n"));
+	translation_en.insert(pair<string, string>(function + "1.0", "Wrong password. Please try again. (You have left "));
+	translation_kr.insert(pair<string, string>(function + "1.0", "비밀번호가 틀렸습니다. 다시 시도해 주십시오. (남은 횟수 :"));
 
+	translation_en.insert(pair<string, string>(function + "1.1", " chance(s).\n"));
+	translation_kr.insert(pair<string, string>(function + "1.1", " 회"));
+	
 	function = "UI_enterAdmin";
 	translation_en.insert(pair<string, string>(function + "0", "Enter admin class\n"));
 	translation_kr.insert(pair<string, string>(function + "0", "관리자 클래스로 진입합니다.\n"));
