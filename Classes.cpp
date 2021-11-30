@@ -237,7 +237,7 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			toAcc->changeBalance(money);
 			
 			// 송금 확인되어 반환의 여지 없을 때 remainCash transactionBill만큼 늘리기
-			*(this->remainBill) += bill;
+			*this->remainBill += bill;
 			bill = Bill{0,0,0,0};
 
 			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
@@ -276,7 +276,7 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 
 bool ATM::checkPW(int password) {
 	if (password == adminpw) { return true; }
-	else return false;
+	else { return false; }
 }
 
 int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송금일 때만 a2 필요
@@ -293,7 +293,7 @@ int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송�
 		else if (a1->isPrimary(this) || a2->isPrimary(this)) { return 2000; } // prim-nonp
 		else { return 2500; } // nonp-nonp
 	}
-	else { cout << languagePack->getSentence("ATM_fee0");; exit(0); }
+	else { cout << languagePack->getSentence("ATM_fee0"); exit(0); }
 }
 
 /***********************	  Bill  	***********************/
