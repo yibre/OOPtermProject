@@ -427,7 +427,7 @@ UI::State UI::d_askDepositType() {
 UI::State UI::d_askAmount_Cash() {
 	cout << languagePack->getSentence("UI_d_askAmount_Cash0.1") << fee << languagePack->getSentence("UI_d_askAmount_Cash0.2");
 
-	string prompt = languagePack->getSentence("UI_d_askAmount_Cash1");
+	string prompt = languagePack->getSentence("put cash");
 	int* input;
 	input = getInputArray(prompt, 4, 500);
 
@@ -657,7 +657,7 @@ UI::State UI::t_askTransferType() {
 	int input;
 
 	string prompt = languagePack->getSentence("UI_t_askTransferType0");
-	input = getInput(prompt, 2);
+	input = getInput(prompt, 2, 1);
 	if (input == -1) {
 		cout << languagePack->getSentence("exit transfer");
 		return State::ChooseTransaction;
@@ -712,7 +712,7 @@ UI::State UI::t_askAmount_c() {
 	cout << languagePack->getSentence("UI_t_askAmount_c0.1") << fee << languagePack->getSentence("UI_t_askAmount_c0.2");
 
 	transactionAmount = 0; // = insertedBill.sum();
-	string prompt = (languagePack->getSentence("UI_t_askAmount_c1"));
+	string prompt = (languagePack->getSentence("put cash"));
 	// 투입 valid한지 check; Bill 사용하게 바꾸기 (입금쪽에서 구현된 함수 사용)
 
 	int* inputArr;
@@ -848,7 +848,7 @@ UI::State UI::t_transfer() {
 		}
 		cout << "\t[" << transactionAmount << languagePack->getSentence("UI_t_transfer1.1");
 		cout << toAcc->getOwner()->getUserName(languagePack->isKor());
-		cout << languagePack->getSentence("UI_t_transfer1.3");
+		cout << languagePack->getSentence("UI_t_transfer1.2");
 
 		cout << languagePack->getSentence("UI_t_transfer2.1");
 		cout << acc->getBalance() << languagePack->getSentence("UI_t_transfer2.2");
