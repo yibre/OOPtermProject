@@ -209,9 +209,25 @@ int* UI::getInputArray(const string& prompt, int length, int maximum, int minimu
 }
 
 /***********************	 state functions  	***********************/
+
 UI::State UI::changeLanguage() {
-	string prompt = "\t한국어 : 0\n\tEnglish : 1\n\t취소(Cancel) : -1\n";
-	int input = getInput(prompt, 1);
+	
+	if (atm->isEnglishSupport()) {
+		cout << "\t[*** 어서오십시오 / Welcome ***]\n";
+		cout << "언어 선택 / Language setting\n";
+	}
+	else {
+		database->changeLanguage("KOR");
+		atm->changeLanguage("KOR");
+		languagePack->changeLanguage("KOR");
+		cout << languagePack->getSentence("UI_changeLanguage0");
+		
+		cout << "\t[*** 어서오십시오 ***]\n";
+		return State::GetAccountNum;
+	}
+	
+	string prompt = "\t한국어 : 0\n\tEnglish : 1\n"; // \t취소(Cancel) : -1\n
+	int input = getInput(prompt, 1, false, false); // 취소 허용하지 않음
 	if (input == 0) {
 		database->changeLanguage("KOR");
 		atm->changeLanguage("KOR");
@@ -239,12 +255,14 @@ UI::State UI::getATM() {
 	return State::End;
 }
 
-UI::State UI::getAccountNum() {
+UI::State UI::getAccountNum() { // accessAccount와 함치자
 	accID, toAccID = -1; acc, toAcc = nullptr; // 혹시 모르니 초기화
 	cout << languagePack->getSentence("UI_getAccountNum0"); // Debug
+	/*
 	if (atm->isEnglishSupport()) {
 		cout << "언어 선택(Choose Language) : -2" << endl;
 	}
+	*/
 	return State::AccessAccount;
 }
 
@@ -335,10 +353,10 @@ UI::State UI::verifyAccount() {
 				cout << languagePack->getSentence("UI_verifyAccount1.0");
 				cout << (2 - i) << languagePack->getSentence("UI_verifyAccount1.1");
 			}
-			else { cout << "비밀번호를 3회 틀리셨습니다.\n"; } // 번역필요
+			else { cout << languagePack->getSentence("UI_verifyAccount2"); }
 		}
 	}
-	return State::GetAccountNum; // EN/KR 단계 구현되면 바꾸기
+	return State::ChangeLanguage;
 }
 
 UI::State UI::enterAdmin() {
@@ -841,7 +859,7 @@ UI::State UI::t_transfer() {
 UI::State UI::sessionOver() {
 	database->printSessionHistory(); // session history를 출력
 	database->clearSessionHistory();
-	return State::GetAccountNum; // EN/KR 구현되면 그곳으로
+	return State::ChangeLanguage; // EN/KR 구현되면 그곳으로
 }
 
 void UI::end() {

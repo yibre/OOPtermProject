@@ -41,7 +41,7 @@ private:
 		SessionOver,
 		End
 	}
-	state = State::GetAccountNum;
+	state = State::ChangeLanguage;
 	// int UserStatus = 1;
 	int accountNum = 0;
 	int transactionType = 0;
