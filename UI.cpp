@@ -6,19 +6,20 @@ int UI::run() {
 
 	Database* DB = Database::getInstance();
 
-	Bank* uriBank = new Bank();
-	Bank* kakaoBank = new Bank("kakao");
+	Bank* uriBank = new Bank("우리은행", "UriBank");
+	Bank* kakaoBank = new Bank("카카오뱅크", "KakaoBank");
+	Bank* suhyup = new Bank("수협은행", "Suhyup");
 
 	Bill* A1_bill = new Bill(100, 200, 500, 1000);
 	Bill* A2_bill = new Bill(100, 100, 100, 100);
 	ATM* A1 = new ATM(uriBank, "admin", 1357, A1_bill, 100, true, true); // 0; engSupport, multiBank
 	ATM* A2 = new ATM(kakaoBank, "master", 2345, A2_bill, 0, false, false); // 1; engUnsupport, singleBank
 
-	User* U1 = new User("U1", "최가난");
-	User* U2 = new User("U2", "권부자");
-	User* U3 = new User("U3", "서모녀");
-	User* U4 = new User("U4", "김백규");
-	User* U5 = new User("U5", "버터");
+	User* U1 = new User("U1", "최가난", "Choi, Ganan");
+	User* U2 = new User("U2", "권부자", "Kwon, Buja");
+	User* U3 = new User("U3", "서모녀", "Seo, Monyeo");
+	User* U4 = new User("U4", "김백규", "Kim, Baekgyu");
+	User* U5 = new User("U5", "버터", "Butter"); // 처음부터 bracket 치면 어떨까
 
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
 	DB->addAccountList(AC1);
@@ -28,14 +29,14 @@ int UI::run() {
 	DB->addAccountList(AC3);
 	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 3
 	DB->addAccountList(AC4);
-	Account* AC5 = new Account(uriBank, U2, 3344, 300000000); // 계좌번호 4 (3억)
+	Account* AC5 = new Account(suhyup, U2, 3344, 300000000); // 계좌번호 4 (3억)
 	DB->addAccountList(AC5);
 
 	atm = A1; // atm 선택받기 구현하면 이거 없애줘야
 	// atm = A2; // (singleBank debugging용)
 	
 	cout << "Debug: current ATM ID : " << atm->getID() << endl;
-	cout << "Debug: current ATM bank : " << atm->getBank()->getBankName() << endl;
+	cout << "Debug: current ATM bank : " << atm->getBank()->getBankName(true) << endl;
 	cout << "Debug: current ATM is ";
 		cout << (atm->isMultiBank()? "multibank ATM":"singlebank ATM") << endl;
 	cout << "Debug: current ATM is " << (atm->isEnglishSupport()? "":"not ");
@@ -143,7 +144,7 @@ int UI::run() {
 			break;
 		case State::End:
 			end();
-			// delete session (memory deallocation)
+			// delete session (memory deallocation) // 추가하기
 
 			delete AC4;
 			delete AC3;
@@ -390,7 +391,7 @@ UI::State UI::chooseTransaction() {
 
 UI::State UI::deposit() {
 	// from: chooseTransaction
-	cout << "\t[deposit]" << endl;
+	cout << "\t[deposit]" << endl; // 번역필요
 	fee = atm->fee(5, acc, nullptr);
 	transactionAmount = 0;
 	int depositCheckNum = 0;
@@ -555,7 +556,7 @@ UI::State UI::d_deposit() {
 UI::State UI::withdrawal() {
 	// from: chooseTransaction
 	if (this->WithdrawalPerSession >= 3) {
-		cout << "해당 세션의 출금 횟수 한도(3회)를 초과하였습니다.\n"; // 번역필요
+		cout << languagePack->getSentence("UI_withdrawal0"); // 번역필요
 		return State::ChooseTransaction;
 	}
 	cout << "\t[withdrawal]" << endl; // 번역필요
@@ -684,8 +685,11 @@ UI::State UI::t_confirmToAcc() { // 금융실명제
 	fee = atm->fee(7, acc, toAcc); // fee 함수 수정되면 따라 바꿔야
 
 	int input;
-	string prompt = "[" + toAcc->getOwner()->getUserName();
-	prompt += (languagePack->getSentence("UI_t_confirmToAcc0.2") + std::to_string(toAccID));
+	// Bank 이름 넣기?
+	string prompt = "[" + toAcc->getOwner()->getUserName(languagePack->isKor());
+	prompt += (languagePack->getSentence("UI_t_confirmToAcc0.2"));
+	prompt += toAcc->getBank()->getBankName(languagePack->isKor());
+	prompt += languagePack->getSentence("UI_t_confirmToAcc0.2.0") + std::to_string(toAccID);
 	prompt += languagePack->getSentence("UI_t_confirmToAcc0.3");
 	input = getInput(prompt, 1);
 	// 같은 계좌인지 확인하기 - to be done
@@ -706,9 +710,7 @@ UI::State UI::t_askAmount_c() {
 	cout << languagePack->getSentence("UI_t_askAmount_c0.1") << fee << languagePack->getSentence("UI_t_askAmount_c0.2");
 
 	transactionAmount = 0; // = insertedBill.sum();
-	string prompt = "Please insert cash you would like to transfer.";
-	prompt += " 송금할 현금을 투입해 주십시오. (5만원권, 1만원권, 5천원권, 1천원권 개수 순으로 입력)";
-	prompt += "\n\tcancel 취소: -1\n";
+	string prompt = (languagePack->getSentence("UI_t_askAmount_c1"));
 	// 투입 valid한지 check; Bill 사용하게 바꾸기 (입금쪽에서 구현된 함수 사용)
 
 	int* inputArr;
@@ -755,7 +757,8 @@ UI::State UI::t_askAmount_a() {
 	// from: t_askToAcc (when transactionType == 2)
 	atm->insertedBill = Bill{0,0,0,0};
   
-	cout << languagePack->getSentence("UI_t_askAmount_a0.1") << fee << languagePack->getSentence("UI_t_askAmount_a0.2");
+	cout << languagePack->getSentence("UI_t_askAmount_a0.1") << fee; // debug
+	cout << languagePack->getSentence("UI_t_askAmount_a0.2"); // debug
 
 	transactionAmount = 0;
 	string prompt = languagePack->getSentence("UI_t_askAmount_a1.1");
@@ -766,7 +769,7 @@ UI::State UI::t_askAmount_a() {
 	int input;
 	input = getInput(prompt, 2000001); // 송금한도액? (일단 200만원으로)
 	if (input == -1) {
-		cout << "You have exited [transfer] session. 송금을 취소하셨습니다." << endl; // 어디로 가게 할 것?
+		cout << languagePack->getSentence("UI_t_askAmount_a3") << endl; // 어디로 가게 할 것?
 		return State::ChooseTransaction; // 어디로 가게 할 것?
 	}
 	/*
@@ -798,6 +801,7 @@ UI::State UI::t_confirm() {
 
 	string prompt = "";
 	// 한글/영어에 따라 어순이 달라서 조건문을 사용해야 함.
+	// Bank 이름 넣기?
 	if (languagePack->isKor()) {
 		prompt += "[" + toAcc->getOwner()->getUserName() + languagePack->getSentence("UI_t_confirm0.2");
 		prompt += (std::to_string(transactionAmount) + languagePack->getSentence("UI_t_confirm0.3"));
@@ -807,7 +811,7 @@ UI::State UI::t_confirm() {
 	}
 	else {
 		prompt += (languagePack->getSentence("UI_t_confirm0.1") + std::to_string(transactionAmount) + languagePack->getSentence("UI_t_confirm0.2"));
-		prompt += (toAcc->getOwner()->getUserName() + languagePack->getSentence("UI_t_confirm0.3"));
+		prompt += (toAcc->getOwner()->getUserName(false) + languagePack->getSentence("UI_t_confirm0.3"));
 		prompt += (std::to_string(fee) + languagePack->getSentence("UI_t_confirm0.4"));
 		prompt += std::to_string(acc->getBalance());
 		prompt += languagePack->getSentence("UI_t_confirm0.5");
@@ -843,8 +847,13 @@ UI::State UI::t_transfer() {
 			// cout << "Debug: Bills in the cash slot: " << atm->insertedBill.getSum() << endl;
 			// cout << endl;
 		}
-		// 명세표 출력?
-		// database->addHistory("송금", before, after, acc, toAcc); // 도연이가 함수안에 만들어놓은듯?
+		cout << "\t[" << transactionAmount << languagePack->getSentence("UI_t_transfer1.1");
+		cout << toAcc->getOwner()->getUserName(languagePack->isKor);
+		cout << languagePack->getSentence("UI_t_transfer1.3");
+
+		cout << languagePack->getSentence("UI_t_transfer2.1");
+		cout << acc->getBalance() << languagePack->getSentence("UI_t_transfer2.2");
+		
 		return State::ChooseTransaction;
 	}
 	else {
