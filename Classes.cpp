@@ -223,12 +223,11 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 }
 
 bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill) {
-	/*
-	cout << languagePack->getSentence("ATM_transfer0.1");
-	cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
-	cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
-	cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer0.5");
-	*/
+	
+	// cout << languagePack->getSentence("ATM_transfer0.1");
+	// cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
+	// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
+	// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer0.5");
 
 	int fee = this->fee(7, fromAcc, toAcc);
 	int before = fromAcc->getBalance();
@@ -242,12 +241,12 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			*this->remainBill += bill;
 			bill = Bill{0,0,0,0};
 
-			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
-			cout << languagePack->getSentence("ATM_transfer1.3");
+			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			// cout << languagePack->getSentence("ATM_transfer1.3");
 
-			cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
-			cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
-			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
+			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
+			// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
+			// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
 			database->addHistory("송금", before, after, fromAcc, toAcc);
@@ -259,12 +258,12 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
 
-			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
-			cout << languagePack->getSentence("ATM_transfer1.3");
+			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			// cout << languagePack->getSentence("ATM_transfer1.3");
 
-			cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
-			cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
-			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
+			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
+			// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
+			// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
 			database->addHistory("송금", before, after, fromAcc, toAcc);
@@ -298,7 +297,7 @@ int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송�
 		else if (a1->isPrimary(this) || a2->isPrimary(this)) { return 2000; } // prim-nonp
 		else { return 2500; } // nonp-nonp
 	}
-	else { cout << languagePack->getSentence("ATM_fee0"); exit(0); }
+	else { cout << languagePack->getSentence("ATM_fee0"); exit(0); } // ???
 }
 
 /***********************	  Bill  	***********************/
