@@ -223,10 +223,12 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 }
 
 bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill) {
+	/*
 	cout << languagePack->getSentence("ATM_transfer0.1");
 	cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
 	cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
 	cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer0.5");
+	*/
 
 	int fee = this->fee(7, fromAcc, toAcc);
 	int before = fromAcc->getBalance();
@@ -268,7 +270,10 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			database->addHistory("송금", before, after, fromAcc, toAcc);
 
 		}
-		else { cout << languagePack->getSentence("ATM_transfer6"); return false; }
+		else {
+			// cout << languagePack->getSentence("ATM_transfer3"); // debug
+			return false; 
+		}
 	}
 
 	return true;
