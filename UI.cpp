@@ -848,7 +848,7 @@ UI::State UI::t_transfer() {
 			// cout << endl;
 		}
 		cout << "\t[" << transactionAmount << languagePack->getSentence("UI_t_transfer1.1");
-		cout << toAcc->getOwner()->getUserName(languagePack->isKor);
+		cout << toAcc->getOwner()->getUserName(languagePack->isKor());
 		cout << languagePack->getSentence("UI_t_transfer1.3");
 
 		cout << languagePack->getSentence("UI_t_transfer2.1");
