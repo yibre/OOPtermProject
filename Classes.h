@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.cpp" // 현주는 여기 cpp
+#include "Language.h" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -64,7 +64,7 @@ public:
 	User() { ID = "U0"; name = "홍길동"; name_EN = "Doe, John"; } // 쓰이나?
 	User(string ID, string name, string name_EN) { this->ID = ID; this->name = name; this->name_EN = name_EN; }
 	~User() {};
-	string getUserName(bool isKor=true) { if (isKor) return name; else return name_EN; } // EN이름 가져오게 <type>으로 가능?
+	string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; } // EN이름 가져오게 <type>으로 가능?
 };
 
 /***********************	  Bill  	***********************/
@@ -104,7 +104,7 @@ public:
 	Bank() { ID = "B1"; name = "uriBank"; } // 안쓰이게 됐다
 	Bank(string name, string name_EN) { this->name = name; this->name_EN = name_EN; }
 	~Bank() { };
-	string getBankName(bool isKor=true) { if (isKor) return name; else return name_EN; }
+	string getBankName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	Account 	***********************/
@@ -176,7 +176,7 @@ public:
 	bool isMultiBank() { return multiBank; }
 	bool isEnglishSupport() { return engSupport; }
 	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
-	Bill insertedBill = Bill{0,0,0,0}; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
+	Bill insertedBill = Bill{ 0,0,0,0 }; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
 };
 
 /*******************	Other Functions 	*******************/
