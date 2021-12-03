@@ -7,6 +7,7 @@ int Database::listsize = 0;
 bool Database::sessionProceeding = false;
 int Database::transactionOrder = 1;
 int Database::totalSessionNum = 0;
+int Database::currentOrderNum = 0;
 vector<vector<string > > Database::atmhisEN;
 vector<vector<string > > Database::atmhisKR;
 vector<vector<string > > Database::sessionhisEN, sessionhisKR;
@@ -43,7 +44,8 @@ void Database::addATMHistory(string transactionType, int before, int after, Acco
 	cout << languagePack->getSentence("Database_addHistory0") << totalSessionNum << endl;
 	cout << languagePack->getSentence("Database_addHistory1") << transactionOrder << endl;
 	transactionOrder++;
-	totalSessionNum++;
+	currentOrderNum++;
+	//totalSessionNum++;
 	string usernameKR = account->getOwner()->getName();
 	string usernameEN = account->getOwner()->getName(false);
 	string receiverName = "-";
@@ -104,7 +106,7 @@ void Database::printATMHistory() {
 			}
 			cout << "\n" << endl;
 		}
-	}	
+	}
 }
 
 void Database::addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount) {
@@ -115,8 +117,8 @@ void Database::addSessionHistory(string type, int before, int after, Account* ac
 }
 
 void Database::printSessionHistory() {
-	if (totalSessionNum == 0) { return; }
-	int start = atmhisEN.size() - totalSessionNum;
+	if (currentOrderNum == 0) { return; }
+	int start = atmhisEN.size() - currentOrderNum;
 	vector<string> column;
 	column.push_back(languagePack->getSentence("Database_printSessionHistory0.1"));
 	column.push_back(languagePack->getSentence("Database_printSessionHistory0.2"));
@@ -128,8 +130,8 @@ void Database::printSessionHistory() {
 		cout << column[i] << " ";
 	}
 	cout << endl;
-	for (int i = start; i < atmhisEN.size()-1; i++) {
-		for (int j = 1; j < column.size(); j++) {
+	for (int i = start; i < atmhisEN.size(); i++) {
+		for (int j = 1; j < column.size() + 1; j++) {
 			if (isKor) cout << atmhisKR[i][j] << " ";
 			else cout << atmhisEN[i][j] << " ";
 		}
@@ -138,7 +140,8 @@ void Database::printSessionHistory() {
 }
 
 void Database::clearSessionHistory() {
-	totalSessionNum = 0;
+	totalSessionNum++;
+	currentOrderNum = 0;
 
 	// cout << sessionhis.size() << endl;
 	// for (int i = 0; i < sessionhis.size() + 1; i++) {
@@ -220,7 +223,7 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 		acc->changeBalance(money.getSum() - fee);
 		*this->remainBill += money;
 		// cout << money.getSum() - fee << languagePack->getSentence("ATM_deposit0");
-		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"), 
+		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"),
 			before, acc->getBalance(), acc, acc, 0, this->remainCheckNum);
 	}
 	else if (type == 2) {
@@ -228,7 +231,7 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 		this->remainCheck += checkSum;
 		this->remainCheckNum += checkNum;
 		// cout << checkSum - fee << languagePack->getSentence("ATM_deposit1");
-		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"), 
+		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"),
 			before, acc->getBalance(), acc, acc, 0, this->remainCheckNum);
 	}
 
