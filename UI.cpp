@@ -320,6 +320,7 @@ UI::State UI::checkAccount() {
 	string prompt = languagePack->getSentence("UI_checkAccount0.1");
 	prompt += to_string(accountNum);
 	prompt += languagePack->getSentence("UI_checkAccount0.2");
+	prompt += languagePack->getSentence("confirm");
 	int input = getInput(prompt, 0);
 	if (input == -1) {
 		// 카드 반환해주기?
@@ -692,10 +693,17 @@ UI::State UI::t_askToAcc() {
 	// from: 
 	int input;
 	string prompt = languagePack->getSentence("UI_t_askToAcc0");
-	// input = getInput(prompt, 99999, 10000); // 계좌번호 받아야 하니까
-	input = getInput(prompt, 5); // 임시
+	input = getInput(prompt, 99998, 10000);
 	if (input == -1) { return State::Transfer; }
-	toAccID = input;
+	if (input == acc->getID()) { // 현재 계좌와 같은 계좌 입력
+		cout << languagePack->getSentence("UI_t_askToAcc1");
+		return State:: T_AskToAcc;
+	}
+	toAccID = database->getIndexFromID(input);
+	if (toAccID == -1) { // 존재하지 않는 계좌일 경우
+		cout << languagePack->getSentence("UI_accessAccount1");
+		return State::T_AskToAcc;
+	}
 	toAcc = database->getAccountByNum(toAccID); // database 사용 (나중에 바꿔야 할 수도)
 	return State::T_ConfirmToAcc;
 }

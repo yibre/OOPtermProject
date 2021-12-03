@@ -41,6 +41,9 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>("show balance1", "현재 잔액 : ["));
 	translation_en.insert(pair<string, string>("show balance2", "] won\n"));
 	translation_kr.insert(pair<string, string>("show balance2", "]원\n"));
+	
+	translation_en.insert(pair<string, string>("confirm", "Confirm : 0\n\tCancel : -1\n"));
+	translation_kr.insert(pair<string, string>("confirm", "\t확인 : 0\n\t취소: -1\n"));
 
 	translation_en.insert(pair<string, string>("unexpected", "Debug: Unexpected behavior\n"));
 	translation_kr.insert(pair<string, string>("unexpected", "Debug: Unexpected behavior\n"));
@@ -82,9 +85,9 @@ Translation::Translation() {
 
 	function = "UI_checkAccount";
 	translation_en.insert(pair<string, string>(function + "0.1", "\tYour account number is : "));
-	translation_kr.insert(pair<string, string>(function + "0.1", "\t계좌번호가 : "));
-	translation_en.insert(pair<string, string>(function + "0.2", "\n\tIs this correct?\n\t(0 to confirm; -1 to cancel)\n"));
-	translation_kr.insert(pair<string, string>(function + "0.2", "\t가 맞습니까?\n\t(0번을 눌러 확인; -1을 눌러 취소)\n"));
+	translation_kr.insert(pair<string, string>(function + "0.1", "\t계좌번호 : "));
+	translation_en.insert(pair<string, string>(function + "0.2", "\n\tIs this correct?\n"));
+	translation_kr.insert(pair<string, string>(function + "0.2", "\t가 맞습니까?\n"));
 
 	// translation_en.insert(pair<string, string>(function + "1", "Debug: Unexpected behavior in UI::checkAccount\n"));
 	// translation_kr.insert(pair<string, string>(function + "1", "Debug: Unexpected behavior in UI::checkAccount\n"));
@@ -297,6 +300,9 @@ Translation::Translation() {
 	function = "UI_t_askToAcc";
 	translation_en.insert(pair<string, string>(function + "0", "Please enter the account you would like to transfer your money to.\n\tCancel : -1\n"));
 	translation_kr.insert(pair<string, string>(function + "0", "송금하실 계좌의 계좌번호를 입력해 주십시오.\n\t취소 : -1\n"));
+	
+	translation_en.insert(pair<string, string>(function + "1", "You cannot transfer to the same account.\n"));
+	translation_kr.insert(pair<string, string>(function + "1", "현재 계좌와 동일한 계좌로 송금할 수 없습니다.\n"));
 
 	function = "UI_t_confirmToAcc";
 	translation_en.insert(pair<string, string>(function + "0.1", "Is [")); // user 이름 이어짐
