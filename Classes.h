@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.cpp" // 현주는 여기 cpp
+#include "Language.h" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -24,11 +24,14 @@ private:
 	static Translation* languagePack;
 	static int listsize;
 	static Database* instance; // 한 번만 생성되는 instance
-	static vector<vector<string> > atmhis; // atm 어드민이 볼 수 있는 거래 내역
-	static vector<vector<string> > sessionhis; // 세션 종료 후 유저가 받는 내역
+	static vector<vector<string> > atmhisEN; // atm 어드민이 볼 수 있는 거래 내역
+	static vector<vector<string> > atmhisKR;
+	static vector<vector<string> > sessionhisEN; // 세션 종료 후 유저가 받는 내역
+	static vector<vector<string> > sessionhisKR;
 	static bool sessionProceeding; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 	static int totalSessionNum; // 한 세션이 시작된 후 몇 번의 거래가 이루어졌는가, clearSessionHistory에서 사용
+	static bool isKor;
 public:
 	Database() {};
 	virtual ~Database() {};
@@ -39,18 +42,18 @@ public:
 	void addAccountList(Account*);
 	Account* getAccountByNum(int index);
 	// void addATMHistory(string transactionType, int money, Account* account, Account* receiverAcc);
-	vector<vector<string> > getATMHistory() { return atmhis; } // atmHis면 더 좋겠다 (-현주)
-	vector<vector<string> > getSessionHistory() { return sessionhis; } // sessionHis면 더 좋겠다 (-현주)
-	void addHistory(string type, int before, int after, Account* acc, Account* receiver); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
-	void printHistory();
-	// void printATMHistory();
+	void addATMHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
+	void addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount);
+	void printATMHistory();
+	void printSessionHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
 	int getIndexFromID(int);
-	void addSessionHistory(string, int, Account*);
-	void printSessionHistory();
 	void clearSessionHistory();
-	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
+	void changeLanguage(string Lang) {
+		if (Lang == "ENG") isKor = false;
+		this->languagePack->changeLanguage(Lang);
+	}
 };
 
 /***********************	  User  	***********************/
@@ -64,7 +67,7 @@ public:
 	User() { ID = "U0"; name = "홍길동"; name_EN = "Doe, John"; } // 쓰이나?
 	User(string ID, string name, string name_EN) { this->ID = ID; this->name = name; this->name_EN = name_EN; }
 	~User() {};
-	string getUserName(bool isKor=true) { if (isKor) return name; else return name_EN; } // EN이름 가져오게 <type>으로 가능?
+	string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; } // EN이름 가져오게 <type>으로 가능?
 };
 
 /***********************	  Bill  	***********************/
@@ -104,7 +107,7 @@ public:
 	Bank() { ID = "B1"; name = "uriBank"; } // 안쓰이게 됐다
 	Bank(string name, string name_EN) { this->name = name; this->name_EN = name_EN; }
 	~Bank() { };
-	string getBankName(bool isKor=true) { if (isKor) return name; else return name_EN; }
+	string getBankName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	Account 	***********************/
@@ -176,7 +179,7 @@ public:
 	bool isMultiBank() { return multiBank; }
 	bool isEnglishSupport() { return engSupport; }
 	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
-	Bill insertedBill = Bill{0,0,0,0}; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
+	Bill insertedBill = Bill{ 0,0,0,0 }; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
 };
 
 /*******************	Other Functions 	*******************/

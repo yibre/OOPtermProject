@@ -7,9 +7,11 @@ int Database::listsize = 0;
 bool Database::sessionProceeding = false;
 int Database::transactionOrder = 1;
 int Database::totalSessionNum = 0;
-vector<vector<string > > Database::atmhis;
-vector<vector<string > > Database::sessionhis;
+vector<vector<string > > Database::atmhisEN;
+vector<vector<string > > Database::atmhisKR;
+vector<vector<string > > Database::sessionhisEN, sessionhisKR;
 Translation* Database::languagePack = new Translation();
+bool Database::isKor = true;
 
 
 void Database::addAccountList(Account* newAccount) {
@@ -35,31 +37,46 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
-void Database::addHistory(string transactionType, int before, int after, Account* account, Account* receiverAcc) { // classes.h에서와 변수이름 다르다
+void Database::addATMHistory(string transactionType, int before, int after, Account* account, Account* receiverAcc, int transferAmount, int ATMremainCash) { // classes.h에서와 변수이름 다르다
 	int order = transactionOrder;
 
 	cout << languagePack->getSentence("Database_addHistory0") << totalSessionNum << endl;
 	cout << languagePack->getSentence("Database_addHistory1") << transactionOrder << endl;
 	transactionOrder++;
 	totalSessionNum++;
-	string username = account->getOwner()->getUserName();
+	string usernameKR = account->getOwner()->getUserName();
+	string usernameEN = account->getOwner()->getUserName(false);
 	string receiverName = "-";
-	if (transactionType == "transfer" || transactionType == "송금") {
-		receiverName = receiverAcc->getOwner()->getUserName();
+	if (transactionType == "transfer") {
+		receiverName = receiverAcc->getOwner()->getUserName(false);
 	}
-	vector<string> temp;
-	temp.push_back(to_string(order));
-	temp.push_back(username);
-	temp.push_back(to_string(account->getID()));
-	temp.push_back(transactionType);
-	temp.push_back(to_string(before));
-	temp.push_back(to_string(after));
-	temp.push_back(receiverName);
+	else if (transactionType == "송금") {
+		receiverName = receiverAcc->getOwner()->getUserName(true);
+	}
+	vector<string> tempKR;
+	tempKR.push_back(to_string(order));
+	tempKR.push_back(usernameKR);
+	tempKR.push_back(to_string(account->getID()));
+	tempKR.push_back(transactionType);
+	tempKR.push_back(to_string(before));
+	tempKR.push_back(to_string(after));
+	tempKR.push_back(receiverName);
+	tempKR.push_back(to_string(ATMremainCash));
+	vector<string> tempEN;
+	tempEN.push_back(to_string(order));
+	tempEN.push_back(usernameEN);
+	tempEN.push_back(to_string(account->getID()));
+	tempEN.push_back(transactionType);
+	tempEN.push_back(to_string(before));
+	tempEN.push_back(to_string(after));
+	tempEN.push_back(receiverName);
 	// vector<string> temp{ to_string(order), username, to_string(account->getID()), transactionType, to_string(before), to_string(after), receiverName };
-	atmhis.push_back(temp);
+	atmhisEN.push_back(tempEN);
+	atmhisKR.push_back(tempKR);
+	tempKR.push_back(to_string(ATMremainCash));
 }
 
-void Database::printHistory() {
+void Database::printATMHistory() {
 	vector<string> column;
 	column.push_back(languagePack->getSentence("Database_printHistory0.1"));
 	column.push_back(languagePack->getSentence("Database_printHistory0.2"));
@@ -72,23 +89,34 @@ void Database::printHistory() {
 		cout << column[i] << " ";
 	}
 	cout << endl;
-	for (int i = 0; i < atmhis.size(); i++) {
-		for (int j = 0; j < column.size(); j++) {
-			cout << atmhis[i][j] << " ";
+	if (isKor) {
+		for (int i = 0; i < atmhisKR.size(); i++) {
+			for (int j = 0; j < column.size(); j++) {
+				cout << atmhisKR[i][j] << " ";
+			}
+			cout << "\n" << endl;
 		}
-		cout << "\n" << endl;
 	}
+	else {
+		for (int i = 0; i < atmhisEN.size(); i++) {
+			for (int j = 0; j < column.size(); j++) {
+				cout << atmhisEN[i][j] << " ";
+			}
+			cout << "\n" << endl;
+		}
+	}	
 }
 
-void Database::addSessionHistory(string, int, Account* myAcc) {
+void Database::addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount) {
 	// 거래 순서, 나간 금액, 들어온 금액, 계좌잔액
-	cout << languagePack->getSentence("Database_addSessionHistory0") << myAcc->getOwner()->getUserName() << endl;
+	cout << languagePack->getSentence("Database_addSessionHistory0") << acc->getOwner()->getUserName() << endl;
 	vector<string> column;
 
 }
 
 void Database::printSessionHistory() {
-	int start = atmhis.size() - totalSessionNum;
+	if (totalSessionNum == 0) { return; }
+	int start = atmhisEN.size() - totalSessionNum;
 	vector<string> column;
 	column.push_back(languagePack->getSentence("Database_printSessionHistory0.1"));
 	column.push_back(languagePack->getSentence("Database_printSessionHistory0.2"));
@@ -100,9 +128,10 @@ void Database::printSessionHistory() {
 		cout << column[i] << " ";
 	}
 	cout << endl;
-	for (int i = start; i < atmhis.size(); i++) {
+	for (int i = start; i < atmhisEN.size()-1; i++) {
 		for (int j = 1; j < column.size(); j++) {
-			cout << atmhis[i][j] << " ";
+			if (isKor) cout << atmhisKR[i][j] << " ";
+			else cout << atmhisEN[i][j] << " ";
 		}
 		cout << "\n" << endl;
 	}
@@ -170,10 +199,10 @@ int ATM::numID = 100; // static int numID 초기화 (3자리 고유번호 주기
 
 ATM::ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport = 1, bool multiBank = 1) {
 	database = Database::getInstance();
-	
+
 	this->ID = this->numID; // static int를 ID로 배정
 	this->numID++;
-	
+
 	this->engSupport = engSupport;
 	this->multiBank = multiBank;
 	this->ownerBank = bank;
@@ -192,16 +221,18 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 		acc->changeBalance(money.getSum() - fee);
 		*this->remainBill += money;
 		cout << money.getSum() - fee << languagePack->getSentence("ATM_deposit0");
-		database->addHistory("입금", before, acc->getBalance(), acc, acc);
+		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"), 
+			before, acc->getBalance(), acc, acc, 0, this->remainCheckNum);
 	}
 	else if (type == 2) {
 		acc->changeBalance(checkSum - fee);
 		this->remainCheck += checkSum;
 		this->remainCheckNum += checkNum;
 		cout << checkSum - fee << languagePack->getSentence("ATM_deposit1");
-		database->addHistory("입금", before, acc->getBalance(), acc, acc);
+		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"), 
+			before, acc->getBalance(), acc, acc, 0, this->remainCheckNum);
 	}
-	
+
 
 	cout << languagePack->getSentence("ATM_deposit2.1") << fee << languagePack->getSentence("ATM_deposit2.2");
 	cout << languagePack->getSentence("ATM_deposit3.1") << acc->getBalance() << languagePack->getSentence("ATM_deposit3.2");
@@ -217,7 +248,10 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 	cout << languagePack->getSentence("ATM_withdrawal1.1") << fee << languagePack->getSentence("ATM_withdrawal1.2");
 	cout << languagePack->getSentence("ATM_withdrawal2.1") << acc->getBalance() << languagePack->getSentence("ATM_withdrawal2.2");
 
-	database->addHistory("출금", before, acc->getBalance(), acc, acc);
+
+	database->addATMHistory(languagePack->getSentence("Database_addSessionHistory2"),
+		before, acc->getBalance(), acc, acc, 0, this->remainCheckNum);
+	// database->addATMHistory("출금", before, acc->getBalance(), acc, acc);
 
 	return true;
 }
@@ -237,10 +271,10 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 		if (fromAcc->getBalance() >= fee) {
 			fromAcc->changeBalance(-fee);
 			toAcc->changeBalance(money);
-			
+
 			// 송금 확인되어 반환의 여지 없을 때 remainCash transactionBill만큼 늘리기
 			*this->remainBill += bill;
-			bill = Bill{0,0,0,0};
+			bill = Bill{ 0,0,0,0 };
 
 			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
 			cout << languagePack->getSentence("ATM_transfer1.3");
@@ -250,7 +284,9 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
-			database->addHistory("송금", before, after, fromAcc, toAcc);
+			database->addATMHistory(languagePack->getSentence("Database_addSessionHistory3"),
+				before, fromAcc->getBalance(), fromAcc, toAcc, money, this->remainCheckNum);
+			// database->addHistory("송금", before, after, fromAcc, toAcc);
 		}
 		else { cout << languagePack->getSentence("ATM_transfer3"); return false; }
 	}
@@ -267,12 +303,14 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
-			database->addHistory("송금", before, after, fromAcc, toAcc);
+			database->addATMHistory(languagePack->getSentence("Database_addSessionHistory3"),
+				before, fromAcc->getBalance(), fromAcc, toAcc, money, this->remainCheckNum);
+			// database->addHistory("송금", before, after, fromAcc, toAcc);
 
 		}
 		else {
 			// cout << languagePack->getSentence("ATM_transfer3"); // debug
-			return false; 
+			return false;
 		}
 	}
 
