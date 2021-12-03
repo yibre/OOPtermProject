@@ -1,5 +1,4 @@
 #pragma once
-#include "Classes.cpp" // 현주는 여기 .cpp로 바꿔쓰기
 #include <iostream>
 #include <string>
 
@@ -66,6 +65,7 @@ private:
 
 public:
 	int run();
+	~UI() { delete languagePack; }
 private:
 	static int getInput(const std::string& prompt, int minimum, int maximum, bool enableCancel);
 	static int* getInputArray(const std::string& prompt, int length, int minimum, int maximum, bool);
