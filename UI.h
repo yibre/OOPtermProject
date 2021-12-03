@@ -1,5 +1,5 @@
 #pragma once
-#include "Classes.cpp" // 현주는 여기 .cpp로 바꿔쓰기
+#include "Classes.h" // 현주는 여기 .cpp로 바꿔쓰기
 #include <iostream>
 #include <string>
 
@@ -12,8 +12,10 @@ private:
 		InsertCard,
 		VerifyAccount,
 		CheckAccount,
-		VerifyAdmin,
-		ShowAdmin,
+		A_Verify,
+		A_ShowMenu,
+		A_ShowHistory,
+		A_CSVtoHistory,
 		ChooseTransaction,
 		Deposit,
 		D_AskDepositType,
@@ -74,8 +76,10 @@ private:
 	State getATM();
 	State insertCard();
 	State verifyAccount();
-	State verifyAdmin();
-	State showAdmin();
+	State a_verify();
+	State a_showMenu();
+	State a_showHistory();
+	State a_csvtoHistory();
 	State checkAccount();
 	State enterAdmin();
 	State chooseTransaction();

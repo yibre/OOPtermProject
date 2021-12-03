@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.cpp" // 현주는 여기 cpp
+#include "Language.h" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -21,7 +21,7 @@ private:
 	string name_EN;
 public:
 	NamedObj(string name, string name_EN) : name(name), name_EN(name_EN) {}
-	string getName(bool isKor=true) { if (isKor) return name; else return name_EN; }
+	string getName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	Database	***********************/
@@ -40,7 +40,6 @@ private:
 	static bool sessionProceeding; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 	static int totalSessionNum; // 한 세션이 시작된 후 몇 번의 거래가 이루어졌는가, clearSessionHistory에서 사용
-	static bool isKor;
 public:
 	Database() {};
 	virtual ~Database() {};
@@ -50,9 +49,10 @@ public:
 	}
 	void addAccountList(Account*);
 	Account* getAccountByNum(int index);
-	// void addATMHistory(string transactionType, int money, Account* account, Account* receiverAcc);
-	void addATMHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
+	void addATMHistory(int type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
 	void addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount);
+	vector<vector<string> > getATMHistoryKR() { return atmhisKR; }
+	vector<vector<string> > getATMHistoryEN() { return atmhisEN; }
 	void printATMHistory();
 	void printSessionHistory();
 	void sizeincrease() { listsize++; };
@@ -60,7 +60,6 @@ public:
 	int getIndexFromID(int);
 	void clearSessionHistory();
 	void changeLanguage(string Lang) {
-		if (Lang == "ENG") isKor = false;
 		this->languagePack->changeLanguage(Lang);
 	}
 };
