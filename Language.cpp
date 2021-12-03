@@ -83,9 +83,6 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "2", "You have entered wrong password.\n"));
 	translation_kr.insert(pair<string, string>(function + "2", "비밀번호가 틀렸습니다.\n"));
 
-	translation_en.insert(pair<string, string>(function + "3", "Do you want to show ATM history? \n\t(0 to confirm; -1 to cancel)\n"));
-	translation_kr.insert(pair<string, string>(function + "3", "ATM history를 보시겠습니까?\n\t(0번을 눌러 확인; -1을 눌러 취소)\n"));
-
 	function = "UI_checkAccount";
 	translation_en.insert(pair<string, string>(function + "0.1", "\tYour account number is : "));
 	translation_kr.insert(pair<string, string>(function + "0.1", "\t계좌번호 : "));
@@ -430,10 +427,6 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0.6", "[거래 후 잔액]"));
 	translation_en.insert(pair<string, string>(function + "0.7", "[Recipient when transfer]"));
 	translation_kr.insert(pair<string, string>(function + "0.7", "[송금 시 수신인]"));
-	translation_en.insert(pair<string, string>(function + "0.8", "[TransferAmount]"));
-	translation_kr.insert(pair<string, string>(function + "0.8", "[송금금액]"));
-	translation_en.insert(pair<string, string>(function + "0.9", "[Cash balance in ATM]"));
-	translation_kr.insert(pair<string, string>(function + "0.9", "[ATM 내 현금 잔액]"));
 
 	function = "Database_addSessionHistory";
 	translation_en.insert(pair<string, string>(function + "0", "Transaction account"));
