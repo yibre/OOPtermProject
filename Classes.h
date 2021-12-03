@@ -57,7 +57,7 @@ public:
 	void printSessionHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
-	int getIndexFromID(int);
+	int getIndexFromID(int); // 계좌번호 받아서 index return
 	void clearSessionHistory();
 	void changeLanguage(string Lang) {
 		if (Lang == "ENG") isKor = false;
@@ -155,7 +155,7 @@ public:
 class Account { // Bank와 User를 상속해도 될듯
 private:
 	Database* database;
-	int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자(계좌번호?)
+	int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자(계좌번호)
 	static int numID; // 어떤 ID를 부여할것인가
 	Bank* ownerBank;
 	User* owner;
@@ -166,10 +166,10 @@ public:
 	Account();
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
-	int getID() { return ID; }
+	int getID() { return ID; } // 계좌번호를 return
 	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void changeBalance(int money);
-	int getNumID() { return numID; }
+	// int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
 	User* getOwner() { return owner; }
