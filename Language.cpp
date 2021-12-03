@@ -67,7 +67,7 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "0", "Your account : "));
 	translation_kr.insert(pair<string, string>(function + "0", "계좌번호 : "));
 
-	translation_en.insert(pair<string, string>(function + "1", "The account does not exist.\n"));
+	translation_en.insert(pair<string, string>(function + "1", "This account does not exist.\n"));
 	translation_kr.insert(pair<string, string>(function + "1", "존재하지 않는 계좌입니다.\n"));
 
 	translation_en.insert(pair<string, string>(function + "2", "This card is not supported by this ATM.\n"));
