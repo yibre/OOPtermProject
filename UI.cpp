@@ -264,7 +264,7 @@ UI::State UI::insertCard() {
 	// 유저로부터 계좌번호 입력받는다
 	accID, toAccID = -1; acc, toAcc = nullptr; // 혹시 모르니 초기화
 	cout << languagePack->getSentence("UI_getAccountNum0");
-	accountNum = getInput(languagePack->getSentence("UI_accessAccount0"), 99999, 0); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
+	accountNum = getInput(languagePack->getSentence("UI_accessAccount0"), 99999, 10000); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
 
 	if (accountNum == 99999) { // admin 계정일 때
 		return State::VerifyAdmin;

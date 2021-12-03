@@ -157,10 +157,9 @@ void Database::clearSessionHistory() {
 
 Account::Account() {
 	database = Database::getInstance();
-	numID = 0;
 }
 
-int Account::numID;
+int Account::numID = 10000;
 
 Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	this->ownerBank = bank;
@@ -168,7 +167,7 @@ Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	this->password = pw;
 	this->balance = balance;
 	this->ID = numID;
-	increaseID(); // id를 부여한 뒤에는 static id를 1 추가함
+	numID++; // id를 부여한 뒤에는 static id를 1 추가함
 }
 
 bool Account::checkPassword(int uswerAnswer) {

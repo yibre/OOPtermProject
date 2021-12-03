@@ -169,7 +169,6 @@ public:
 	int getID() { return ID; }
 	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void changeBalance(int money);
-	void increaseID() { numID++; }
 	int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
