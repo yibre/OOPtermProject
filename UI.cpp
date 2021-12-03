@@ -170,6 +170,7 @@ int UI::run() {
 
 /***********************	  cin functions  	***********************/
 
+
 int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enableCancel = true) { // [min, max]
 	int input;
 	for (;;) {
@@ -886,8 +887,10 @@ UI::State UI::t_transfer() {
 }
 
 UI::State UI::sessionOver() {
-	database->printSessionHistory(); // session history를 출력
+	database->printSessionHistory();
 	database->clearSessionHistory();
 	return State::ChangeLanguage;
+
+void UI::end() {
 	// return State::ReturnCard; // 카드 반환
 }

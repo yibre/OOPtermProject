@@ -176,6 +176,7 @@ Translation::Translation() {
 	// translation_kr.insert(pair<string, string>(function + "6", "입금을 취소하셨습니다.\n"));
 
 	function = "UI_d_confirm_Cash";
+
 	// translation_en.insert(pair<string, string>(function + "0", "Please make sure if the amount you put in is correct.\nConfirm : 0\tCancel : -1\n"));
 	// translation_kr.insert(pair<string, string>(function + "0", "투입하신 금액이 맞는지 확인해 주십시오.\n확인 : 0\t취소 : -1\n"));
 
@@ -398,6 +399,7 @@ Translation::Translation() {
 
 	/********************	 Database	 ********************/
 	function = "Database_addHistory";
+
 	translation_en.insert(pair<string, string>(function + "0", "Total session number is "));
 	translation_kr.insert(pair<string, string>(function + "0", "현재 세션 번호 : "));
 
@@ -423,8 +425,15 @@ Translation::Translation() {
 	function = "Database_addSessionHistory";
 	translation_en.insert(pair<string, string>(function + "0", "Transaction account"));
 	translation_kr.insert(pair<string, string>(function + "0", "거래 계좌 : "));
+	translation_en.insert(pair<string, string>(function + "1", "입금"));
+	translation_kr.insert(pair<string, string>(function + "1", "deposit"));
+	translation_en.insert(pair<string, string>(function + "2", "출금"));
+	translation_kr.insert(pair<string, string>(function + "2", "withdrawal"));
+	translation_en.insert(pair<string, string>(function + "3", "송금"));
+	translation_kr.insert(pair<string, string>(function + "3", "transfer"));
 
 	function = "Database_printSessionHistory";
+
 	translation_en.insert(pair<string, string>(function + "0.1", "[Account holder]"));
 	translation_kr.insert(pair<string, string>(function + "0.1", "[계좌주]"));
 	translation_en.insert(pair<string, string>(function + "0.2", "[Account number]"));
@@ -437,6 +446,7 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0.5", "[거래 후 잔액]"));
 	translation_en.insert(pair<string, string>(function + "0.6", "[Recipient when transfer]"));
 	translation_kr.insert(pair<string, string>(function + "0.6", "[송금 시 수신인]"));
+
 
 	/********************	 ATM	 ********************/
 	// 이것들 다 UI로 빼기, []원 되도록 bracket 넣기

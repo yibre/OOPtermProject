@@ -14,7 +14,7 @@ private:
 public:
 	Translation();
 	void changeLanguage(string Lang) {
-		if (Lang == "EN") {
+		if (Lang == "ENG") {
 			this->currentIsKor = false;
 		}
 		else if (Lang == "KOR") {
