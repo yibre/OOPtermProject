@@ -44,14 +44,14 @@ void Database::addATMHistory(string transactionType, int before, int after, Acco
 	cout << languagePack->getSentence("Database_addHistory1") << transactionOrder << endl;
 	transactionOrder++;
 	totalSessionNum++;
-	string usernameKR = account->getOwner()->getUserName();
-	string usernameEN = account->getOwner()->getUserName(false);
+	string usernameKR = account->getOwner()->getName();
+	string usernameEN = account->getOwner()->getName(false);
 	string receiverName = "-";
 	if (transactionType == "transfer") {
-		receiverName = receiverAcc->getOwner()->getUserName(false);
+		receiverName = receiverAcc->getOwner()->getName(false);
 	}
 	else if (transactionType == "송금") {
-		receiverName = receiverAcc->getOwner()->getUserName(true);
+		receiverName = receiverAcc->getOwner()->getName(true);
 	}
 	vector<string> tempKR;
 	tempKR.push_back(to_string(order));
@@ -109,7 +109,7 @@ void Database::printATMHistory() {
 
 void Database::addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount) {
 	// 거래 순서, 나간 금액, 들어온 금액, 계좌잔액
-	cout << languagePack->getSentence("Database_addSessionHistory0") << acc->getOwner()->getUserName() << endl;
+	cout << languagePack->getSentence("Database_addSessionHistory0") << acc->getOwner()->getName() << endl;
 	vector<string> column;
 
 }
@@ -188,7 +188,7 @@ void Account::changeBalance(int money) {
 */
 
 bool Account::isPrimary(ATM* A) {
-	if (this->ownerBank->getBankName() == A->getBank()->getBankName()) { return true; }
+	if (this->ownerBank->getName() == A->getBank()->getName()) { return true; }
 	// BankID로 같은지 아닌지 확인할 수도 있지만 현재 ID 구현이 덜 돼 있는 상태인듯
 	return false;
 }
@@ -273,7 +273,7 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			*this->remainBill += bill;
 			bill = Bill{ 0,0,0,0 };
 
-			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getName();
 			// cout << languagePack->getSentence("ATM_transfer1.3");
 
 			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
@@ -292,7 +292,7 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
 
-			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getName();
 			// cout << languagePack->getSentence("ATM_transfer1.3");
 
 			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
@@ -453,7 +453,7 @@ bool Bill::operator>(const Bill& bill) {
 
 void Bill::printBill(bool isKor) {
 	if (isKor) { languagePack->changeLanguage("KOR"); }
-	else { languagePack->changeLanguage("EN"); }
+	else { languagePack->changeLanguage("ENG"); }
 	cout << languagePack->getSentence("Bill_printBill0.1");
 	for (int i = 0; i < 4; i++) {
 		cout << "[" << this->value[i] << languagePack->getSentence("Bill_printBill0.2") << this->paperCash[i] << languagePack->getSentence("Bill_printBill0.3");
