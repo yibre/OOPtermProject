@@ -102,7 +102,7 @@ private:
 	Translation* languagePack = new Translation();
 public:
 	Bill(int c50k, int c10k, int c5k, int c1k);
-	~Bill() { delete languagePack; }
+	//~Bill() { delete languagePack; }
 	int getTotalNum();
 	int getSum();
 	void printBill(bool isKor);
