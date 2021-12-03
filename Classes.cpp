@@ -7,6 +7,7 @@ int Database::listsize = 0;
 bool Database::sessionProceeding = false;
 int Database::transactionOrder = 1;
 int Database::totalSessionNum = 0;
+int Database::currentOrderNum = 0;
 vector<vector<string > > Database::atmhisEN;
 vector<vector<string > > Database::atmhisKR;
 vector<vector<string > > Database::sessionhisEN, sessionhisKR;
@@ -42,7 +43,8 @@ void Database::addATMHistory(int transactionType, int before, int after, Account
 	cout << languagePack->getSentence("Database_addHistory0") << totalSessionNum << endl;
 	cout << languagePack->getSentence("Database_addHistory1") << transactionOrder << endl;
 	transactionOrder++;
-	totalSessionNum++;
+	currentOrderNum++;
+	//totalSessionNum++;
 	string usernameKR = account->getOwner()->getName();
 	string usernameEN = account->getOwner()->getName(false);
 	string receiverNameKR = "-";
@@ -129,8 +131,8 @@ void Database::addSessionHistory(string type, int before, int after, Account* ac
 }
 
 void Database::printSessionHistory() {
-	if (totalSessionNum == 0) { return; }
-	int start = atmhisEN.size() - totalSessionNum;
+	if (currentOrderNum == 0) { return; }
+	int start = atmhisEN.size() - currentOrderNum;
 	vector<string> column;
 	column.push_back(languagePack->getSentence("Database_printSessionHistory0.1"));
 	column.push_back(languagePack->getSentence("Database_printSessionHistory0.2"));
@@ -154,7 +156,10 @@ void Database::printSessionHistory() {
 }
 
 void Database::clearSessionHistory() {
-	totalSessionNum = 0;
+	totalSessionNum++;
+	currentOrderNum = 0;
+
+	// cout << sessionhis.size() << endl;
 	// for (int i = 0; i < sessionhis.size() + 1; i++) {
 		// cout << i << endl;
 		// sessionhis.pop_back();
@@ -171,10 +176,9 @@ void Database::clearSessionHistory() {
 
 Account::Account() {
 	database = Database::getInstance();
-	numID = 0;
 }
 
-int Account::numID;
+int Account::numID = 10000;
 
 Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	this->ownerBank = bank;
@@ -182,7 +186,7 @@ Account::Account(Bank* bank, User* owner, int pw, int balance) {
 	this->password = pw;
 	this->balance = balance;
 	this->ID = numID;
-	increaseID(); // id를 부여한 뒤에는 static id를 1 추가함
+	numID++; // id를 부여한 뒤에는 static id를 1 추가함
 }
 
 bool Account::checkPassword(int uswerAnswer) {

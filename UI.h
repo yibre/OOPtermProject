@@ -68,6 +68,7 @@ private:
 
 public:
 	int run();
+	~UI() { delete languagePack; }
 private:
 	static int getInput(const std::string& prompt, int minimum, int maximum, bool enableCancel);
 	static int* getInputArray(const std::string& prompt, int length, int minimum, int maximum, bool);

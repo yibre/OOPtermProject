@@ -40,6 +40,7 @@ private:
 	static bool sessionProceeding; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 	static int totalSessionNum; // 한 세션이 시작된 후 몇 번의 거래가 이루어졌는가, clearSessionHistory에서 사용
+	static int currentOrderNum;
 public:
 	Database() {};
 	virtual ~Database() {};
@@ -57,7 +58,7 @@ public:
 	void printSessionHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
-	int getIndexFromID(int);
+	int getIndexFromID(int); // 계좌번호 받아서 index return
 	void clearSessionHistory();
 	void changeLanguage(string Lang) {
 		this->languagePack->changeLanguage(Lang);
@@ -101,6 +102,7 @@ private:
 	Translation* languagePack = new Translation();
 public:
 	Bill(int c50k, int c10k, int c5k, int c1k);
+	~Bill() { delete languagePack; }
 	int getTotalNum();
 	int getSum();
 	void printBill(bool isKor);
@@ -154,7 +156,7 @@ public:
 class Account { // Bank와 User를 상속해도 될듯
 private:
 	Database* database;
-	int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자(계좌번호?)
+	int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자(계좌번호)
 	static int numID; // 어떤 ID를 부여할것인가
 	Bank* ownerBank;
 	User* owner;
@@ -165,11 +167,10 @@ public:
 	Account();
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
-	int getID() { return ID; }
+	int getID() { return ID; } // 계좌번호를 return
 	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void changeBalance(int money);
-	void increaseID() { numID++; }
-	int getNumID() { return numID; }
+	// int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
 	User* getOwner() { return owner; }
