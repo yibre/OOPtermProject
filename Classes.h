@@ -41,7 +41,6 @@ private:
 	static int transactionOrder;
 	static int totalSessionNum; // 한 세션이 시작된 후 몇 번의 거래가 이루어졌는가, clearSessionHistory에서 사용
 	static int currentOrderNum;
-	static bool isKor;
 public:
 	Database() {};
 	virtual ~Database() {};
@@ -51,9 +50,10 @@ public:
 	}
 	void addAccountList(Account*);
 	Account* getAccountByNum(int index);
-	// void addATMHistory(string transactionType, int money, Account* account, Account* receiverAcc);
-	void addATMHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
+	void addATMHistory(int type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
 	void addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount);
+	vector<vector<string> > getATMHistoryKR() { return atmhisKR; }
+	vector<vector<string> > getATMHistoryEN() { return atmhisEN; }
 	void printATMHistory();
 	void printSessionHistory();
 	void sizeincrease() { listsize++; };
@@ -61,7 +61,6 @@ public:
 	int getIndexFromID(int); // 계좌번호 받아서 index return
 	void clearSessionHistory();
 	void changeLanguage(string Lang) {
-		if (Lang == "ENG") isKor = false;
 		this->languagePack->changeLanguage(Lang);
 	}
 };

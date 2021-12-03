@@ -1,4 +1,5 @@
 #include "UI.h"
+#include <fstream>
 
 using namespace std;
 
@@ -15,10 +16,10 @@ int UI::run() {
 	ATM* A1 = new ATM(uriBank, "admin", 1357, A1_bill, 100, true, true); // 0; engSupport, multiBank
 	ATM* A2 = new ATM(kakaoBank, "master", 2345, A2_bill, 0, false, false); // 1; engUnsupport, singleBank
 
-	User* U1 = new User("최가난", "Choi, Ganan");
-	User* U2 = new User("권부자", "Kwon, Buja");
-	User* U3 = new User("서모녀", "Seo, Monyeo");
-	User* U4 = new User("김백규", "Kim, Baekgyu");
+	User* U1 = new User("최가난", "Ganan Choi");
+	User* U2 = new User("권부자", "Buja Kwon");
+	User* U3 = new User("서모녀", "Monyeo Soe");
+	User* U4 = new User("김백규", "Baekgyu Kim");
 	User* U5 = new User("버터", "Butter"); // 처음부터 bracket 치면 어떨까
 
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
@@ -52,11 +53,17 @@ int UI::run() {
 		case State::InsertCard: // 계좌번호 입력, 99999 <- admin,
 			state = insertCard();
 			break;
-		case State::VerifyAdmin:
-			state = verifyAdmin();
+		case State::A_Verify:
+			state = a_verify();
 			break;
-		case State::ShowAdmin: // 본인 확인
-			state = showAdmin();
+		case State::A_ShowMenu: // 본인 확인
+			state = a_showMenu();
+			break;
+		case State::A_ShowHistory:
+			state = a_showHistory();
+			break;
+		case State::A_CSVtoHistory:
+			state = a_csvtoHistory();
 			break;
 		case State::CheckAccount: // 0 <- admin, 
 			state = checkAccount();
@@ -268,7 +275,7 @@ UI::State UI::insertCard() {
 	accountNum = getInput(languagePack->getSentence("UI_insertCard1"), 99999, 10000); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
 
 	if (accountNum == 99999) { // admin 계정일 때
-		return State::VerifyAdmin;
+		return State::A_Verify;
 	}
 	else if (accountNum == -1) {
 		cout << languagePack->getSentence("UI_insertCard2");
@@ -294,25 +301,43 @@ UI::State UI::insertCard() {
 	// 여기서 하는 존재하지 않는 계좌/지원하지 않는 계좌 체크는 checkAccount 끝나고 나서 하는 게 맞지 않나?
 }
 
-UI::State UI::verifyAdmin() {
+UI::State UI::a_verify() {
 	// from: accessAccount (admin 계정일 때)
 	cout << languagePack->getSentence("UI_verifyAdmin0");
 	int input = getInput(languagePack->getSentence("UI_verifyAdmin1"), 10000);
-	if (atm->checkPW(input)) { return State::ShowAdmin; }
+	if (atm->checkPW(input)) { return State::A_ShowMenu; }
 	else {
 		cout << languagePack->getSentence("UI_verifyAdmin2");
 		return State::InsertCard;
 	}
 }
 
-UI::State UI::showAdmin() { // 메뉴 보여주기
-	// TODO: show history 
-	database->printATMHistory(); // printHistory() 는 없다고, printATMHistory() 쓰겠냐는데?
-	// file로 출력하겠느냐 물어보기
-	// admin 세션 끝나면 카드 돌려주고 맨 처음으로 돌아감
-	// (바로 돌아가게 하지 말고 지연 있어야 할듯. -1을 눌러야 기록보기 종료하고 admin 세션 끝난다든지)
+UI::State UI::a_showMenu() { // 메뉴 보여주기
+	cout << "we are in show menu" << endl;
+	int input = getInput(languagePack->getSentence("UI_verifyAdmin3"), 10000);
+	cout << "input is " << input << endl;
+	if (input == 0) { return State::A_ShowHistory; }
+	else return State::ChangeLanguage;
+}
+
+UI::State UI::a_showHistory() { // 메뉴 보여주기
+	cout << "show history" << endl;
+	database->printATMHistory();
+	return State::A_CSVtoHistory;
+}
+
+UI::State UI::a_csvtoHistory() { // 메뉴 보여주기
+	ofstream myFile("history_1.csv");
+	for (int i = 0; i < database->getATMHistoryEN().size(); i++) {
+		for (int j = 0; j < 9; j++) {
+			if (languagePack->isKor()) myFile << database->getATMHistoryKR()[i][j] << ",";
+			else  myFile << database->getATMHistoryEN()[i][j] << ",";
+		}
+		myFile << endl;
+	}
 	return State::ChangeLanguage;
 }
+
 
 UI::State UI::checkAccount() {
 	// from: accessAccount
@@ -561,7 +586,7 @@ UI::State UI::d_deposit() {
 	if (success) {
 		//cout << languagePack->getSentence("UI_d_deposit0") << atm->getATMremainCash() << endl; // debug [Checked]
 
-		if(transactionType == 1){
+		if (transactionType == 1) {
 			cout << "[" << transactionBill.getSum() - fee << languagePack->getSentence("UI_d_deposit1");
 		}
 		if (transactionType == 2) {
@@ -822,6 +847,7 @@ UI::State UI::t_askAmount_a() {
 	transactionAmount = input;
 
 	// 액수 묻기 (cancel을 다시 입력으로 보고 함수로 따로 빼기)
+
 	prompt = languagePack->getSentence("UI_t_askAmount_a2.1") +  std::to_string(transactionAmount);
 	prompt += languagePack->getSentence("UI_t_askAmount_a2.2");
 	prompt += languagePack->getSentence("confirm");
