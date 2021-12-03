@@ -58,7 +58,6 @@ public:
 	void printSessionHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };
-	int getIndexFromID(int); // 계좌번호 받아서 index return
 	void clearSessionHistory();
 	void changeLanguage(string Lang) {
 		if (Lang == "ENG") isKor = false;
@@ -103,6 +102,7 @@ private:
 	Translation* languagePack = new Translation();
 public:
 	Bill(int c50k, int c10k, int c5k, int c1k);
+	~Bill() { delete languagePack; }
 	int getTotalNum();
 	int getSum();
 	void printBill(bool isKor);
@@ -167,10 +167,8 @@ public:
 	Account();
 	Account(Bank* bank, User* owner, int pw, int balance);
 	~Account() {}
-	int getID() { return ID; } // 계좌번호를 return
 	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void changeBalance(int money);
-	// int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
 	User* getOwner() { return owner; }
