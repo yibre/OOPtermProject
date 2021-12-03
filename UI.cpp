@@ -36,7 +36,7 @@ int UI::run() {
 	// atm = A2; // (singleBank, EngSupport X debugging용)
 
 	cout << "Debug: current ATM ID : " << atm->getID() << endl;
-	cout << "Debug: current ATM bank : " << atm->getBank()->getBankName(false) << endl;
+	cout << "Debug: current ATM bank : " << atm->getBank()->getName(false) << endl;
 	cout << "Debug: current ATM is ";
 	cout << (atm->isMultiBank() ? "multibank ATM" : "singlebank ATM") << endl;
 	cout << "Debug: current ATM is " << (atm->isEnglishSupport() ? "" : "not ");
@@ -185,7 +185,7 @@ int UI::getInput(const string& prompt, int maximum, int minimum = 0, bool enable
 	return input;
 }
 
-int* UI::getInputArray(const string& prompt, int length, int maximum, int minimum = 0, bool enableCancel = true) { // maximum 미만, minimum 이상; 즉 [min, max)
+int* UI::getInputArray(const string& prompt, int length, int maximum, int minimum = 0, bool enableCancel = true) { // [min, max]
 	int* input = new int[30];
 	cout << prompt;
 	cout.flush(); // Similar to endl, without new line.
@@ -235,14 +235,11 @@ UI::State UI::changeLanguage() {
 		cout << languagePack->getSentence("UI_changeLanguage0");
 	}
 	else if (input == 1) {
-		database->changeLanguage("EN");
-		atm->changeLanguage("EN");
-		languagePack->changeLanguage("EN");
+		database->changeLanguage("ENG");
+		atm->changeLanguage("ENG");
+		languagePack->changeLanguage("ENG");
 		cout << languagePack->getSentence("UI_changeLanguage0");
-	}/*
-	else if (input == -1) {
-		cout << languagePack->getSentence("UI_changeLanguage1");
-	}*/
+	}
 	else {
 		cout << languagePack->getSentence("unexpected"); // debug [Checked]
 	}
@@ -287,7 +284,7 @@ UI::State UI::insertCard() {
 	// if ATM이 singlebank이면
 	if (!atm->isMultiBank()) {
 		// ATM의 bank와 acc의 bank 같은지 체크
-		if (atm->getBank()->getBankName() != acc->getBank()->getBankName()) { // bank 다른 경우
+		if (atm->getBank()->getName() != acc->getBank()->getName()) { // bank 다른 경우
 			cout << languagePack->getSentence("UI_accessAccount2");
 			cout << languagePack->getSentence("card returned");
 			return State::ChangeLanguage;
@@ -310,7 +307,7 @@ UI::State UI::verifyAdmin() {
 
 UI::State UI::showAdmin() { // 메뉴 보여주기
 	// TODO: show history 
-	database->printHistory();
+	database->printATMHistory(); // printHistory() 는 없다고, printATMHistory() 쓰겠냐는데?
 	// file로 출력하겠느냐 물어보기
 	// admin 세션 끝나면 카드 돌려주고 맨 처음으로 돌아감
 	// (바로 돌아가게 하지 말고 지연 있어야 할듯. -1을 눌러야 기록보기 종료하고 admin 세션 끝난다든지)
@@ -709,9 +706,9 @@ UI::State UI::t_confirmToAcc() { // 금융실명제
 	fee = atm->fee(7, acc, toAcc); // fee 함수 수정되면 따라 바꿔야
 
 	int input;
-	string prompt = "[" + toAcc->getOwner()->getUserName(languagePack->isKor()); // 받는 user 이름
+	string prompt = "[" + toAcc->getOwner()->getName(languagePack->isKor()); // 받는 user 이름
 	prompt += (languagePack->getSentence("UI_t_confirmToAcc0.2"));
-	prompt += toAcc->getBank()->getBankName(languagePack->isKor()); // bank 이름
+	prompt += toAcc->getBank()->getName(languagePack->isKor()); // bank 이름
 	prompt += languagePack->getSentence("UI_t_confirmToAcc0.2.0") + std::to_string(toAccID); // 받는 계좌
 	prompt += languagePack->getSentence("UI_t_confirmToAcc0.3");
 	input = getInput(prompt, 1);
@@ -824,7 +821,7 @@ UI::State UI::t_confirm() {
 	// 한글/영어에 따라 어순이 달라서 조건문을 사용해야 함.
 	// Bank 이름 넣기?
 	if (languagePack->isKor()) {
-		prompt += "[" + toAcc->getOwner()->getUserName() + languagePack->getSentence("UI_t_confirm0.2");
+		prompt += "[" + toAcc->getOwner()->getName() + languagePack->getSentence("UI_t_confirm0.2");
 		prompt += (std::to_string(transactionAmount) + languagePack->getSentence("UI_t_confirm0.3"));
 		prompt += (std::to_string(fee) + languagePack->getSentence("UI_t_confirm0.4"));
 		prompt += std::to_string(acc->getBalance());
@@ -832,7 +829,7 @@ UI::State UI::t_confirm() {
 	}
 	else {
 		prompt += (languagePack->getSentence("UI_t_confirm0.1") + std::to_string(transactionAmount) + languagePack->getSentence("UI_t_confirm0.2"));
-		prompt += (toAcc->getOwner()->getUserName(false) + languagePack->getSentence("UI_t_confirm0.3"));
+		prompt += (toAcc->getOwner()->getName(false) + languagePack->getSentence("UI_t_confirm0.3"));
 		prompt += (std::to_string(fee) + languagePack->getSentence("UI_t_confirm0.4"));
 		prompt += std::to_string(acc->getBalance());
 		prompt += languagePack->getSentence("UI_t_confirm0.5");
@@ -869,7 +866,7 @@ UI::State UI::t_transfer() {
 			// cout << endl;
 		}
 		cout << "\t[" << transactionAmount << languagePack->getSentence("UI_t_transfer1.1");
-		cout << toAcc->getOwner()->getUserName(languagePack->isKor());
+		cout << toAcc->getOwner()->getName(languagePack->isKor());
 		cout << languagePack->getSentence("UI_t_transfer1.2");
 
 		cout << languagePack->getSentence("show balance1");
@@ -890,7 +887,4 @@ UI::State UI::sessionOver() {
 	database->printSessionHistory();
 	database->clearSessionHistory();
 	return State::ChangeLanguage;
-
-void UI::end() {
-	// return State::ReturnCard; // 카드 반환
 }

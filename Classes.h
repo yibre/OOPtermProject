@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.h" // 현주는 여기 cpp
+#include "Language.cpp" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -13,7 +13,16 @@ class User;
 class Bank;
 class Bill;
 
+/***********************	Abstract	***********************/
 
+class NamedObj {
+private:
+	string name;
+	string name_EN;
+public:
+	NamedObj(string name, string name_EN) : name(name), name_EN(name_EN) {}
+	string getName(bool isKor=true) { if (isKor) return name; else return name_EN; }
+};
 
 /***********************	Database	***********************/
 
@@ -58,6 +67,7 @@ public:
 
 /***********************	  User  	***********************/
 
+/*
 class User {
 private:
 	string ID; // user는 U1, U2, U3 이렇게 시작 // 쓰이나?
@@ -67,7 +77,20 @@ public:
 	User() { ID = "U0"; name = "홍길동"; name_EN = "Doe, John"; } // 쓰이나?
 	User(string ID, string name, string name_EN) { this->ID = ID; this->name = name; this->name_EN = name_EN; }
 	~User() {};
-	string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; } // EN이름 가져오게 <type>으로 가능?
+	string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; }
+};
+*/
+
+class User : public NamedObj {
+private:
+	string ID; // user는 U1, U2, U3 이렇게 시작 // 쓰이나?
+	// string name;
+	// string name_EN;
+public:
+	// User() { ID = "U0"; name = "홍길동"; name_EN = "Doe, John"; } // 쓰이나?
+	User(string ID, string name, string name_EN) : NamedObj(name, name_EN) { this->ID = ID; }
+	~User() {};
+	// string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	  Bill  	***********************/
@@ -95,19 +118,36 @@ public:
 
 /***********************	  Bank  	***********************/
 
+/*
 class Bank {
 private:
 	string ID; // bank는 B1, B2, B3 이렇게 시작
 	static int addID; // 0부터 시작해서 1씩 증가; 어디에 쓰이는고? -(현주)
 	string name; // 현재 ID랑 name이랑 따로 있는 이유 있나? ID는 get할 수도 없는데... -(현주) // 이것도 영어이름 넣고싶다
 	string name_EN;
-	Account* accountlist[100];
+	Account* accountlist[100]; // 쓰임??
 
 public:
 	Bank() { ID = "B1"; name = "uriBank"; } // 안쓰이게 됐다
 	Bank(string name, string name_EN) { this->name = name; this->name_EN = name_EN; }
 	~Bank() { };
 	string getBankName(bool isKor = true) { if (isKor) return name; else return name_EN; }
+};
+*/
+
+class Bank : public NamedObj {
+private:
+	string ID; // bank는 B1, B2, B3 이렇게 시작
+	static int addID; // 0부터 시작해서 1씩 증가; 어디에 쓰이는고? -(현주)
+	// string name; // 현재 ID랑 name이랑 따로 있는 이유 있나? ID는 get할 수도 없는데... -(현주) // 이것도 영어이름 넣고싶다
+	// string name_EN;
+	Account* accountlist[100]; // 쓰임??
+
+public:
+	// Bank() { ID = "B1"; name = "uriBank"; } // 안쓰이게 됐다
+	Bank(string name, string name_EN) : NamedObj(name, name_EN) {}
+	~Bank() {};
+	// string getBankName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	Account 	***********************/
