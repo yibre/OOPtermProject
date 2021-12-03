@@ -15,11 +15,11 @@ int UI::run() {
 	ATM* A1 = new ATM(uriBank, "admin", 1357, A1_bill, 100, true, true); // 0; engSupport, multiBank
 	ATM* A2 = new ATM(kakaoBank, "master", 2345, A2_bill, 0, false, false); // 1; engUnsupport, singleBank
 
-	User* U1 = new User("U1", "최가난", "Choi, Ganan");
-	User* U2 = new User("U2", "권부자", "Kwon, Buja");
-	User* U3 = new User("U3", "서모녀", "Seo, Monyeo");
-	User* U4 = new User("U4", "김백규", "Kim, Baekgyu");
-	User* U5 = new User("U5", "버터", "Butter"); // 처음부터 bracket 치면 어떨까
+	User* U1 = new User("최가난", "Choi, Ganan");
+	User* U2 = new User("권부자", "Kwon, Buja");
+	User* U3 = new User("서모녀", "Seo, Monyeo");
+	User* U4 = new User("김백규", "Kim, Baekgyu");
+	User* U5 = new User("버터", "Butter"); // 처음부터 bracket 치면 어떨까
 
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
 	DB->addAccountList(AC1);

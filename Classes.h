@@ -83,13 +83,13 @@ public:
 
 class User : public NamedObj {
 private:
-	string ID; // user는 U1, U2, U3 이렇게 시작 // 쓰이나?
+	// string ID; // user는 U1, U2, U3 이렇게 시작 // 쓰이나?
 	// string name;
 	// string name_EN;
 public:
 	// User() { ID = "U0"; name = "홍길동"; name_EN = "Doe, John"; } // 쓰이나?
-	User(string ID, string name, string name_EN) : NamedObj(name, name_EN) { this->ID = ID; }
-	~User() {};
+	User(string name, string name_EN) : NamedObj(name, name_EN) {}
+	~User() {}
 	// string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
@@ -137,11 +137,11 @@ public:
 
 class Bank : public NamedObj {
 private:
-	string ID; // bank는 B1, B2, B3 이렇게 시작
-	static int addID; // 0부터 시작해서 1씩 증가; 어디에 쓰이는고? -(현주)
+	// string ID; // bank는 B1, B2, B3 이렇게 시작
+	// static int addID; // 0부터 시작해서 1씩 증가; 어디에 쓰이는고? -(현주)
 	// string name; // 현재 ID랑 name이랑 따로 있는 이유 있나? ID는 get할 수도 없는데... -(현주) // 이것도 영어이름 넣고싶다
 	// string name_EN;
-	Account* accountlist[100]; // 쓰임??
+	// Account* accountlist[100]; // 쓰임??
 
 public:
 	// Bank() { ID = "B1"; name = "uriBank"; } // 안쓰이게 됐다
