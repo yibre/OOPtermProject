@@ -7,9 +7,9 @@ class UI {
 private:
 	enum class State {
 		ChangeLanguage,
+		// ReturnCard,
 		GetATM,
-		GetAccountNum,
-		AccessAccount,
+		InsertCard,
 		VerifyAccount,
 		CheckAccount,
 		VerifyAdmin,
@@ -67,12 +67,12 @@ private:
 public:
 	int run();
 private:
-	static int getInput(const std::string& prompt, int minimum, int maximum, bool languageCheck, bool);
+	static int getInput(const std::string& prompt, int minimum, int maximum, bool enableCancel);
 	static int* getInputArray(const std::string& prompt, int length, int minimum, int maximum, bool);
 	State changeLanguage();
+	// State returnCard();
 	State getATM();
-	State getAccountNum();
-	State accessAccount();
+	State insertCard();
 	State verifyAccount();
 	State verifyAdmin();
 	State showAdmin();
@@ -103,5 +103,4 @@ private:
 	State t_confirm();
 	State t_transfer();
 	State sessionOver();
-	void end();
 };

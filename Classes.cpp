@@ -220,7 +220,7 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 	if (type == 1) {
 		acc->changeBalance(money.getSum() - fee);
 		*this->remainBill += money;
-		cout << money.getSum() - fee << languagePack->getSentence("ATM_deposit0");
+		// cout << money.getSum() - fee << languagePack->getSentence("ATM_deposit0");
 		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"), 
 			before, acc->getBalance(), acc, acc, 0, this->remainCheckNum);
 	}
@@ -228,14 +228,15 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 		acc->changeBalance(checkSum - fee);
 		this->remainCheck += checkSum;
 		this->remainCheckNum += checkNum;
-		cout << checkSum - fee << languagePack->getSentence("ATM_deposit1");
+		// cout << checkSum - fee << languagePack->getSentence("ATM_deposit1");
 		database->addATMHistory(languagePack->getSentence("Database_addSessionHistory1"), 
 			before, acc->getBalance(), acc, acc, 0, this->remainCheckNum);
 	}
 
 
-	cout << languagePack->getSentence("ATM_deposit2.1") << fee << languagePack->getSentence("ATM_deposit2.2");
-	cout << languagePack->getSentence("ATM_deposit3.1") << acc->getBalance() << languagePack->getSentence("ATM_deposit3.2");
+
+	//cout << languagePack->getSentence("ATM_deposit2.1") << fee << languagePack->getSentence("ATM_deposit2.2");
+	//cout << languagePack->getSentence("ATM_deposit3.1") << acc->getBalance() << languagePack->getSentence("ATM_deposit3.2");
 	return true;
 }
 
@@ -244,9 +245,6 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 	int before = acc->getBalance();
 	acc->changeBalance(-(money.getSum() + fee));
 	*this->remainBill -= money;
-	cout << money.getSum() << languagePack->getSentence("ATM_withdrawal0");
-	cout << languagePack->getSentence("ATM_withdrawal1.1") << fee << languagePack->getSentence("ATM_withdrawal1.2");
-	cout << languagePack->getSentence("ATM_withdrawal2.1") << acc->getBalance() << languagePack->getSentence("ATM_withdrawal2.2");
 
 
 	database->addATMHistory(languagePack->getSentence("Database_addSessionHistory2"),
@@ -257,12 +255,11 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 }
 
 bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill) {
-	/*
-	cout << languagePack->getSentence("ATM_transfer0.1");
-	cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
-	cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
-	cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer0.5");
-	*/
+
+	// cout << languagePack->getSentence("ATM_transfer0.1");
+	// cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
+	// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
+	// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer0.5");
 
 	int fee = this->fee(7, fromAcc, toAcc);
 	int before = fromAcc->getBalance();
@@ -276,12 +273,12 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			*this->remainBill += bill;
 			bill = Bill{ 0,0,0,0 };
 
-			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
-			cout << languagePack->getSentence("ATM_transfer1.3");
+			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			// cout << languagePack->getSentence("ATM_transfer1.3");
 
-			cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
-			cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
-			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
+			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
+			// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
+			// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
 			database->addATMHistory(languagePack->getSentence("Database_addSessionHistory3"),
@@ -295,12 +292,12 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
 
-			cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
-			cout << languagePack->getSentence("ATM_transfer1.3");
+			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getUserName();
+			// cout << languagePack->getSentence("ATM_transfer1.3");
 
-			cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
-			cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
-			cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
+			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
+			// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
+			// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
 			database->addATMHistory(languagePack->getSentence("Database_addSessionHistory3"),
@@ -336,7 +333,7 @@ int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송�
 		else if (a1->isPrimary(this) || a2->isPrimary(this)) { return 2000; } // prim-nonp
 		else { return 2500; } // nonp-nonp
 	}
-	else { cout << languagePack->getSentence("ATM_fee0"); exit(0); }
+	else { cout << languagePack->getSentence("ATM_fee0"); exit(0); } // ???
 }
 
 /***********************	  Bill  	***********************/
@@ -459,7 +456,7 @@ void Bill::printBill(bool isKor) {
 	else { languagePack->changeLanguage("EN"); }
 	cout << languagePack->getSentence("Bill_printBill0.1");
 	for (int i = 0; i < 4; i++) {
-		cout << this->value[i] << languagePack->getSentence("Bill_printBill0.2") << this->paperCash[i] << languagePack->getSentence("Bill_printBill0.3");
+		cout << "[" << this->value[i] << languagePack->getSentence("Bill_printBill0.2") << this->paperCash[i] << languagePack->getSentence("Bill_printBill0.3");
 	}
 	cout << endl;
 	cout << languagePack->getSentence("Bill_printBill0.4") << this->getSum() << languagePack->getSentence("Bill_printBill0.5");
