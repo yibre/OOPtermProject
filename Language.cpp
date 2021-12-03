@@ -209,7 +209,7 @@ Translation::Translation() {
 	// translation_en.insert(pair<string, string>(function + "0", "Error\n"));
 	// translation_kr.insert(pair<string, string>(function + "0", "Error\n"));
 
-	translation_en.insert(pair<string, string>(function + "1.1", "Do you want to deposit ["));
+	translation_en.insert(pair<string, string>(function + "1.1", "Would you like to deposit ["));
 	translation_kr.insert(pair<string, string>(function + "1.1", "계좌로 ["));
 	translation_en.insert(pair<string, string>(function + "1.2", "] won into your account?\nThe fee is ["));
 	translation_kr.insert(pair<string, string>(function + "1.2", "]원 입금하시겠습니까?\n수수료는 ["));
@@ -261,7 +261,7 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0", "ATM 기 내부에 현금이 부족합니다.\n"));
 
 	function = "UI_w_confirm";
-	translation_en.insert(pair<string, string>(function + "0.1", "Do you want to withdraw ["));
+	translation_en.insert(pair<string, string>(function + "0.1", "Would you like to withdraw ["));
 	translation_kr.insert(pair<string, string>(function + "0.1", "계좌에서 ["));
 	translation_en.insert(pair<string, string>(function + "0.2", "] won from your account?\nThe fee is["));
 	translation_kr.insert(pair<string, string>(function + "0.2", "]원 출금하시겠습니까?\n수수료는 ["));
@@ -450,7 +450,7 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0.4", "[거래 전 잔액]"));
 	translation_en.insert(pair<string, string>(function + "0.5", "[Balance after the transaction]"));
 	translation_kr.insert(pair<string, string>(function + "0.5", "[거래 후 잔액]"));
-	translation_en.insert(pair<string, string>(function + "0.6", "[Recipient when transfer]"));
+	translation_en.insert(pair<string, string>(function + "0.6", "[Recipient when transfer]")); // ???
 	translation_kr.insert(pair<string, string>(function + "0.6", "[송금 시 수신인]"));
 
 
@@ -487,7 +487,7 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "2.2", " won\n"));
 	translation_kr.insert(pair<string, string>(function + "2.2", "원\n"));*/
 
-	function = "ATM_transfer";
+	// function = "ATM_transfer";
 	// translation_en.insert(pair<string, string>(function + "0.1", "Debug: ATM::transfer called\nDebug: (송금 전)\nfrom account ["));
 	// translation_kr.insert(pair<string, string>(function + "0.1", "Debug: ATM::transfer called\nDebug: (송금 전)\nfrom account ["));
 	// translation_en.insert(pair<string, string>(function + "0.2", "]\t 현재 잔액: ["));

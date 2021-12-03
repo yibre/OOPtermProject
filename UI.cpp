@@ -717,7 +717,7 @@ UI::State UI::t_confirmToAcc() { // 금융실명제
 	string prompt = "[" + toAcc->getOwner()->getName(languagePack->isKor()); // 받는 user 이름
 	prompt += (languagePack->getSentence("UI_t_confirmToAcc0.2"));
 	prompt += toAcc->getBank()->getName(languagePack->isKor()); // bank 이름
-	prompt += languagePack->getSentence("UI_t_confirmToAcc0.2.0") + std::to_string(toAccID); // 받는 계좌
+	prompt += languagePack->getSentence("UI_t_confirmToAcc0.2.0") + std::to_string(toAcc->getID()); // 받는 계좌
 	prompt += languagePack->getSentence("UI_t_confirmToAcc0.3");
 	input = getInput(prompt, 1);
 	// 같은 계좌인지 확인하기 - to be done
@@ -793,7 +793,7 @@ UI::State UI::t_askAmount_a() {
 
 	// 액수 valid한지 check하기(계좌 잔액, 송금한도 등;) - to be done
 	int input;
-	input = getInput(prompt, 2000001); // 송금한도액? (일단 200만원으로)
+	input = getInput(prompt, 2000000); // 송금한도액? (일단 200만원으로)
 	if (input == -1) {
 		cout << languagePack->getSentence("exit transfer") << endl; // 어디로 가게 할 것?
 		return State::ChooseTransaction; // 어디로 가게 할 것?
@@ -808,7 +808,7 @@ UI::State UI::t_askAmount_a() {
 
 	// 액수 묻기 (cancel을 다시 입력으로 보고 함수로 따로 빼기)
 	prompt = languagePack->getSentence("UI_t_askAmount_a2.1") +  std::to_string(transactionAmount);
-	prompt += languagePack->getSentence("UI_t_askAmount_a2.2"); // 번역필요
+	prompt += languagePack->getSentence("UI_t_askAmount_a2.2");
 	input = getInput(prompt, 0);
 
 	if (input == 0) { return State::T_Confirm; }
