@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.cpp" // 현주는 여기 cpp
+#include "Language.h" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -21,7 +21,7 @@ private:
 	string name_EN;
 public:
 	NamedObj(string name, string name_EN) : name(name), name_EN(name_EN) {}
-	string getName(bool isKor=true) { if (isKor) return name; else return name_EN; }
+	string getName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	Database	***********************/
@@ -40,6 +40,7 @@ private:
 	static bool sessionProceeding; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 	static int totalSessionNum; // 한 세션이 시작된 후 몇 번의 거래가 이루어졌는가, clearSessionHistory에서 사용
+	static int currentOrderNum;
 	static bool isKor;
 public:
 	Database() {};
