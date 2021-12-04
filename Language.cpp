@@ -149,8 +149,8 @@ Translation::Translation() {
 	function = "UI_admin";
 	translation_en.insert(pair<string, string>(function + "0", "Enter the name of the CSV file to save the ATM history: "));
 	translation_kr.insert(pair<string, string>(function + "0", "ATM 내역을 저장할 csv 파일명을 입력하세요: "));
-	translation_en.insert(pair<string, string>(function + "1", "The file has been saved."));
-	translation_kr.insert(pair<string, string>(function + "1", "파일이 저장되었습니다."));
+	translation_en.insert(pair<string, string>(function + "1", "The file has been saved as history.csv"));
+	translation_kr.insert(pair<string, string>(function + "1", "파일이 history.csv로 저장되었습니다."));
 
 	/********************	 Deposit	 ********************/
 	function = "UI_deposit";
