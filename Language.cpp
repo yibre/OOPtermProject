@@ -118,7 +118,7 @@ Translation::Translation() {
 
 	translation_en.insert(pair<string, string>(function + "2", "You have made three wrong attempts.\n"));
 	translation_kr.insert(pair<string, string>(function + "2", "비밀번호를 3회 틀리셨습니다.\n"));
-	
+
 	translation_en.insert(pair<string, string>(function + "3.1", "You have accessed to : [")); // user 이름 이어짐
 	translation_kr.insert(pair<string, string>(function + "3.1", "["));
 	translation_en.insert(pair<string, string>(function + "3.2", "]'s [")); // bank 이름 이어짐
@@ -182,8 +182,8 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "0.2", "] won.\n"));
 	translation_kr.insert(pair<string, string>(function + "0.2", "]원입니다.\n"));
 
-	// translation_en.insert(pair<string, string>(function + "1", "Please put your cash in the cash/check slot. (Input in the order of 50,000 won, 10,000 won, 5,000 won, and 1,000 won bills.)\n\tCancel : -1\n"));
-	// translation_kr.insert(pair<string, string>(function + "1", "투입구에 현금을 넣어 주십시오. (5만원권, 1만원권, 5천원권, 1천원권 개수 순으로 입력해 주십시오.)\n\t취소 : -1\n"));
+	translation_en.insert(pair<string, string>(function + "1", "\tPlease put your cash in the cash/check slot. (Input in the order of 50,000 won, 10,000 won, 5,000 won, and 1,000 won bills.)\n\t(Up to 50 amounts of cash can be deposited per time.)\n\t(Cancel : -1)\n"));
+	translation_kr.insert(pair<string, string>(function + "1", "\t투입구에 현금을 넣어 주십시오. (5만원권, 1만원권, 5천원권, 1천원권 개수 순으로 입력해 주십시오.)\n\t(1회당 최대 50장의 현금 입금하실 수 있습니다.)\n\t(취소 : -1)\n"));
 
 	// translation_en.insert(pair<string, string>(function + "2", "You have exited the deposit session.\n"));
 	// translation_kr.insert(pair<string, string>(function + "2", "입금을 취소하셨습니다.\n"));
@@ -200,8 +200,8 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "0.2", "] won.\n"));
 	translation_kr.insert(pair<string, string>(function + "0.2", "]원입니다.\n"));
 
-	translation_en.insert(pair<string, string>(function + "1", "\tPlease enter the number of checks you want to put in."));
-	translation_kr.insert(pair<string, string>(function + "1", "\t투입하실 수표의 장 수를 입력해 주십시오."));
+	translation_en.insert(pair<string, string>(function + "1", "\tPlease enter the number of checks you want to put in. Up to 30 checks can be deposited per time. "));
+	translation_kr.insert(pair<string, string>(function + "1", "\t투입하실 수표의 장 수를 입력해 주십시오. 1회당 최대 30장의 수표를 입금하실 수 있습니다. "));
 
 	// translation_en.insert(pair<string, string>(function + "2", "You have exited the deposit session.\n"));
 	// translation_kr.insert(pair<string, string>(function + "2", "입금을 취소하셨습니다.\n"));
@@ -285,8 +285,8 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "0.2", "] won.\n"));
 	translation_kr.insert(pair<string, string>(function + "0.2", "]원입니다.\n"));
 
-	translation_en.insert(pair<string, string>(function + "1", "\tPlease enter the amount you want to withdraw. (Unit : 10000 won)"));
-	translation_kr.insert(pair<string, string>(function + "1", "\t출금하실 금액을 입력해 주십시오. (단위 : 만 원)"));
+	translation_en.insert(pair<string, string>(function + "1", "\tPlease enter the amount you want to withdraw. You can withdraw 500 thousand won or less at a time. (Unit : 10000 won)"));
+	translation_kr.insert(pair<string, string>(function + "1", "\t출금하실 금액을 입력해 주십시오. 1회 출금한도는 50만 원입니다. (단위 : 만 원)"));
 
 	// translation_en.insert(pair<string, string>(function + "2", "You have exited the withdrawal session.\n"));
 	// translation_kr.insert(pair<string, string>(function + "2", "출금을 취소하셨습니다.\n"));
@@ -486,17 +486,17 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "0.9", "[Cash in ATM]"));
 	translation_kr.insert(pair<string, string>(function + "0.9", "[ATM 내 현금 잔액]"));
 	*/
-/*
-	function = "Database_addSessionHistory";
-	translation_en.insert(pair<string, string>(function + "0", "Transaction account"));
-	translation_kr.insert(pair<string, string>(function + "0", "거래 계좌 : "));
-	translation_en.insert(pair<string, string>(function + "1", "입금"));
-	translation_kr.insert(pair<string, string>(function + "1", "deposit"));
-	translation_en.insert(pair<string, string>(function + "2", "출금"));
-	translation_kr.insert(pair<string, string>(function + "2", "withdrawal"));
-	translation_en.insert(pair<string, string>(function + "3", "송금"));
-	translation_kr.insert(pair<string, string>(function + "3", "transfer"));
-*/
+	/*
+		function = "Database_addSessionHistory";
+		translation_en.insert(pair<string, string>(function + "0", "Transaction account"));
+		translation_kr.insert(pair<string, string>(function + "0", "거래 계좌 : "));
+		translation_en.insert(pair<string, string>(function + "1", "입금"));
+		translation_kr.insert(pair<string, string>(function + "1", "deposit"));
+		translation_en.insert(pair<string, string>(function + "2", "출금"));
+		translation_kr.insert(pair<string, string>(function + "2", "withdrawal"));
+		translation_en.insert(pair<string, string>(function + "3", "송금"));
+		translation_kr.insert(pair<string, string>(function + "3", "transfer"));
+	*/
 	function = "Database_printSessionHistory";
 
 	translation_en.insert(pair<string, string>(function + "0.1", "[Acc. holder]"));
