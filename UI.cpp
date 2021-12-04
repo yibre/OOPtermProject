@@ -549,7 +549,8 @@ UI::State UI::d_confirm_Check() {
 	cout << languagePack->getSentence("UI_d_confirm_Check0.3") << depositCheckSum << languagePack->getSentence("UI_d_confirm_Check0.4");;
 	int input = getInput("", 0);
 	if (input == -1) {
-		cout << languagePack->getSentence("UI_d_confirm_Check1");
+		cout << languagePack->getSentence("exit deposit");
+		cout << languagePack->getSentence("check returned");
 		return State::ChooseTransaction;
 	}
 	else if (input == 0) {
@@ -582,6 +583,8 @@ UI::State UI::d_confirmTotal() {
 	if (input == 0) { return State::D_Deposit; }
 	if (input == -1) {
 		cout << languagePack->getSentence("exit deposit");
+		if(transactionType == 1){ cout << languagePack->getSentence("cash returned"); }
+		else { cout << languagePack->getSentence("check returned"); }
 		return State::ChooseTransaction;
 	}
 
