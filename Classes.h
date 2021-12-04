@@ -67,30 +67,10 @@ public:
 
 /***********************	  User  	***********************/
 
-/*
-class User {
-private:
-	string ID; // user는 U1, U2, U3 이렇게 시작 // 쓰이나?
-	string name;
-	string name_EN;
-public:
-	User() { ID = "U0"; name = "홍길동"; name_EN = "Doe, John"; } // 쓰이나?
-	User(string ID, string name, string name_EN) { this->ID = ID; this->name = name; this->name_EN = name_EN; }
-	~User() {};
-	string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; }
-};
-*/
-
 class User : public NamedObj {
 private:
-	// string ID; // user는 U1, U2, U3 이렇게 시작 // 쓰이나?
-	// string name;
-	// string name_EN;
 public:
-	// User() { ID = "U0"; name = "홍길동"; name_EN = "Doe, John"; } // 쓰이나?
 	User(string name, string name_EN) : NamedObj(name, name_EN) {}
-	~User() {}
-	// string getUserName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	  Bill  	***********************/
@@ -119,41 +99,15 @@ public:
 
 /***********************	  Bank  	***********************/
 
-/*
-class Bank {
-private:
-	string ID; // bank는 B1, B2, B3 이렇게 시작
-	static int addID; // 0부터 시작해서 1씩 증가; 어디에 쓰이는고? -(현주)
-	string name; // 현재 ID랑 name이랑 따로 있는 이유 있나? ID는 get할 수도 없는데... -(현주) // 이것도 영어이름 넣고싶다
-	string name_EN;
-	Account* accountlist[100]; // 쓰임??
-
-public:
-	Bank() { ID = "B1"; name = "uriBank"; } // 안쓰이게 됐다
-	Bank(string name, string name_EN) { this->name = name; this->name_EN = name_EN; }
-	~Bank() { };
-	string getBankName(bool isKor = true) { if (isKor) return name; else return name_EN; }
-};
-*/
-
 class Bank : public NamedObj {
 private:
-	// string ID; // bank는 B1, B2, B3 이렇게 시작
-	// static int addID; // 0부터 시작해서 1씩 증가; 어디에 쓰이는고? -(현주)
-	// string name; // 현재 ID랑 name이랑 따로 있는 이유 있나? ID는 get할 수도 없는데... -(현주) // 이것도 영어이름 넣고싶다
-	// string name_EN;
-	// Account* accountlist[100]; // 쓰임??
-
 public:
-	// Bank() { ID = "B1"; name = "uriBank"; } // 안쓰이게 됐다
 	Bank(string name, string name_EN) : NamedObj(name, name_EN) {}
-	~Bank() {};
-	// string getBankName(bool isKor = true) { if (isKor) return name; else return name_EN; }
 };
 
 /***********************	Account 	***********************/
 
-class Account { // Bank와 User를 상속해도 될듯
+class Account {
 private:
 	Database* database;
 	int ID; // ID는 0부터 시작해 1씩 늘려감, 순수 숫자(계좌번호)
@@ -170,7 +124,6 @@ public:
 	int getID() { return ID; } // 계좌번호를 return
 	bool checkPassword(int); // int 타입의 패스워드를 받아 해당 패스워드가 맞는지 확인
 	void changeBalance(int money);
-	// int getNumID() { return numID; }
 	int getBalance() { return balance; }
 	Bank* getBank() { return ownerBank; }
 	User* getOwner() { return owner; }
@@ -179,12 +132,11 @@ public:
 
 /***********************	  ATM   	***********************/
 
-class ATM { // Bank를 상속해도 될듯
+class ATM {
 private:
 	Database* database;
-	// string ID; // atm은 A1 A2 A3 이렇게 시작 // 쓰이는 곳 있나?
 	int ID;
-	static int numID; // id 부여용 넘버, 0부터 시작해서 1씩 증가 // ???
+	static int numID;
 	Bank* ownerBank;
 	string adminID;
 	int adminpw;
@@ -198,17 +150,17 @@ private:
 	Translation* languagePack;
 
 public:
-	ATM() { numID = 0; } // ???
+	// ATM() { numID = 0; }
 	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport, bool multiBank);
 	~ATM() { delete languagePack; }
-	bool checkID(char); // 쓰이는 곳 현재 없음
+	// bool checkID(char); // 쓰이는 곳 현재 없음
 	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
 	bool withdrawal(Bill money, Account* acc); // 출금함수, 출금액
 	bool checkPW(int);
 	bool transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill); // int fee 없애는거 고려
-	void IncreaseID() { numID++; }
-	int getNumID() { return numID; } // ???
-	int getID() { return ID; } // 이 ATM의 ID를 return; 현재 Debug용 코드 외 쓰이는 곳 없음
+	// void IncreaseID() { numID++; }
+	// int getNumID() { return numID; } // ???
+	int getID() { return ID; } // 이 ATM의 ID를 return
 	int getATMremainCash() { return remainBill->getSum(); }
 	int getATMremainCheckNum() { return remainCheckNum; }
 	void insertCash(Bill cash) { *this->remainBill += cash; }

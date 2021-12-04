@@ -457,21 +457,21 @@ Translation::Translation() {
 	function = "Database_printHistory";
 	translation_en.insert(pair<string, string>(function + "0.1", "[Order]"));
 	translation_kr.insert(pair<string, string>(function + "0.1", "[순서]"));
-	translation_en.insert(pair<string, string>(function + "0.2", "[Account holder]"));
+	translation_en.insert(pair<string, string>(function + "0.2", "[Acc. holder]"));
 	translation_kr.insert(pair<string, string>(function + "0.2", "[계좌주]"));
-	translation_en.insert(pair<string, string>(function + "0.3", "[Account number]"));
+	translation_en.insert(pair<string, string>(function + "0.3", "[Acc. No.]"));
 	translation_kr.insert(pair<string, string>(function + "0.3", "[계좌번호]"));
-	translation_en.insert(pair<string, string>(function + "0.4", "[Transcation type]"));
+	translation_en.insert(pair<string, string>(function + "0.4", "[Transaction]"));
 	translation_kr.insert(pair<string, string>(function + "0.4", "[거래 타입]"));
-	translation_en.insert(pair<string, string>(function + "0.5", "[Balance before the transaction]"));
+	translation_en.insert(pair<string, string>(function + "0.5", "[Balance (before)]"));
 	translation_kr.insert(pair<string, string>(function + "0.5", "[거래 전 잔액]"));
-	translation_en.insert(pair<string, string>(function + "0.6", "[Balance after the transaction]"));
+	translation_en.insert(pair<string, string>(function + "0.6", "[Balance (changed)]"));
 	translation_kr.insert(pair<string, string>(function + "0.6", "[거래 후 잔액]"));
-	translation_en.insert(pair<string, string>(function + "0.7", "[Recipient when transfer]"));
+	translation_en.insert(pair<string, string>(function + "0.7", "[Recipient]"));
 	translation_kr.insert(pair<string, string>(function + "0.7", "[송금 시 수신인]"));
-	translation_en.insert(pair<string, string>(function + "0.8", "[TransferAmount]"));
-	translation_kr.insert(pair<string, string>(function + "0.8", "[송금금액]"));
-	translation_en.insert(pair<string, string>(function + "0.9", "[Cash balance in ATM]"));
+	translation_en.insert(pair<string, string>(function + "0.8", "[Transferred amount]"));
+	translation_kr.insert(pair<string, string>(function + "0.8", "[송금액]"));
+	translation_en.insert(pair<string, string>(function + "0.9", "[Cash in ATM]"));
 	translation_kr.insert(pair<string, string>(function + "0.9", "[ATM 내 현금 잔액]"));
 
 	function = "Database_addSessionHistory";
@@ -486,19 +486,20 @@ Translation::Translation() {
 
 	function = "Database_printSessionHistory";
 
-	translation_en.insert(pair<string, string>(function + "0.1", "[Account holder]"));
+	translation_en.insert(pair<string, string>(function + "0.1", "[Acc. holder]"));
 	translation_kr.insert(pair<string, string>(function + "0.1", "[계좌주]"));
-	translation_en.insert(pair<string, string>(function + "0.2", "[Account number]"));
+	translation_en.insert(pair<string, string>(function + "0.2", "[Acc. No.]"));
 	translation_kr.insert(pair<string, string>(function + "0.2", "[계좌번호]"));
-	translation_en.insert(pair<string, string>(function + "0.3", "[Transation type]"));
+	translation_en.insert(pair<string, string>(function + "0.3", "[Transation]"));
 	translation_kr.insert(pair<string, string>(function + "0.3", "[거래 타입]"));
-	translation_en.insert(pair<string, string>(function + "0.4", "[Balance before the transaction]"));
+	translation_en.insert(pair<string, string>(function + "0.4", "[Balance (before)]"));
 	translation_kr.insert(pair<string, string>(function + "0.4", "[거래 전 잔액]"));
-	translation_en.insert(pair<string, string>(function + "0.5", "[Balance after the transaction]"));
+	translation_en.insert(pair<string, string>(function + "0.5", "[Balance (changed)]"));
 	translation_kr.insert(pair<string, string>(function + "0.5", "[거래 후 잔액]"));
-	translation_en.insert(pair<string, string>(function + "0.6", "[Recipient when transfer]")); // ???
+	translation_en.insert(pair<string, string>(function + "0.6", "[Recipient]"));
 	translation_kr.insert(pair<string, string>(function + "0.6", "[송금 시 수신인]"));
 
+<<<<<<< Updated upstream
 
 	/********************	 ATM	 ********************/
 	// 이것들 다 UI로 빼기, []원 되도록 bracket 넣기
@@ -600,4 +601,6 @@ Translation::Translation() {
 	//translation_en.insert(pair<string, string>(function + "0.5", " won\n"));
 	//translation_kr.insert(pair<string, string>(function + "0.5", "원\n"));
 
+=======
+>>>>>>> Stashed changes
 }

@@ -30,10 +30,7 @@ int Database::getIndexFromID(int ID) {
 	return index;
 }
 
-//isValid(int 계좌번호) 같은 함수 있었으면 좋겠다 
-
 Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계좌 찾아주는 함수; 계좌 유무 확인 옵션 원함(현주)
-	// cout << "Debug: This comes from a get account by num fun" << endl;
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
@@ -59,8 +56,8 @@ void Database::addATMHistory(int transactionType, int before, int after, Account
 		column2.push_back("[Transcation type]");
 		column2.push_back("[Balance before the transaction]");
 		column2.push_back("[Balance after the transaction]");
-		column2.push_back("[Recipient when transfer]");
-		column2.push_back("[TransferAmount]");
+		column2.push_back("[Recipient]");
+		column2.push_back("[Transferred amount]");
 		column2.push_back("[Cash balance in ATM]");
 		atmhisEN.push_back(column2);
 	}
@@ -193,10 +190,7 @@ void Database::clearSessionHistory() {
 }
 /***********************	  User  	***********************/
 
-
 /***********************	  Bank  	***********************/
-
-// Bank::Bank(string name) { this->name = name; }
 
 /***********************	Account 	***********************/
 
@@ -220,20 +214,12 @@ bool Account::checkPassword(int uswerAnswer) {
 	else { return false; }
 }
 
-/*	건의(윤성이에게 현주가)	*/
-
 void Account::changeBalance(int money) {
 	this->balance += money;
 }
 
-/*
-로 해서 계좌금액 바꾸는 함수 하나 두고(money가 양수이면 더하기, 음수이면 빼기)
-입출송금에 모두 공통으로 사용하면 어떨지?
-*/
-
 bool Account::isPrimary(ATM* A) {
 	if (this->ownerBank->getName() == A->getBank()->getName()) { return true; }
-	// BankID로 같은지 아닌지 확인할 수도 있지만 현재 ID 구현이 덜 돼 있는 상태인듯
 	return false;
 }
 
@@ -264,7 +250,6 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 	if (type == 1) {
 		acc->changeBalance(money.getSum() - fee);
 		*this->remainBill += money;
-		// cout << money.getSum() - fee << languagePack->getSentence("ATM_deposit0");
 		database->addATMHistory(1,
 			before, acc->getBalance(), acc, acc, 0, this->remainBill->getSum());
 	}
@@ -272,13 +257,9 @@ bool ATM::deposit(int type, Bill money, int check[], int checkNum, int checkSum,
 		acc->changeBalance(checkSum - fee);
 		this->remainCheck += checkSum;
 		this->remainCheckNum += checkNum;
-		// cout << checkSum - fee << languagePack->getSentence("ATM_deposit1");
 		database->addATMHistory(1,
 			before, acc->getBalance(), acc, acc, 0, this->remainBill->getSum());
 	}
-
-	//cout << languagePack->getSentence("ATM_deposit2.1") << fee << languagePack->getSentence("ATM_deposit2.2");
-	//cout << languagePack->getSentence("ATM_deposit3.1") << acc->getBalance() << languagePack->getSentence("ATM_deposit3.2");
 	return true;
 }
 
@@ -296,11 +277,6 @@ bool ATM::withdrawal(Bill money, Account* acc) { // 출금함수, 출금액
 
 bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill) {
 
-	// cout << languagePack->getSentence("ATM_transfer0.1");
-	// cout << fromAcc->getID() << languagePack->getSentence("ATM_transfer0.2");
-	// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer0.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer0.4");
-	// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer0.5");
-
 	int fee = this->fee(7, fromAcc, toAcc);
 	int before = fromAcc->getBalance();
 
@@ -312,13 +288,6 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			// 송금 확인되어 반환의 여지 없을 때 remainCash transactionBill만큼 늘리기
 			*this->remainBill += bill;
 			bill = Bill{ 0,0,0,0 };
-
-			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getName();
-			// cout << languagePack->getSentence("ATM_transfer1.3");
-
-			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
-			// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
-			// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
 
 			int after = fromAcc->getBalance();
 			database->addATMHistory(3,
@@ -332,25 +301,14 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			fromAcc->changeBalance(-(money + fee));
 			toAcc->changeBalance(money);
 
-			// cout << "\t" << money << languagePack->getSentence("ATM_transfer1.2") << toAcc->getOwner()->getName();
-			// cout << languagePack->getSentence("ATM_transfer1.3");
-
-			// cout << languagePack->getSentence("ATM_transfer2.1") << fromAcc->getID() << languagePack->getSentence("ATM_transfer2.2");
-			// cout << fromAcc->getBalance() << languagePack->getSentence("ATM_transfer2.3") << toAcc->getID() << languagePack->getSentence("ATM_transfer2.4");
-			// cout << toAcc->getBalance() << languagePack->getSentence("ATM_transfer2.5");
-
 			int after = fromAcc->getBalance();
 			database->addATMHistory(3,
 				before, fromAcc->getBalance(), fromAcc, toAcc, money, this->remainBill->getSum());
 			// database->addHistory("송금", before, after, fromAcc, toAcc);
 
 		}
-		else {
-			// cout << languagePack->getSentence("ATM_transfer3"); // debug
-			return false;
-		}
+		else { return false; }
 	}
-
 	return true;
 }
 
