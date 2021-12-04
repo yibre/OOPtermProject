@@ -510,7 +510,7 @@ UI::State UI::d_askAmount_Check() {
 		return State::D_AskAmount_Check;
 	}
 	string prompt2 = languagePack->getSentence("UI_d_askAmount_Check5");
-	prompt += languagePack->getSentence("cancel");
+	prompt2 += languagePack->getSentence("cancel");
 	int* input;
 	input = getInputArray(prompt2, depositCheckNum, 100000000); // check 최대 입금 가능 장수 제한 없나? (금액을 묻는 곳! 어차피 나중에 금액 체크하긴 하는데 input은 크게 받을 수도 있게 해놨음)
 	if (input[0] == -1) {
@@ -577,10 +577,8 @@ UI::State UI::d_confirmTotal() {
 	prompt += languagePack->getSentence("UI_d_confirmTotal1.4");
 	prompt += languagePack->getSentence("confirm");
 
-	cout << prompt;
-
 	int input;
-	input = getInput("", 0);
+	input = getInput(prompt, 0);
 	if (input == 0) { return State::D_Deposit; }
 	if (input == -1) {
 		cout << languagePack->getSentence("exit deposit");
@@ -673,10 +671,8 @@ UI::State UI::w_confirm() {
 	prompt += languagePack->getSentence("UI_w_confirm0.4");
 	prompt += languagePack->getSentence("confirm");
 
-	cout << prompt;
-
 	int input;
-	input = getInput("", 0);
+	input = getInput(prompt, 0);
 	if (input == 0) { return State::W_Withdrawal; }
 	if (input == -1) {
 		cout << languagePack->getSentence("exit withdraw");
