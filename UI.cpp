@@ -621,7 +621,7 @@ UI::State UI::w_askAmount() {
 	string prompt = languagePack->getSentence("UI_w_askAmount1");
 	prompt += languagePack->getSentence("cancel");
 
-	transactionAmount = getInput(prompt, 2000); // 10000원짜리 장수; 한도 얼마로 해두는게 좋을까? [어차피 뒤에서 체크해서 아무 숫자나 넣어둔 것.]
+	transactionAmount = getInput(prompt, 2000, 1); // 10000원짜리 장수; 한도 얼마로 해두는게 좋을까? [어차피 뒤에서 체크해서 아무 숫자나 넣어둔 것.]
 
 	if (transactionAmount == -1) {
 		cout << languagePack->getSentence("exit withdraw");
