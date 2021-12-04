@@ -341,11 +341,8 @@ UI::State UI::a_showHistory() { // history 보여주기
 }
 
 UI::State UI::a_csvtoHistory() { // 파일로 출력
-	// string input = getInput(languagePack->getSentence("UI_verifyAdmin3"), 10000);
-	string filename;
-	cout << languagePack->getSentence("UI_admin0");
-	cin >> filename;
-	ofstream myFile(filename + ".csv");
+	
+	ofstream myFile("history.csv");
 	for (int i = 0; i < database->getATMHistoryEN().size(); i++) {
 		for (int j = 0; j < 13; j++) {
 			if (languagePack->isKor()) myFile << database->getATMHistoryKR()[i][j] << ",";
