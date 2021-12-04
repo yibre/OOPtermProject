@@ -18,9 +18,9 @@ int UI::run() {
 
 	User* U1 = new User("최가난", "Ganan Choi");
 	User* U2 = new User("권부자", "Buja Kwon");
-	User* U3 = new User("서모녀", "Monyeo Soe");
-	User* U4 = new User("김백규", "Baekgyu Kim");
-	User* U5 = new User("버터", "Butter"); // 처음부터 bracket 치면 어떨까
+	User* U3 = new User("서모녀", "Monyeo Seo");
+	// User* U4 = new User("김백규", "Baekgyu Kim");
+	// User* U5 = new User("버터", "Butter"); // 처음부터 bracket 치면 어떨까
 
 	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
 	DB->addAccountList(AC1);
@@ -36,11 +36,11 @@ int UI::run() {
 	atm = A1; // atm 선택받기 구현하면 이거 없애줘야
 	// atm = A2; // (singleBank, EngSupport X debugging용)
 
-	cout << "Debug: current ATM ID : " << atm->getID() << endl;
-	cout << "Debug: current ATM bank : " << atm->getBank()->getName(false) << endl;
-	cout << "Debug: current ATM is ";
+	cout << "Boot message : current ATM ID : " << atm->getID() << endl;
+	cout << "Boot message : current ATM bank : " << atm->getBank()->getName(false) << endl;
+	cout << "Boot message : current ATM is ";
 	cout << (atm->isMultiBank() ? "multibank ATM" : "singlebank ATM") << endl;
-	cout << "Debug: current ATM is " << (atm->isEnglishSupport() ? "" : "not ");
+	cout << "Boot message : current ATM is " << (atm->isEnglishSupport() ? "" : "not ");
 	cout << "supporting ENG" << endl;
 
 	this->database = DB;
@@ -157,8 +157,8 @@ int UI::run() {
 			delete A2;
 			delete A1;
 
-			delete U5;
-			delete U4;
+			// delete U5;
+			// delete U4;
 			delete U3;
 			delete U2;
 			delete U1;
@@ -260,11 +260,12 @@ UI::State UI::returnCard() {
 }
 */
 
-
+/*
 UI::State UI::getATM() {
 	// 필요시 구현
 	return State::End;
 }
+*/
 
 UI::State UI::insertCard() {
 	// from: changeLanguage()
@@ -304,26 +305,31 @@ UI::State UI::insertCard() {
 UI::State UI::a_verify() {
 	// from: accessAccount (admin 계정일 때)
 	cout << languagePack->getSentence("UI_verifyAdmin0");
-	int input = getInput(languagePack->getSentence("UI_verifyAdmin1"), 10000);
+	int input = getInput(languagePack->getSentence("UI_verifyAdmin1"), 10000, 0, false); // 취소 비허용
 	if (atm->checkPW(input)) { return State::A_ShowMenu; }
 	else {
 		cout << languagePack->getSentence("UI_verifyAdmin2");
+		cout << languagePack->getSentence("card returned");
 		return State::InsertCard;
 	}
 }
 
 UI::State UI::a_showMenu() { // 메뉴 보여주기
-	int input = getInput(languagePack->getSentence("UI_verifyAdmin3"), 10000);
+	int input = getInput(languagePack->getSentence("UI_verifyAdmin3"), 0);
 	if (input == 0) { return State::A_ShowHistory; }
-	else return State::ChangeLanguage;
+	else {
+		cout << languagePack->getSentence("UI_verifyAdmin4");
+		cout << languagePack->getSentence("card returned");
+		return State::ChangeLanguage;
+	}
 }
 
-UI::State UI::a_showHistory() { // 메뉴 보여주기
+UI::State UI::a_showHistory() { // history 보여주기
 	database->printATMHistory();
 	return State::A_CSVtoHistory;
 }
 
-UI::State UI::a_csvtoHistory() { // 메뉴 보여주기
+UI::State UI::a_csvtoHistory() { // 파일로 출력
 	// string input = getInput(languagePack->getSentence("UI_verifyAdmin3"), 10000);
 	string filename;
 	cout << languagePack->getSentence("UI_admin0");
@@ -350,8 +356,8 @@ UI::State UI::checkAccount() {
 	prompt += languagePack->getSentence("confirm");
 	int input = getInput(prompt, 0);
 	if (input == -1) {
-		// 카드 반환해주기?
-		return State::InsertCard;
+		cout << languagePack->getSentence("card returned");
+		return State::ChangeLanguage;
 	}
 	else if (input == 0) {
 		return State::VerifyAccount;
@@ -369,7 +375,7 @@ UI::State UI::verifyAccount() {
 	string prompt = languagePack->getSentence("UI_verifyAccount0");
 	for (int i = 0; i < 3; i++) {
 		int input = getInput(prompt, 9999, 0, false); // 4자리 수이지만 이 경우에는 0000~9999
-		if (input == -1) { return State::CheckAccount; } // 현재 쓰이지 않는다(enableCancel = false)
+		// if (input == -1) { return State::CheckAccount; } // 현재 쓰이지 않는다(enableCancel = false)
 		else {
 			if (acc->checkPassword(input)) { // 비밀번호 맞으면
 				// 새로운 session 시작
@@ -383,7 +389,6 @@ UI::State UI::verifyAccount() {
 			else {
 				cout << languagePack->getSentence("UI_verifyAccount2");
 				cout << languagePack->getSentence("card returned");
-				// return State::ReturnCard;
 			}
 		}
 	}
@@ -940,7 +945,6 @@ UI::State UI::t_transfer() {
 UI::State UI::sessionOver() {
 	database->printSessionHistory();
 	database->clearSessionHistory();
-	cout << languagePack->getSentence("card returned");
 	cout << languagePack->getSentence("common exit");
 	return State::ChangeLanguage;
 }
