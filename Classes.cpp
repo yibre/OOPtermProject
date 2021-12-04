@@ -46,19 +46,19 @@ void Database::addATMHistory(int transactionType, int before, int after, Account
 		column.push_back("[거래 전 잔액]");
 		column.push_back("[거래 후 잔액]");
 		column.push_back("[송금 시 수신인]");
-		column.push_back("[송금 금액]");
+		column.push_back("[송금액]");
 		column.push_back("[ATM 내 현금 잔액]");
 		atmhisKR.push_back(column);
 		vector<string> column2;
 		column2.push_back("[Order]");
-		column2.push_back("[Account holder]");
-		column2.push_back("[Account number]");
-		column2.push_back("[Transcation type]");
-		column2.push_back("[Balance before the transaction]");
-		column2.push_back("[Balance after the transaction]");
+		column2.push_back("[Acc. holder]");
+		column2.push_back("[Acc. No.]");
+		column2.push_back("[Transaction]");
+		column2.push_back("[Balance (before)]");
+		column2.push_back("[Balance (changed)]");
 		column2.push_back("[Recipient]");
 		column2.push_back("[Transferred amount]");
-		column2.push_back("[Cash balance in ATM]");
+		column2.push_back("[Cash in ATM]");
 		atmhisEN.push_back(column2);
 	}
 
