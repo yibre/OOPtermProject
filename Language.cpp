@@ -585,16 +585,16 @@ Translation::Translation() {
 	//translation_en.insert(pair<string, string>(function + "0", "Debug: Wrong transactionType in int ATM::fee(int, Bank*, Bank*)\n"));
 	//translation_kr.insert(pair<string, string>(function + "0", "Debug: Wrong transactionType in int ATM::fee(int, Bank*, Bank*)\n"));
 
-	function = "Bill_printBill";
-	translation_en.insert(pair<string, string>(function + "0.1", "\tAmount : "));
-	translation_kr.insert(pair<string, string>(function + "0.1", "\t금액 : "));
-	translation_en.insert(pair<string, string>(function + "0.2", " won : "));
-	translation_kr.insert(pair<string, string>(function + "0.2", "원 : "));
-	translation_en.insert(pair<string, string>(function + "0.3", " bill(s)] "));
-	translation_kr.insert(pair<string, string>(function + "0.3", "장] "));
-	translation_en.insert(pair<string, string>(function + "0.4", "\tTotal amount : "));
-	translation_kr.insert(pair<string, string>(function + "0.4", "\t총 액수 : "));
-	translation_en.insert(pair<string, string>(function + "0.5", " won\n"));
-	translation_kr.insert(pair<string, string>(function + "0.5", "원\n"));
+	//function = "Bill_printBill";
+	//translation_en.insert(pair<string, string>(function + "0.1", "\tAmount : "));
+	//translation_kr.insert(pair<string, string>(function + "0.1", "\t금액 : "));
+	//translation_en.insert(pair<string, string>(function + "0.2", " won : "));
+	//translation_kr.insert(pair<string, string>(function + "0.2", "원 : "));
+	//translation_en.insert(pair<string, string>(function + "0.3", " bill(s)] "));
+	//translation_kr.insert(pair<string, string>(function + "0.3", "장] "));
+	//translation_en.insert(pair<string, string>(function + "0.4", "\tTotal amount : "));
+	//translation_kr.insert(pair<string, string>(function + "0.4", "\t총 액수 : "));
+	//translation_en.insert(pair<string, string>(function + "0.5", " won\n"));
+	//translation_kr.insert(pair<string, string>(function + "0.5", "원\n"));
 
 }
