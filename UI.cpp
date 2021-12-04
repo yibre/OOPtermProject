@@ -328,7 +328,7 @@ UI::State UI::a_csvtoHistory() { // 메뉴 보여주기
 	string filename;
 	cout << languagePack->getSentence("UI_admin0");
 	cin >> filename;
-	ofstream myFile(filename+".csv");
+	ofstream myFile(filename + ".csv");
 	for (int i = 0; i < database->getATMHistoryEN().size(); i++) {
 		for (int j = 0; j < 9; j++) {
 			if (languagePack->isKor()) myFile << database->getATMHistoryKR()[i][j] << ",";
@@ -835,7 +835,7 @@ UI::State UI::t_askAmount_a() {
 
 	// 액수 valid한지 check하기(계좌 잔액, 송금한도 등;) - to be done
 	int input;
-	input = getInput(prompt, 2000000); // 송금한도액? (일단 200만원으로)
+	input = getInput(prompt, 2000000, 1); // 송금한도액? (일단 200만원으로)
 	if (input == -1) {
 		cout << languagePack->getSentence("exit transfer") << endl; // 어디로 가게 할 것?
 		return State::ChooseTransaction; // 어디로 가게 할 것?

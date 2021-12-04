@@ -492,12 +492,20 @@ bool Bill::operator>(const Bill& bill) {
 }
 
 void Bill::printBill(bool isKor) {
-	if (isKor) { languagePack->changeLanguage("KOR"); }
-	else { languagePack->changeLanguage("ENG"); }
-	cout << languagePack->getSentence("Bill_printBill0.1");
-	for (int i = 0; i < 4; i++) {
-		cout << "[" << this->value[i] << languagePack->getSentence("Bill_printBill0.2") << this->paperCash[i] << languagePack->getSentence("Bill_printBill0.3");
+	if (isKor) {
+		cout << "\t금액 : ";
+		for (int i = 0; i < 4; i++) {
+			cout << "[" << this->value[i] << "원 : " << this->paperCash[i] << "장] ";
+		}
+		cout << endl;
+		cout << "\t총 액수 : " << this->getSum() << "원\n";
 	}
-	cout << endl;
-	cout << languagePack->getSentence("Bill_printBill0.4") << this->getSum() << languagePack->getSentence("Bill_printBill0.5");
+	else {
+		cout << "\tAmount : ";
+		for (int i = 0; i < 4; i++) {
+			cout << "[" << this->value[i] << " won : " << this->paperCash[i] << " bill(s)] ";
+		}
+		cout << endl;
+		cout << "\tTotal amount : " << this->getSum() << " won\n";
+	}
 }

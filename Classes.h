@@ -99,7 +99,7 @@ class Bill {
 private:
 	int paperCash[4];
 	static int value[4];
-	Translation* languagePack = new Translation();
+	//Translation* languagePack = new Translation();
 public:
 	Bill(int c50k, int c10k, int c5k, int c1k);
 	//~Bill() { delete languagePack; }
