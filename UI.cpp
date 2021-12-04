@@ -753,13 +753,14 @@ UI::State UI::t_confirmToAcc() { // 금융실명제
 	fee = atm->fee(7, acc, toAcc); // fee 함수 수정되면 따라 바꿔야
 
 	int input;
-	string prompt = "[" + toAcc->getOwner()->getName(languagePack->isKor()); // 받는 user 이름
+	string prompt = languagePack->getSentence("UI_t_confirmToAcc0.1");
+	prompt += toAcc->getOwner()->getName(languagePack->isKor()); // 받는 user 이름
 	prompt += (languagePack->getSentence("UI_t_confirmToAcc0.2"));
 	prompt += toAcc->getBank()->getName(languagePack->isKor()); // bank 이름
 	prompt += languagePack->getSentence("UI_t_confirmToAcc0.2.0") + std::to_string(toAcc->getID()); // 받는 계좌
 	prompt += languagePack->getSentence("UI_t_confirmToAcc0.3");
 	prompt += languagePack->getSentence("cancel");
-	prompt += languagePack->getSentence("UI_t_confirmToAcc0.3");
+	prompt += languagePack->getSentence("UI_t_confirmToAcc0.4");
 	input = getInput(prompt, 1);
 	// 같은 계좌인지 확인하기 - to be done
 	if (input == -1) { return State::ChooseTransaction; }
