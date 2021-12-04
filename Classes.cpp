@@ -331,7 +331,10 @@ int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // ì†¡ê¸
 		else if (a1->isPrimary(this) || a2->isPrimary(this)) { return 2000; } // prim-nonp
 		else { return 2500; } // nonp-nonp
 	}
-	else { cout << languagePack->getSentence("ATM_fee0"); exit(0); } // ???
+	else {
+		//cout << languagePack->getSentence("ATM_fee0");// ???
+		exit(0);
+	} 
 }
 
 /***********************	  Bill  	***********************/
