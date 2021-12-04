@@ -79,17 +79,20 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "4", "본 ATM에서 지원하지 않는 은행의 계좌입니다.\n"));
 
 	function = "UI_verifyAdmin";
-	translation_en.insert(pair<string, string>(function + "0", "You have inserted an admin card.\n"));
+	translation_en.insert(pair<string, string>(function + "0", "You have inserted the admin card.\n"));
 	translation_kr.insert(pair<string, string>(function + "0", "관리자 카드가 삽입되었습니다.\n"));
 
-	translation_en.insert(pair<string, string>(function + "1", "Enter the password to access admin panel : "));
+	translation_en.insert(pair<string, string>(function + "1", "Enter the password to access the admin panel : "));
 	translation_kr.insert(pair<string, string>(function + "1", "관리자 패널에 접속하시려면 비밀번호를 입력해 주십시오 : "));
 
 	translation_en.insert(pair<string, string>(function + "2", "You have entered wrong password.\n"));
 	translation_kr.insert(pair<string, string>(function + "2", "비밀번호가 틀렸습니다.\n"));
 
-	translation_en.insert(pair<string, string>(function + "3", "Do you want to show ATM history? \n\t(0 to confirm; -1 to cancel)\n"));
-	translation_kr.insert(pair<string, string>(function + "3", "ATM 내역을 보시겠습니까?\n\t(0번을 눌러 확인; -1을 눌러 취소)\n"));
+	translation_en.insert(pair<string, string>(function + "3", "\tDo you want to show ATM history?\n\t(Confirm : 0\tCancel : -1)\n"));
+	translation_kr.insert(pair<string, string>(function + "3", "\tATM 거래 내역을 보시겠습니까?\n\t(확인 : 0\t취소 : -1)\n"));
+	
+	translation_en.insert(pair<string, string>(function + "4", "You have exited the admin panel session.\n"));
+	translation_kr.insert(pair<string, string>(function + "4", "관리자 패널에서 접속 종료하셨습니다.\n"));
 
 	function = "UI_checkAccount";
 	translation_en.insert(pair<string, string>(function + "0.1", "\tYour account number is : "));
