@@ -25,6 +25,9 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>("cash returned", "Your cash has been returned. Please take your cash.\n"));
 	translation_kr.insert(pair<string, string>("cash returned", "투입하신 현금이 반환되었습니다. 투입구를 확인해 주십시오.\n"));
 
+	translation_en.insert(pair<string, string>("check returned", "Your check has been returned. Please take your check.\n"));
+	translation_kr.insert(pair<string, string>("check returned", "투입하신 수표가 반환되었습니다. 투입구를 확인해 주십시오.\n"));
+
 	translation_en.insert(pair<string, string>("excess cash", "You could only put 50 or less number of paper cash at a time. Please try again.\n")); // The maximum number of available bills has been exceeded. 
 	translation_kr.insert(pair<string, string>("excess cash", "최대 입금 가능 장 수를 초과하였습니다. 다시 시도해 주십시오.\n"));
 
@@ -227,8 +230,8 @@ Translation::Translation() {
 	translation_en.insert(pair<string, string>(function + "0.4", "] won\n"));
 	translation_kr.insert(pair<string, string>(function + "0.4", "]원\n"));
 
-	translation_en.insert(pair<string, string>(function + "1", "You have exited the deposit session.\nThe check(s) you put in has been returned.\nPlease make sure to take your check(s).\n"));
-	translation_kr.insert(pair<string, string>(function + "1", "수표 입금을 취소하셨습니다.\n투입하신 수표가 반환되었습니다.\n투입구를 확인해 주십시오.\n"));
+	//translation_en.insert(pair<string, string>(function + "1", "You have exited the deposit session.\nThe check(s) you put in has been returned.\nPlease make sure to take your check(s).\n"));
+	//translation_kr.insert(pair<string, string>(function + "1", "수표 입금을 취소하셨습니다.\n투입하신 수표가 반환되었습니다.\n투입구를 확인해 주십시오.\n"));
 
 	// translation_en.insert(pair<string, string>(function + "2", "Error\n"));
 	// translation_kr.insert(pair<string, string>(function + "2", "Error\n"));
