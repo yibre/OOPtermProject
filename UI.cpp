@@ -42,6 +42,9 @@ int UI::run() {
 	cout << (atm->isMultiBank() ? "multibank ATM" : "singlebank ATM") << endl;
 	cout << "Boot message : current ATM is " << (atm->isEnglishSupport() ? "" : "not ");
 	cout << "supporting ENG" << endl;
+	cout << "Boot message : current ATM Balance : " << endl;
+	atm->printATMremainCashNum();
+	cout << endl;
 
 	this->database = DB;
 
@@ -376,21 +379,21 @@ UI::State UI::verifyAccount() {
 	for (int i = 0; i < 3; i++) {
 		int input = getInput(prompt, 9999, 0, false); // 4자리 수이지만 이 경우에는 0000~9999
 		// if (input == -1) { return State::CheckAccount; } // 현재 쓰이지 않는다(enableCancel = false)
-		else {
-			if (acc->checkPassword(input)) { // 비밀번호 맞으면
-				// 새로운 session 시작
-				this->WithdrawalPerSession = 0; // chooseTransaction 들어가기 전에 초기화해줘야 하기 때문에
-				return State::ChooseTransaction;
-			}
-			if (i < 2) {
-				cout << languagePack->getSentence("UI_verifyAccount1.0");
-				cout << (2 - i) << languagePack->getSentence("UI_verifyAccount1.1");
-			}
-			else {
-				cout << languagePack->getSentence("UI_verifyAccount2");
-				cout << languagePack->getSentence("card returned");
-			}
+		//else {
+		if (acc->checkPassword(input)) { // 비밀번호 맞으면
+			// 새로운 session 시작
+			this->WithdrawalPerSession = 0; // chooseTransaction 들어가기 전에 초기화해줘야 하기 때문에
+			return State::ChooseTransaction;
 		}
+		if (i < 2) {
+			cout << languagePack->getSentence("UI_verifyAccount1.0");
+			cout << (2 - i) << languagePack->getSentence("UI_verifyAccount1.1");
+		}
+		else {
+			cout << languagePack->getSentence("UI_verifyAccount2");
+			cout << languagePack->getSentence("card returned");
+		}
+		//}
 	}
 	return State::ChangeLanguage;
 }
@@ -404,9 +407,9 @@ UI::State UI::chooseTransaction() {
 	// from: verifyAccount
 	// from: t_askTransferType (if canceled)
 
-	cout << "Debug : ";
-	atm->printATMremainCashNum();
-	cout << endl;
+	//cout << "Debug : ";
+	//atm->printATMremainCashNum();
+	//cout << endl;
 
 	atm->insertedBill = Bill{ 0,0,0,0 }; // 혹시 모르니 초기화 (송금)
 	transactionAmount = 0; // 혹시 모르니 초기화 (송금)
