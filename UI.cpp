@@ -316,7 +316,7 @@ UI::State UI::a_verify() {
 	if (input == -1) {
 		cout << languagePack->getSentence("card returned");
 		return State::ChangeLanguage;
-		}
+	}
 	if (atm->checkPW(input)) { return State::A_ShowMenu; }
 	else {
 		cout << languagePack->getSentence("UI_verifyAdmin2");
@@ -347,7 +347,7 @@ UI::State UI::a_csvtoHistory() { // 파일로 출력
 	cin >> filename;
 	ofstream myFile(filename + ".csv");
 	for (int i = 0; i < database->getATMHistoryEN().size(); i++) {
-		for (int j = 0; j < 9; j++) {
+		for (int j = 0; j < 13; j++) {
 			if (languagePack->isKor()) myFile << database->getATMHistoryKR()[i][j] << ",";
 			else  myFile << database->getATMHistoryEN()[i][j] << ",";
 		}
@@ -389,7 +389,7 @@ UI::State UI::verifyAccount() {
 		int input = getInput(prompt, 9999); // 4자리 수이지만 이 경우에는 0000~9999
 		if (input == -1) {
 			cout << languagePack->getSentence("card returned");
-			return State::ChangeLanguage; 
+			return State::ChangeLanguage;
 		}
 		if (acc->checkPassword(input)) { // 비밀번호 맞으면
 			// 새로운 session 시작
@@ -399,7 +399,7 @@ UI::State UI::verifyAccount() {
 			cout << acc->getBank()->getName(languagePack->isKor());
 			cout << languagePack->getSentence("UI_verifyAccount3.2.0");
 			cout << acc->getID() << languagePack->getSentence("UI_verifyAccount3.3");
-			
+
 			this->WithdrawalPerSession = 0; // chooseTransaction 들어가기 전에 초기화해줘야 하기 때문에
 			return State::ChooseTransaction;
 		}
@@ -488,7 +488,7 @@ UI::State UI::d_askDepositType() {
 UI::State UI::d_askAmount_Cash() {
 	cout << languagePack->getSentence("UI_d_askAmount_Cash0.1") << fee << languagePack->getSentence("UI_d_askAmount_Cash0.2");
 
-	string prompt = languagePack->getSentence("put cash");
+	string prompt = languagePack->getSentence("UI_d_askAmount_Cash1");
 	int* input;
 	input = getInputArray(prompt, 4, 500);
 
@@ -600,7 +600,7 @@ UI::State UI::d_confirmTotal() {
 	if (input == 0) { return State::D_Deposit; }
 	if (input == -1) {
 		cout << languagePack->getSentence("exit deposit");
-		if(transactionType == 1){ cout << languagePack->getSentence("cash returned"); }
+		if (transactionType == 1) { cout << languagePack->getSentence("cash returned"); }
 		else { cout << languagePack->getSentence("check returned"); }
 		return State::ChooseTransaction;
 	}

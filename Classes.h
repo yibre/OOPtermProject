@@ -50,7 +50,7 @@ public:
 	}
 	void addAccountList(Account*);
 	Account* getAccountByNum(int index);
-	void addATMHistory(int type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
+	void addATMHistory(int type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill, int* atmCashNum); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
 	void addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount);
 	vector<vector<string> > getATMHistoryKR() { return atmhisKR; }
 	vector<vector<string> > getATMHistoryEN() { return atmhisEN; }
@@ -85,6 +85,7 @@ public:
 	//~Bill() { delete languagePack; }
 	int getTotalNum();
 	int getSum();
+	int* getCashNumArray() { return paperCash; }
 	void printBill(bool isKor);
 	// Bill& operator+(const Bill& bill);
 	Bill& operator+=(const Bill& rhs);
