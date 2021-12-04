@@ -146,12 +146,14 @@ void Database::printATMHistory() {
 	}
 }
 
+/*
 void Database::addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount) {
 	// 거래 순서, 나간 금액, 들어온 금액, 계좌잔액
 	cout << languagePack->getSentence("Database_addSessionHistory0") << acc->getOwner()->getName() << endl;
 	vector<string> column;
 
 }
+*/
 
 void Database::printSessionHistory() {
 	if (currentOrderNum == 0) { return; }
