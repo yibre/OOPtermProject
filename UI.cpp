@@ -313,21 +313,22 @@ UI::State UI::a_verify() {
 }
 
 UI::State UI::a_showMenu() { // 메뉴 보여주기
-	cout << "we are in show menu" << endl;
 	int input = getInput(languagePack->getSentence("UI_verifyAdmin3"), 10000);
-	cout << "input is " << input << endl;
 	if (input == 0) { return State::A_ShowHistory; }
 	else return State::ChangeLanguage;
 }
 
 UI::State UI::a_showHistory() { // 메뉴 보여주기
-	cout << "show history" << endl;
 	database->printATMHistory();
 	return State::A_CSVtoHistory;
 }
 
 UI::State UI::a_csvtoHistory() { // 메뉴 보여주기
-	ofstream myFile("history_1.csv");
+	// string input = getInput(languagePack->getSentence("UI_verifyAdmin3"), 10000);
+	string filename;
+	cout << languagePack->getSentence("UI_admin0");
+	cin >> filename;
+	ofstream myFile(filename+".csv");
 	for (int i = 0; i < database->getATMHistoryEN().size(); i++) {
 		for (int j = 0; j < 9; j++) {
 			if (languagePack->isKor()) myFile << database->getATMHistoryKR()[i][j] << ",";
@@ -335,6 +336,7 @@ UI::State UI::a_csvtoHistory() { // 메뉴 보여주기
 		}
 		myFile << endl;
 	}
+	cout << languagePack->getSentence("UI_admin1") << endl;
 	return State::ChangeLanguage;
 }
 
@@ -734,7 +736,7 @@ UI::State UI::t_askToAcc() {
 	if (input == -1) { return State::Transfer; }
 	if (input == acc->getID()) { // 현재 계좌와 같은 계좌 입력
 		cout << languagePack->getSentence("UI_t_askToAcc1");
-		return State:: T_AskToAcc;
+		return State::T_AskToAcc;
 	}
 	toAccID = database->getIndexFromID(input);
 	if (toAccID == -1) { // 존재하지 않는 계좌일 경우
@@ -848,7 +850,7 @@ UI::State UI::t_askAmount_a() {
 
 	// 액수 묻기 (cancel을 다시 입력으로 보고 함수로 따로 빼기)
 
-	prompt = languagePack->getSentence("UI_t_askAmount_a2.1") +  std::to_string(transactionAmount);
+	prompt = languagePack->getSentence("UI_t_askAmount_a2.1") + std::to_string(transactionAmount);
 	prompt += languagePack->getSentence("UI_t_askAmount_a2.2");
 	prompt += languagePack->getSentence("confirm");
 	input = getInput(prompt, 0);
