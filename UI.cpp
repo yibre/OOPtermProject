@@ -36,12 +36,19 @@ int UI::run() {
 	atm = A1; // atm 선택받기 구현하면 이거 없애줘야
 	// atm = A2; // (singleBank, EngSupport X debugging용)
 
-	cout << "Boot message : current ATM ID : " << atm->getID() << endl;
-	cout << "Boot message : current ATM bank : " << atm->getBank()->getName(false) << endl;
-	cout << "Boot message : current ATM is ";
+	cout << "\t[Boot message]" << endl;
+	cout << "current ATM ID : " << atm->getID() << endl;
+	cout << "current ATM bank : " << atm->getBank()->getName(false) << endl;
+	cout << "current ATM is ";
 	cout << (atm->isMultiBank() ? "multibank ATM" : "singlebank ATM") << endl;
-	cout << "Boot message : current ATM is " << (atm->isEnglishSupport() ? "" : "not ");
+	cout << "current ATM is " << (atm->isEnglishSupport() ? "" : "not ");
 	cout << "supporting ENG" << endl;
+<<<<<<< Updated upstream
+=======
+	cout << "current ATM Balance : " << endl;
+	atm->printATMremainCashNum();
+	cout << endl;
+>>>>>>> Stashed changes
 
 	this->database = DB;
 
@@ -876,8 +883,7 @@ UI::State UI::t_confirm() {
 	// from: t_askAmount_c
 
 	string prompt = "";
-	// 한글/영어에 따라 어순이 달라서 조건문을 사용해야 함.
-	// Bank 이름 넣기?
+	// 한글/영어 어순 달라서 조건문 사용
 	if (languagePack->isKor()) {
 		prompt += "[" + toAcc->getOwner()->getName() + languagePack->getSentence("UI_t_confirm0.2");
 		prompt += (std::to_string(transactionAmount) + languagePack->getSentence("UI_t_confirm0.3"));
@@ -892,6 +898,7 @@ UI::State UI::t_confirm() {
 		prompt += (std::to_string(fee) + languagePack->getSentence("UI_t_confirm0.4"));
 		prompt += std::to_string(acc->getBalance());
 		prompt += languagePack->getSentence("UI_t_confirm0.5");
+		prompt += languagePack->getSentence("confirm");
 	}
 
 	int input;
@@ -918,12 +925,6 @@ UI::State UI::t_transfer() {
 
 	bool success = atm->transfer(transactionType, transactionAmount, acc, toAcc, atm->insertedBill);
 	if (success) {
-		if (transactionType == 1) {
-			// cout << "Debug: Remaining Bills in the ATM : " << atm->getATMremainCash() << endl;
-			// cout << "Debug: Remaining Bills in the ATM : "; atm->printATMremainCashNum();
-			// cout << "Debug: Bills in the cash slot: " << atm->insertedBill.getSum() << endl;
-			// cout << endl;
-		}
 		cout << "\t[" << transactionAmount << languagePack->getSentence("UI_t_transfer1.1");
 		cout << toAcc->getOwner()->getName(languagePack->isKor());
 		cout << languagePack->getSentence("UI_t_transfer1.2");
@@ -938,7 +939,7 @@ UI::State UI::t_transfer() {
 		if (transactionType == 1) {
 			cout << languagePack->getSentence("cash returned");
 		}
-		return State::ChooseTransaction; // 어디로 가게 할 것?
+		return State::ChooseTransaction;
 	}
 }
 
