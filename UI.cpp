@@ -361,6 +361,7 @@ UI::State UI::a_csvtoHistory() { // 파일로 출력
 		myFile << endl;
 	}
 	cout << languagePack->getSentence("UI_admin1") << endl;
+	cout << languagePack->getSentence("card returned");
 	return State::ChangeLanguage;
 }
 
