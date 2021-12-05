@@ -281,8 +281,14 @@ UI::State UI::insertCard() {
 	// 유저로부터 계좌번호 입력받는다
 	accID, toAccID = -1; acc, toAcc = nullptr; // 혹시 모르니 초기화
 	string prompt = languagePack->getSentence("UI_insertCard0");
-	prompt += languagePack->getSentence("cancel");
-	accountNum = getInput(prompt, 99999, 10000); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
+	if (atm->isEnglishSupport()) {
+		prompt += languagePack->getSentence("cancel");
+		accountNum = getInput(prompt, 99999, 10000);
+	}
+	else {
+		prompt += "\n";
+		accountNum = getInput(prompt, 99999, 10000, false);
+	}
 
 	if (accountNum == 99999) { // admin 계정일 때
 		return State::A_Verify;
