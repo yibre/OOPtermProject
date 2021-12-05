@@ -10,7 +10,6 @@ int Database::totalSessionNum = 0;
 int Database::currentOrderNum = 0;
 vector<vector<string > > Database::atmhisEN;
 vector<vector<string > > Database::atmhisKR;
-vector<vector<string > > Database::sessionhisEN, sessionhisKR;
 Translation* Database::languagePack = new Translation();
 
 
@@ -34,7 +33,8 @@ Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계
 	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
 }
 
-void Database::addATMHistory(int transactionType, int before, int after, Account* account, Account* receiverAcc, int transferAmount, int ATMremainCash, int* atmCashNum) { // classes.h에서와 변수이름 다르다
+void Database::addATMHistory(int transactionType, int before, int after, Account* account, 
+	Account* receiverAcc, int transferAmount, int ATMremainCash, int* atmCashNum) { // classes.h에서와 변수이름 다르다
 	int order = transactionOrder;
 
 	if (transactionOrder == 1) {

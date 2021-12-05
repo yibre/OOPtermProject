@@ -25,8 +25,6 @@ public:
 };
 
 /***********************	Database	***********************/
-
-// 쓸 수 있으면 map 쓰는게 제일 좋을듯
 class Database {
 private:
 	Account* accountList[100]; // 계좌 리스트
@@ -35,8 +33,6 @@ private:
 	static Database* instance; // 한 번만 생성되는 instance
 	static vector<vector<string> > atmhisEN; // atm 어드민이 볼 수 있는 거래 내역
 	static vector<vector<string> > atmhisKR;
-	static vector<vector<string> > sessionhisEN; // 세션 종료 후 유저가 받는 내역
-	static vector<vector<string> > sessionhisKR;
 	static bool sessionProceeding; // 세션이 진행 중일땐 false임
 	static int transactionOrder;
 	static int totalSessionNum; // 한 세션이 시작된 후 몇 번의 거래가 이루어졌는가, clearSessionHistory에서 사용
@@ -50,8 +46,7 @@ public:
 	}
 	void addAccountList(Account*);
 	Account* getAccountByNum(int index);
-	void addATMHistory(int type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill, int* atmCashNum); // receiver 대신에 toAcc 쓰면 통일성 더 좋을것같다 (-현주)
-	void addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount);
+	void addATMHistory(int type, int before, int after, Account* acc, Account* receiver, int transferAmount, int ATMremainBill, int* atmCashNum);
 	vector<vector<string> > getATMHistoryKR() { return atmhisKR; }
 	vector<vector<string> > getATMHistoryEN() { return atmhisEN; }
 	void printATMHistory();
