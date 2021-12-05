@@ -22,21 +22,19 @@ int UI::run() {
 	// User* U4 = new User("김백규", "Baekgyu Kim");
 	// User* U5 = new User("버터", "Butter"); // 처음부터 bracket 치면 어떨까
 
-	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 10000
+	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
 	DB->addAccountList(AC1);
-	Account* AC2 = new Account(uriBank, U2, 3344, 1510000); // 계좌번호 10001
+	Account* AC2 = new Account(uriBank, U2, 3344, 1510000); // 계좌번호 1
 	DB->addAccountList(AC2);
-	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 계좌번호 10002
+	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 계좌번호 2
 	DB->addAccountList(AC3);
-	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 10003
+	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 3
 	DB->addAccountList(AC4);
-	Account* AC5 = new Account(suhyup, U2, 3344, 300000000); // 계좌번호 10004 (3억)
+	Account* AC5 = new Account(suhyup, U2, 3344, 300000000); // 계좌번호 4 (3억)
 	DB->addAccountList(AC5);
-	Account* AC6 = new Account(suhyup, U2, 3344, 100000); // 계좌번호 10004 (3억)
-	DB->addAccountList(AC6);
 
 	atm = A1;
-	//atm = A2; // (singleBank, EngSupport X)
+	// atm = A2; // (singleBank, EngSupport X)
 
 	cout << "\t[Boot message]" << endl;
 	cout << "current ATM ID : " << atm->getID() << endl;
@@ -156,8 +154,6 @@ int UI::run() {
 		case State::End:
 			// delete session (memory deallocation) // 추가하기
 
-			delete AC6;
-			delete AC5;
 			delete AC4;
 			delete AC3;
 			delete AC2;
@@ -236,7 +232,7 @@ UI::State UI::changeLanguage() {
 		database->changeLanguage("KOR");
 		atm->changeLanguage("KOR");
 		languagePack->changeLanguage("KOR");
-		// cout << languagePack->getSentence("UI_changeLanguage0");
+		cout << languagePack->getSentence("UI_changeLanguage0");
 
 		cout << "\t[*** 어서오십시오 ***]\n";
 		return State::InsertCard;
@@ -281,14 +277,8 @@ UI::State UI::insertCard() {
 	// 유저로부터 계좌번호 입력받는다
 	accID, toAccID = -1; acc, toAcc = nullptr; // 혹시 모르니 초기화
 	string prompt = languagePack->getSentence("UI_insertCard0");
-	if (atm->isEnglishSupport()) {
-		prompt += languagePack->getSentence("cancel");
-		accountNum = getInput(prompt, 99999, 10000);
-	}
-	else {
-		prompt += "\n";
-		accountNum = getInput(prompt, 99999, 10000, false);
-	}
+	prompt += languagePack->getSentence("cancel");
+	accountNum = getInput(prompt, 99999, 10000); // "cancel: -1"임을 넣거나 enableCancel false로 하거나
 
 	if (accountNum == 99999) { // admin 계정일 때
 		return State::A_Verify;
@@ -346,17 +336,12 @@ UI::State UI::a_showMenu() { // 메뉴 보여주기
 }
 
 UI::State UI::a_showHistory() { // history 보여주기
-	if (database->isHistoryEmpty()) {
-		cout << languagePack->getSentence("Database_printHistory1");
-		cout << languagePack->getSentence("card returned");
-		return State::ChangeLanguage;
-	}
 	database->printATMHistory();
 	return State::A_CSVtoHistory;
 }
 
 UI::State UI::a_csvtoHistory() { // 파일로 출력
-
+	
 	ofstream myFile("history.csv");
 	for (int i = 0; i < database->getATMHistoryEN().size(); i++) {
 		for (int j = 0; j < 13; j++) {
@@ -366,7 +351,6 @@ UI::State UI::a_csvtoHistory() { // 파일로 출력
 		myFile << endl;
 	}
 	cout << languagePack->getSentence("UI_admin1") << endl;
-	cout << languagePack->getSentence("card returned");
 	return State::ChangeLanguage;
 }
 
@@ -672,7 +656,7 @@ UI::State UI::w_askAmount() {
 	return State::W_CheckMaxAmount;
 }
 
-UI::State UI::w_checkMaxAmount() { // 출금한도 넘는 경우
+UI::State UI::w_checkMaxAmount() {
 	if (transactionBill.getSum() > 500000) {
 		cout << languagePack->getSentence("UI_w_checkMaxAmount0");
 		return State::W_AskAmount;
@@ -680,10 +664,10 @@ UI::State UI::w_checkMaxAmount() { // 출금한도 넘는 경우
 	else { return State::W_CheckAccountBalance; }
 }
 
-UI::State UI::w_checkAccountBalance() { // 계좌 잔액 부족한 경우
+UI::State UI::w_checkAccountBalance() {
 	if ((transactionBill.getSum() + fee) > acc->getBalance()) {
 		cout << languagePack->getSentence("UI_w_checkAccountBalance0");
-		return State::W_AskAmount; // 원래 Withdrawal로 가도록 돼있던데...
+		return State::Withdrawal;
 	}
 	else { return State::W_CheckATMBalance; }
 }

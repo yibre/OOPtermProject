@@ -147,9 +147,9 @@ Translation::Translation() {
 
 	/********************	 Admin	 ********************/
 	function = "UI_admin";
-	// translation_en.insert(pair<string, string>(function + "0", "Enter the name of the CSV file to save the ATM history: "));
-	// translation_kr.insert(pair<string, string>(function + "0", "ATM 내역을 저장할 csv 파일명을 입력하세요: "));
-	translation_en.insert(pair<string, string>(function + "1", "The file has been saved as \"history.csv\"."));
+	translation_en.insert(pair<string, string>(function + "0", "Enter the name of the CSV file to save the ATM history: "));
+	translation_kr.insert(pair<string, string>(function + "0", "ATM 내역을 저장할 csv 파일명을 입력하세요: "));
+	translation_en.insert(pair<string, string>(function + "1", "The file has been saved as history.csv"));
 	translation_kr.insert(pair<string, string>(function + "1", "파일이 history.csv로 저장되었습니다."));
 
 	/********************	 Deposit	 ********************/
@@ -183,7 +183,7 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0.2", "]원입니다.\n"));
 
 	translation_en.insert(pair<string, string>(function + "1", "\tPlease put your cash in the cash/check slot. (Input in the order of 50,000 won, 10,000 won, 5,000 won, and 1,000 won bills.)\n\t(Up to 50 amounts of cash can be deposited per time.)\n\t(Cancel : -1)\n"));
-	translation_kr.insert(pair<string, string>(function + "1", "\t투입구에 현금을 넣어 주십시오. (5만원권, 1만원권, 5천원권, 1천원권 개수 순으로 입력해 주십시오.)\n\t(1회당 최대 50장의 지폐를 입금하실 수 있습니다.)\n\t(취소 : -1)\n"));
+	translation_kr.insert(pair<string, string>(function + "1", "\t투입구에 현금을 넣어 주십시오. (5만원권, 1만원권, 5천원권, 1천원권 개수 순으로 입력해 주십시오.)\n\t(1회당 최대 50장의 현금 입금하실 수 있습니다.)\n\t(취소 : -1)\n"));
 
 	// translation_en.insert(pair<string, string>(function + "2", "You have exited the deposit session.\n"));
 	// translation_kr.insert(pair<string, string>(function + "2", "입금을 취소하셨습니다.\n"));
@@ -464,8 +464,6 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "1", "통합 거래 순서 : "));
 
 	function = "Database_printHistory";
-	translation_en.insert(pair<string, string>(function + "1", "There is no transaction history."));
-	translation_kr.insert(pair<string, string>(function + "1", "거래 내역이 없습니다.\n"));
 	/*
 	translation_en.insert(pair<string, string>(function + "0.1", "[Order]"));
 	translation_kr.insert(pair<string, string>(function + "0.1", "[순서]"));
@@ -513,6 +511,5 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0.5", "[거래 후 잔액]"));
 	translation_en.insert(pair<string, string>(function + "0.6", "[Recipient]"));
 	translation_kr.insert(pair<string, string>(function + "0.6", "[송금 시 수신인]"));
-
 
 }
