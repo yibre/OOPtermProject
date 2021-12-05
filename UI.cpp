@@ -36,7 +36,7 @@ int UI::run() {
 	DB->addAccountList(AC6);
 
 	atm = A1;
-	// atm = A2; // (singleBank, EngSupport X)
+	//atm = A2; // (singleBank, EngSupport X)
 
 	cout << "\t[Boot message]" << endl;
 	cout << "current ATM ID : " << atm->getID() << endl;
@@ -346,12 +346,17 @@ UI::State UI::a_showMenu() { // 메뉴 보여주기
 }
 
 UI::State UI::a_showHistory() { // history 보여주기
+	if (database->isHistoryEmpty()) {
+		cout << languagePack->getSentence("Database_printHistory1");
+		cout << languagePack->getSentence("card returned");
+		return State::ChangeLanguage;
+	}
 	database->printATMHistory();
 	return State::A_CSVtoHistory;
 }
 
 UI::State UI::a_csvtoHistory() { // 파일로 출력
-	
+
 	ofstream myFile("history.csv");
 	for (int i = 0; i < database->getATMHistoryEN().size(); i++) {
 		for (int j = 0; j < 13; j++) {
