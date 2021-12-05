@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.h" // 현주는 여기 cpp
+#include "Language.cpp" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -27,7 +27,7 @@ public:
 /***********************	Database	***********************/
 class Database {
 private:
-	Account* accountList[100]; // 계좌 리스트
+	Account* accountList[100]; // 생성 가능한 계좌 개수 (일단 100개; 변동가능)
 	static Translation* languagePack;
 	static int listsize;
 	static Database* instance; // 한 번만 생성되는 instance
@@ -75,19 +75,14 @@ class Bill {
 private:
 	int paperCash[4];
 	static int value[4];
-	//Translation* languagePack = new Translation();
 public:
 	Bill(int c50k, int c10k, int c5k, int c1k);
-	//~Bill() { delete languagePack; }
 	int getTotalNum();
 	int getSum();
 	int* getCashNumArray() { return paperCash; }
 	void printBill(bool isKor);
-	// Bill& operator+(const Bill& bill);
 	Bill& operator+=(const Bill& rhs);
-	// Bill& operator-(const Bill& bill);
 	Bill& operator-=(const Bill& rhs);
-	// Bill& operator*(int mul);
 	bool operator<=(const Bill& bill);
 	bool operator>=(const Bill& bill);
 	bool operator<(const Bill& bill);
@@ -147,16 +142,12 @@ private:
 	Translation* languagePack;
 
 public:
-	// ATM() { numID = 0; }
 	ATM(Bank* bank, string adminID, int adminPW, Bill* bill, int check, bool engSupport, bool multiBank);
 	~ATM() { delete languagePack; }
-	// bool checkID(char); // 쓰이는 곳 현재 없음
-	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수, 입금액 (type1 : 현금 type2 : 수표)
-	bool withdrawal(Bill money, Account* acc); // 출금함수, 출금액
+	bool deposit(int type, Bill money, int check[], int checkNum, int checkSum, Account* acc); // 입금함수
+	bool withdrawal(Bill money, Account* acc); // 출금함수
 	bool checkPW(int);
-	bool transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill); // int fee 없애는거 고려
-	// void IncreaseID() { numID++; }
-	// int getNumID() { return numID; } // ???
+	bool transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& bill);
 	int getID() { return ID; } // 이 ATM의 ID를 return
 	int getATMremainCash() { return remainBill->getSum(); }
 	int getATMremainCheckNum() { return remainCheckNum; }
@@ -170,7 +161,3 @@ public:
 	void changeLanguage(string Lang) { this->languagePack->changeLanguage(Lang); }
 	Bill insertedBill = Bill{ 0,0,0,0 }; // 함수 아니고 변수임; 현재 투입구에 계류중인 현금
 };
-
-/*******************	Other Functions 	*******************/
-
-bool checkExit(string); // ?

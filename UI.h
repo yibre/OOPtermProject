@@ -7,7 +7,6 @@ class UI {
 private:
 	enum class State {
 		ChangeLanguage,
-		// ReturnCard,
 		GetATM,
 		InsertCard,
 		VerifyAccount,
@@ -44,26 +43,21 @@ private:
 		End
 	}
 	state = State::ChangeLanguage;
-	// int UserStatus = 1;
 	int accountNum = 0;
 	int transactionType = 0;
-	int FirstDigit = 0; // needed to be deleted
-	int SecondDigit = 0; // needed to be deleted
 	int accID = -1; // 현재 계좌 index
-	// int userIndex = -1; // 현재 계좌번호(겹침)
 	Account* acc = nullptr; // 현재 계좌
 	int toAccID = -1; // 송금 상대 계좌 index; 송금시에만 사용
 	Account* toAcc = nullptr; // 송금 상대 계좌; 송금시에만 사용
 	int* depositCheckInput = new int[30];// 입금시에만 사용
-	int depositCheckNum = 0;// 입금시에만 사용
-	int depositCheckSum = 0;// 입금시에만 사용
+	int depositCheckNum = 0; // 입금시에만 사용
+	int depositCheckSum = 0; // 입금시에만 사용
 	int fee = 0;
-	int transactionAmount = 0; // transaction 으로 이름 변경함.
+	int transactionAmount = 0;
 	Bill transactionBill = Bill{ 0,0,0,0 };
-	Database* database = nullptr; // database 사용 (바꿔야 할 수도)
+	Database* database = nullptr;
 	ATM* atm = nullptr; // the ATM we are using
 	Translation* languagePack = new Translation();
-	// int SessionStartNum = 0; // 한 거래가 진행될때마다 1로 증가
 	int WithdrawalPerSession = 0;
 
 public:
@@ -73,7 +67,6 @@ private:
 	static int getInput(const std::string& prompt, int minimum, int maximum, bool enableCancel);
 	static int* getInputArray(const std::string& prompt, int length, int minimum, int maximum, bool);
 	State changeLanguage();
-	// State returnCard();
 	State getATM();
 	State insertCard();
 	State verifyAccount();

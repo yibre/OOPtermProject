@@ -29,56 +29,37 @@ int Database::getIndexFromID(int ID) {
 	return index;
 }
 
-Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계좌 찾아주는 함수; 계좌 유무 확인 옵션 원함(현주)
-	return accountList[index]; // 이대로면 최대 index 초과하는 숫자 들어와도 dummy 뱉을듯? exception handling 원함(현주)
+Account* Database::getAccountByNum(int index) { // 계좌번호 입력하면 계좌 찾아주는 함수
+	return accountList[index];
 }
 
 void Database::addATMHistory(int transactionType, int before, int after, Account* account, 
-	Account* receiverAcc, int transferAmount, int ATMremainCash, int* atmCashNum) { // classes.h에서와 변수이름 다르다
+	Account* receiverAcc, int transferAmount, int ATMremainCash, int* atmCashNum) {
 	int order = transactionOrder;
 
 	if (transactionOrder == 1) {
 		vector<string> column;
-		column.push_back("[순서]");
-		column.push_back("[계좌주]");
-		column.push_back("[계좌번호]");
-		column.push_back("[거래 타입]");
-		column.push_back("[거래 전 잔액]");
-		column.push_back("[거래 후 잔액]");
-		column.push_back("[수신 계좌]");
-		column.push_back("[송금액]");
-		column.push_back("[ATM 내 현금 잔액]");
-		column.push_back("[ATM 50k]");
-		column.push_back("[ATM 10k]");
-		column.push_back("[ATM 5k]");
-		column.push_back("[ATM 1k]");
-		atmhisKR.push_back(column);
+		column.push_back("[순서]"); column.push_back("[계좌주]"); column.push_back("[계좌번호]");
+		column.push_back("[거래 타입]"); column.push_back("[거래 전 잔액]"); column.push_back("[거래 후 잔액]");
+		column.push_back("[수신 계좌]"); column.push_back("[송금액]"); column.push_back("[ATM 내 현금 잔액]");
+		column.push_back("[ATM 50k]"); column.push_back("[ATM 10k]"); column.push_back("[ATM 5k]");
+		column.push_back("[ATM 1k]"); atmhisKR.push_back(column); 
+		
 		vector<string> column2;
-		column2.push_back("[Order]");
-		column2.push_back("[Acc. holder]");
-		column2.push_back("[Acc. No.]");
-		column2.push_back("[Transaction]");
-		column2.push_back("[Balance (before)]");
-		column2.push_back("[Balance (changed)]");
-		column2.push_back("[Recipient]");
-		column2.push_back("[Transferred amount]");
-		column2.push_back("[Cash in ATM]");
-		column2.push_back("[ATM 50k]");
-		column2.push_back("[ATM 10k]");
-		column2.push_back("[ATM 5k]");
-		column2.push_back("[ATM 1k]");
-		atmhisEN.push_back(column2);
+		column2.push_back("[Order]"); column2.push_back("[Acc. holder]"); column2.push_back("[Acc. No.]");
+		column2.push_back("[Transaction]"); column2.push_back("[Balance (before)]");
+		column2.push_back("[Balance (changed)]"); column2.push_back("[Recipient]");
+		column2.push_back("[Transferred amount]"); column2.push_back("[Cash in ATM]");
+		column2.push_back("[ATM 50k]"); column2.push_back("[ATM 10k]"); column2.push_back("[ATM 5k]");
+		column2.push_back("[ATM 1k]"); atmhisEN.push_back(column2);
 	}
 
 	cout << languagePack->getSentence("Database_addHistory0") << totalSessionNum << endl;
 	cout << languagePack->getSentence("Database_addHistory1") << transactionOrder << endl;
 	transactionOrder++;
 	currentOrderNum++;
-	//totalSessionNum++;
 	string usernameKR = account->getOwner()->getName();
 	string usernameEN = account->getOwner()->getName(false);
-	//string receiverNameKR = "-";
-	//string receiverNameEN = "-";
 	string receiverName = "-";
 	string transactionTypeKR;
 	string transactionTypeEN;
@@ -94,8 +75,6 @@ void Database::addATMHistory(int transactionType, int before, int after, Account
 		transactionTypeKR = "송금";
 		transactionTypeEN = "transfer";
 		receiverName = to_string(receiverAcc->getID());
-		//receiverNameKR = to_string(receiverAcc->getID());
-		//receiverNameEN = to_string(receiverAcc->getID());
 	}
 	vector<string> tempKR;
 	tempKR.push_back(to_string(order));
@@ -131,21 +110,6 @@ void Database::addATMHistory(int transactionType, int before, int after, Account
 }
 
 void Database::printATMHistory() {
-	/*
-	vector<string> column;
-	column.push_back(languagePack->getSentence("Database_printHistory0.1"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.2"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.3"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.4"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.5"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.6"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.7"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.8"));
-	column.push_back(languagePack->getSentence("Database_printHistory0.9"));
-	for (int i = 0; i < column.size(); i++) {
-		cout << column[i] << " ";
-	}
-	cout << endl;*/
 	if (languagePack->isKor()) {
 		for (int i = 0; i < atmhisKR.size(); i++) {
 			for (int j = 0; j < 13; j++) {
@@ -163,15 +127,6 @@ void Database::printATMHistory() {
 		}
 	}
 }
-
-/*
-void Database::addSessionHistory(string type, int before, int after, Account* acc, Account* receiver, int transferAmount) {
-	// 거래 순서, 나간 금액, 들어온 금액, 계좌잔액
-	cout << languagePack->getSentence("Database_addSessionHistory0") << acc->getOwner()->getName() << endl;
-	vector<string> column;
-
-}
-*/
 
 void Database::printSessionHistory() {
 	if (currentOrderNum == 0) { return; }
@@ -201,16 +156,7 @@ void Database::printSessionHistory() {
 void Database::clearSessionHistory() {
 	totalSessionNum++;
 	currentOrderNum = 0;
-
-	// cout << sessionhis.size() << endl;
-	// for (int i = 0; i < sessionhis.size() + 1; i++) {
-		// cout << i << endl;
-		// sessionhis.pop_back();
-	// }
 }
-/***********************	  User  	***********************/
-
-/***********************	  Bank  	***********************/
 
 /***********************	Account 	***********************/
 
@@ -312,7 +258,6 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			int after = fromAcc->getBalance();
 			database->addATMHistory(3,
 				before, fromAcc->getBalance(), fromAcc, toAcc, money, this->remainBill->getSum(), this->remainBill->getCashNumArray());
-			// database->addHistory("송금", before, after, fromAcc, toAcc);
 		}
 		else { cout << languagePack->getSentence("ATM_transfer3"); return false; }
 	}
@@ -324,8 +269,6 @@ bool ATM::transfer(int type, int money, Account* fromAcc, Account* toAcc, Bill& 
 			int after = fromAcc->getBalance();
 			database->addATMHistory(3,
 				before, fromAcc->getBalance(), fromAcc, toAcc, money, this->remainBill->getSum(), this->remainBill->getCashNumArray());
-			// database->addHistory("송금", before, after, fromAcc, toAcc);
-
 		}
 		else { return false; }
 	}
@@ -352,7 +295,6 @@ int ATM::fee(int transactionType, Account* a1, Account* a2 = nullptr) { // 송�
 		else { return 2500; } // nonp-nonp
 	}
 	else {
-		//cout << languagePack->getSentence("ATM_fee0");// ???
 		exit(0);
 	}
 }
@@ -379,41 +321,13 @@ int Bill::getTotalNum() {
 	return sum;
 }
 
-/*
-Bill& Bill::operator+(const Bill& bill) {
-	int num1 = paperCash[0] + bill.paperCash[0];
-	int num2 = paperCash[1] + bill.paperCash[1];
-	int num3 = paperCash[2] + bill.paperCash[2];
-	int num4 = paperCash[3] + bill.paperCash[3];
-	Bill result = Bill{ num1, num2, num3, num4 };
-	return result;
-	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
-	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
-
-}
-*/
-
 Bill& Bill::operator+=(const Bill& rhs) {
 	this->paperCash[0] += rhs.paperCash[0];
 	this->paperCash[1] += rhs.paperCash[1];
 	this->paperCash[2] += rhs.paperCash[2];
 	this->paperCash[3] += rhs.paperCash[3];
 	return *this;
-	// 작동 확인 완료되었는지?
 }
-
-/*
-Bill& Bill::operator-(const Bill& bill) {
-	int num1 = paperCash[0] - bill.paperCash[0];
-	int num2 = paperCash[1] - bill.paperCash[1];
-	int num3 = paperCash[2] - bill.paperCash[2];
-	int num4 = paperCash[3] - bill.paperCash[3];
-	Bill result = Bill{ num1, num2, num3, num4 };
-	return result;
-	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
-	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
-}
-*/
 
 Bill& Bill::operator-=(const Bill& rhs) {
 	this->paperCash[0] -= rhs.paperCash[0];
@@ -421,29 +335,14 @@ Bill& Bill::operator-=(const Bill& rhs) {
 	this->paperCash[2] -= rhs.paperCash[2];
 	this->paperCash[3] -= rhs.paperCash[3];
 	return *this;
-	// 작동 확인 완료되었는지?
 }
-
-/*
-Bill& Bill::operator*(const int mul) {
-	int num1 = paperCash[0] * mul;
-	int num2 = paperCash[1] * mul;
-	int num3 = paperCash[2] * mul;
-	int num4 = paperCash[3] * mul;
-	Bill result = Bill{ num1, num2, num3, num4 };
-	return result;
-	// 컴파일러 경고뜸 (warning: reference to local variable 'result' returned)
-	// return type 왜 Bill&인지? 그냥 Bill 해도 충분하지 않나?
-}
-*/
 
 bool Bill::operator<=(const Bill& bill) {
 	bool case1 = paperCash[0] <= bill.paperCash[0];
 	bool case2 = paperCash[1] <= bill.paperCash[1];
 	bool case3 = paperCash[2] <= bill.paperCash[2];
 	bool case4 = paperCash[3] <= bill.paperCash[3];
-	return (case1 & case2 & case3 & case4);
-	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
+	return (case1 && case2 && case3 && case4);
 }
 
 bool Bill::operator>=(const Bill& bill) {
@@ -451,16 +350,14 @@ bool Bill::operator>=(const Bill& bill) {
 	bool case2 = paperCash[1] >= bill.paperCash[1];
 	bool case3 = paperCash[2] >= bill.paperCash[2];
 	bool case4 = paperCash[3] >= bill.paperCash[3];
-	return (case1 & case2 & case3 & case4);
-	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
+	return (case1 && case2 && case3 && case4);
 }
 bool Bill::operator<(const Bill& bill) {
 	bool case1 = paperCash[0] < bill.paperCash[0];
 	bool case2 = paperCash[1] < bill.paperCash[1];
 	bool case3 = paperCash[2] < bill.paperCash[2];
 	bool case4 = paperCash[3] < bill.paperCash[3];
-	return (case1 & case2 & case3 & case4);
-	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
+	return (case1 && case2 && case3 && case4);
 }
 
 bool Bill::operator>(const Bill& bill) {
@@ -468,8 +365,7 @@ bool Bill::operator>(const Bill& bill) {
 	bool case2 = paperCash[1] > bill.paperCash[1];
 	bool case3 = paperCash[2] > bill.paperCash[2];
 	bool case4 = paperCash[3] > bill.paperCash[3];
-	return (case1 & case2 & case3 & case4);
-	// bool이어서 상관없긴 한데 논리연산 && 아니고 비트단위연산 & 쓴 건 의도된 것인가?
+	return (case1 && case2 && case3 && case4);
 }
 
 void Bill::printBill(bool isKor) {
