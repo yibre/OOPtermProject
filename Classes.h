@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include "Language.cpp" // 현주는 여기 cpp
+#include "Language.h" // 현주는 여기 cpp
 
 using namespace std;
 
@@ -55,6 +55,7 @@ public:
 	vector<vector<string> > getATMHistoryKR() { return atmhisKR; }
 	vector<vector<string> > getATMHistoryEN() { return atmhisEN; }
 	void printATMHistory();
+	bool isHistoryEmpty() { if (atmhisKR.size() == 0) { return true; } else { return false; } }
 	void printSessionHistory();
 	void sizeincrease() { listsize++; };
 	int getDatabaseSize() { return listsize; };

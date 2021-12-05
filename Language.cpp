@@ -464,6 +464,8 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "1", "통합 거래 순서 : "));
 
 	function = "Database_printHistory";
+	translation_en.insert(pair<string, string>(function + "1", "There is no transaction history."));
+	translation_kr.insert(pair<string, string>(function + "1", "거래 내역이 없습니다.\n"));
 	/*
 	translation_en.insert(pair<string, string>(function + "0.1", "[Order]"));
 	translation_kr.insert(pair<string, string>(function + "0.1", "[순서]"));
@@ -511,5 +513,6 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0.5", "[거래 후 잔액]"));
 	translation_en.insert(pair<string, string>(function + "0.6", "[Recipient]"));
 	translation_kr.insert(pair<string, string>(function + "0.6", "[송금 시 수신인]"));
+
 
 }
