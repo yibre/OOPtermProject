@@ -296,8 +296,8 @@ Translation::Translation() {
 	translation_kr.insert(pair<string, string>(function + "0", "계좌에 잔액이 부족합니다. 다시 시도해 주십시오.\n"));
 
 	function = "UI_w_checkMaxAmount";
-	translation_en.insert(pair<string, string>(function + "0", "It exceeded the maximum withdrawal amount (300,000 won) per time. Please try again.\n"));
-	translation_kr.insert(pair<string, string>(function + "0", "1회 최대 출금 금액(30만원)을 초과하였습니다. 다시 시도해 주십시오.\n"));
+	translation_en.insert(pair<string, string>(function + "0", "It exceeded the maximum withdrawal amount (500,000 won) per time. Please try again.\n"));
+	translation_kr.insert(pair<string, string>(function + "0", "1회 최대 출금 금액(50만원)을 초과하였습니다. 다시 시도해 주십시오.\n"));
 
 	function = "UI_w_checkATMBalance";
 	translation_en.insert(pair<string, string>(function + "0", "Not enough cash in this ATM machine.\n"));
