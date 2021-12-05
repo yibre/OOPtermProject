@@ -22,16 +22,18 @@ int UI::run() {
 	// User* U4 = new User("김백규", "Baekgyu Kim");
 	// User* U5 = new User("버터", "Butter"); // 처음부터 bracket 치면 어떨까
 
-	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 0
+	Account* AC1 = new Account(uriBank, U1, 2345, 10000); // 계좌번호 10000
 	DB->addAccountList(AC1);
-	Account* AC2 = new Account(uriBank, U2, 3344, 1510000); // 계좌번호 1
+	Account* AC2 = new Account(uriBank, U2, 3344, 1510000); // 계좌번호 10001
 	DB->addAccountList(AC2);
-	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 계좌번호 2
+	Account* AC3 = new Account(kakaoBank, U3, 22, 450000); // 계좌번호 10002
 	DB->addAccountList(AC3);
-	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 3
+	Account* AC4 = new Account(kakaoBank, U1, 1024, 1000); // 계좌번호 10003
 	DB->addAccountList(AC4);
-	Account* AC5 = new Account(suhyup, U2, 3344, 300000000); // 계좌번호 4 (3억)
+	Account* AC5 = new Account(suhyup, U2, 3344, 300000000); // 계좌번호 10004 (3억)
 	DB->addAccountList(AC5);
+	Account* AC6 = new Account(suhyup, U2, 3344, 100000); // 계좌번호 10004 (3억)
+	DB->addAccountList(AC6);
 
 	atm = A1;
 	// atm = A2; // (singleBank, EngSupport X)
@@ -154,6 +156,8 @@ int UI::run() {
 		case State::End:
 			// delete session (memory deallocation) // 추가하기
 
+			delete AC6;
+			delete AC5;
 			delete AC4;
 			delete AC3;
 			delete AC2;
@@ -656,7 +660,7 @@ UI::State UI::w_askAmount() {
 	return State::W_CheckMaxAmount;
 }
 
-UI::State UI::w_checkMaxAmount() {
+UI::State UI::w_checkMaxAmount() { // 출금한도 넘는 경우
 	if (transactionBill.getSum() > 500000) {
 		cout << languagePack->getSentence("UI_w_checkMaxAmount0");
 		return State::W_AskAmount;
@@ -664,10 +668,10 @@ UI::State UI::w_checkMaxAmount() {
 	else { return State::W_CheckAccountBalance; }
 }
 
-UI::State UI::w_checkAccountBalance() {
+UI::State UI::w_checkAccountBalance() { // 계좌 잔액 부족한 경우
 	if ((transactionBill.getSum() + fee) > acc->getBalance()) {
 		cout << languagePack->getSentence("UI_w_checkAccountBalance0");
-		return State::Withdrawal;
+		return State::W_AskAmount; // 원래 Withdrawal로 가도록 돼있던데...
 	}
 	else { return State::W_CheckATMBalance; }
 }
