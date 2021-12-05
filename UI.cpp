@@ -236,7 +236,7 @@ UI::State UI::changeLanguage() {
 		database->changeLanguage("KOR");
 		atm->changeLanguage("KOR");
 		languagePack->changeLanguage("KOR");
-		cout << languagePack->getSentence("UI_changeLanguage0");
+		// cout << languagePack->getSentence("UI_changeLanguage0");
 
 		cout << "\t[*** 어서오십시오 ***]\n";
 		return State::InsertCard;
