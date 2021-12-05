@@ -168,7 +168,7 @@ public:
 	void insertCash(Bill cash) { *this->remainBill += cash; }
 	int fee(int, Account*, Account*);
 	void printATMremainCashNum() { this->remainBill->printBill(this->languagePack->isKor()); };
-	bool compareBill(Bill subject) { return (*(this->remainBill) > subject); }
+	bool compareBill(Bill subject) { return (*(this->remainBill) >= subject); }
 	Bank* getBank() { return ownerBank; }
 	bool isMultiBank() { return multiBank; }
 	bool isEnglishSupport() { return engSupport; }
